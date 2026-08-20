@@ -41,12 +41,12 @@
 
       <div class="nav-right">
         <!-- Demo Mode Badge -->
-        <span id="demo-badge" class="demo-badge" style="display:none;">&bull; DEMO</span>
+        <span id="demo-badge" class="demo-badge" style="display:none;">◈ DEMO</span>
 
         <!-- System status -->
         <div class="sys-status" id="system-status">
           <span class="status-dot" id="status-dot"></span>
-          <span class="status-text" id="system-status-text">ONLINE</span>
+          <span class="status-text" id="system-status-text">INITIALIZING…</span>
         </div>
 
         <a href="/" class="nav-link">HOME</a>
@@ -108,13 +108,13 @@
           </button>
         </div>
 
-        <div class="mic-instruction" id="mic-state-label">TAP TO SPEAK</div>
+        <div class="mic-instruction" id="mic-label">TAP TO SPEAK</div>
 
         <!-- Text Input Search Box -->
-        <form id="text-query-form" class="search-form" role="search" onsubmit="return false;">
+        <form id="text-query-form" class="search-form" role="search">
           <div class="search-input-wrap">
             <input
-              id="text-input"
+              id="input-text-query"
               type="text"
               class="search-input"
               placeholder="Enter question or query neural knowledge..."
@@ -122,7 +122,7 @@
               spellcheck="false"
               aria-label="Search query"
             />
-            <button id="btn-send" class="btn-send" type="button" aria-label="Submit query">
+            <button id="btn-submit-text" class="btn-send" type="submit" aria-label="Submit query">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="5" y1="12" x2="19" y2="12"/>
                 <polyline points="12 5 19 12 12 19"/>
@@ -131,28 +131,35 @@
           </div>
         </form>
 
-        <!-- Quick suggestion chips -->
+        <!-- Quick suggestion chips with pre-baked data-query attributes -->
         <div class="chips-container" id="query-chips" role="group" aria-label="Suggested search queries">
-          <button class="chip" type="button">RAG</button>
-          <button class="chip" type="button">FAISS</button>
-          <button class="chip" type="button">CHUNKING</button>
-          <button class="chip" type="button">LATENCY</button>
-          <button class="chip" type="button">STT</button>
-          <button class="chip" type="button">GROQ</button>
+          <button class="chip" type="button" data-query="What is Retrieval-Augmented Generation?">RAG</button>
+          <button class="chip" type="button" data-query="How does in-memory vector search with FAISS work?">FAISS</button>
+          <button class="chip" type="button" data-query="What is semantic chunking and how does it differ from sliding window?">CHUNKING</button>
+          <button class="chip" type="button" data-query="How does the system achieve under 200 ms latency?">LATENCY</button>
+          <button class="chip" type="button" data-query="How does the Sarvam AI speech-to-text work?">STT</button>
+          <button class="chip" type="button" data-query="What LLM does this system use and why Groq?">GROQ</button>
         </div>
 
       </section>
 
       <!-- ══════════════════════════════════
-           LIVE RESULTS PANEL
+           LIVE RESULTS PANEL (results-wrapper)
       ══════════════════════════════════ -->
-      <section id="results-panel" class="results-panel" style="display:none;" aria-live="polite">
+      <section id="results-wrapper" class="results-panel" style="display:none;" aria-live="polite">
 
-        <!-- Voice Transcription Card (shows if voice query) -->
-        <div id="transcript-section" class="glass-card transcript-card" style="display:none;">
+        <!-- Error Card (if any error occurs) -->
+        <div id="error-card" class="glass-card error-card" style="display:none;">
+          <div class="card-header">
+            <span class="card-tag error-tag">⚠ SYSTEM NOTIFICATION</span>
+          </div>
+          <p id="error-text" class="error-body"></p>
+        </div>
+
+        <!-- Voice Transcription Card (shows on voice queries) -->
+        <div id="transcript-card" class="glass-card transcript-card" style="display:none;">
           <div class="card-header">
             <span class="card-tag">🎙 SPEECH TRANSCRIPTION</span>
-            <span id="transcript-meta" class="meta-tag"></span>
           </div>
           <p id="transcript-text" class="transcript-body"></p>
         </div>
@@ -162,15 +169,14 @@
           <div class="card-header">
             <div class="header-left">
               <span class="card-tag">✨ NEURAL RESPONSE</span>
-              <span id="badge-grounded" class="badge-grounded" style="display:none;">&check; Grounded</span>
-              <span id="badge-latency" class="badge-latency"></span>
+              <span id="grounded-badge" class="grounded-badge">✓ Grounded</span>
             </div>
             <div class="header-actions">
-              <button id="btn-speak" class="action-btn" title="Read aloud" aria-label="Read answer aloud">
+              <button id="btn-speak-answer" class="action-btn" title="Read aloud" aria-label="Read answer aloud">
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
                 SPEAK
               </button>
-              <button id="btn-copy" class="action-btn" title="Copy answer" aria-label="Copy answer">
+              <button id="btn-copy-answer" class="action-btn" title="Copy answer" aria-label="Copy answer">
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
                 COPY
               </button>
@@ -179,29 +185,20 @@
           <div id="answer-text" class="answer-content"></div>
         </div>
 
-        <!-- Retrieved Nodes / Citations -->
-        <div id="nodes-section" class="glass-card nodes-card">
+        <!-- Retrieved Nodes / Citations (sources-section) -->
+        <div id="sources-section" class="glass-card nodes-card" style="display:none;">
           <div class="card-header">
             <span class="card-tag">📚 RETRIEVED CITATIONS</span>
-            <span id="nodes-count" class="meta-tag"></span>
           </div>
-          <div id="nodes-list" class="nodes-list"></div>
+          <div id="sources-list" class="nodes-list"></div>
         </div>
 
-        <!-- Telemetry Breakdown Grid -->
-        <div id="telemetry-section" class="glass-card telemetry-card">
+        <!-- Telemetry Breakdown Grid (latency-section) -->
+        <div id="latency-section" class="glass-card telemetry-card" style="display:none;">
           <div class="card-header">
-            <span class="card-tag">⏱ LATENCY BREAKDOWN</span>
-            <span class="meta-tag">TARGET: &lt;200MS</span>
+            <span class="card-tag">⏱ LATENCY TELEMETRY</span>
           </div>
-          <div class="telemetry-grid" id="telemetry-grid">
-            <div class="tel-item"><span class="tel-label">STT</span><span class="tel-val" id="t-stt">—</span></div>
-            <div class="tel-item"><span class="tel-label">EMBED</span><span class="tel-val" id="t-embed">—</span></div>
-            <div class="tel-item"><span class="tel-label">FAISS</span><span class="tel-val" id="t-faiss">—</span></div>
-            <div class="tel-item"><span class="tel-label">GROQ</span><span class="tel-val" id="t-llm">—</span></div>
-            <div class="tel-item"><span class="tel-label">GUARD</span><span class="tel-val" id="t-guard">—</span></div>
-            <div class="tel-item tel-total"><span class="tel-label">TOTAL</span><span class="tel-val" id="t-total">—</span></div>
-          </div>
+          <div class="latency-grid-container" id="latency-grid"></div>
         </div>
 
       </section>
@@ -209,9 +206,9 @@
     </main>
 
     <!-- ══════════════════════════════════════
-         SETTINGS MODAL DRAWER
+         SETTINGS MODAL (settings-modal)
     ══════════════════════════════════════ -->
-    <div id="settings-drawer" class="settings-modal-backdrop" aria-hidden="true">
+    <div id="settings-modal" class="settings-modal-backdrop" style="display:none;" aria-hidden="true">
       <div class="settings-card" role="dialog" aria-labelledby="settings-title">
         <div class="settings-header">
           <h2 id="settings-title" class="settings-title">SYSTEM SETTINGS</h2>
@@ -225,7 +222,7 @@
               <span class="setting-desc">Simulate speech &amp; RAG pipeline offline with mock data</span>
             </div>
             <label class="toggle-switch">
-              <input type="checkbox" id="toggle-demo" />
+              <input type="checkbox" id="setting-demo-mode" />
               <span class="toggle-slider"></span>
             </label>
           </div>
@@ -233,9 +230,9 @@
           <div class="setting-row">
             <div class="setting-label-group">
               <span class="setting-name">Top-K Retrieval</span>
-              <span class="setting-desc">Number of candidate passages to retrieve (<span id="val-top-k">3</span>)</span>
+              <span class="setting-desc">Number of candidate passages to retrieve (<span id="top-k-val">3</span>)</span>
             </div>
-            <input type="range" id="slider-top-k" min="1" max="10" value="3" class="range-slider" />
+            <input type="range" id="setting-top-k" min="1" max="10" value="3" class="range-slider" />
           </div>
 
           <div class="setting-row">
@@ -243,7 +240,7 @@
               <span class="setting-name">Backend API Base</span>
               <span class="setting-desc">FastAPI server host URL</span>
             </div>
-            <input type="text" id="input-api-base" class="text-field" placeholder="http://127.0.0.1:8000" />
+            <input type="text" id="setting-api-url" class="text-field" placeholder="http://127.0.0.1:8000" />
           </div>
         </div>
 
