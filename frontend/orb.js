@@ -153,29 +153,45 @@
     }));
 
     /* ── hook into app.js state transitions ── */
-    // We'll monkey-patch DOM.btnMic class changes
-    const origClassAdd = canvas.classList.add.bind(canvas.classList);
+    // app.js calls classList.toggle('recording', bool) — intercept toggle too
+    const origClassAdd    = canvas.classList.add.bind(canvas.classList);
     const origClassRemove = canvas.classList.remove.bind(canvas.classList);
+    const origClassToggle = canvas.classList.toggle.bind(canvas.classList);
+
+    function applyRecording(active) {
+      isRecording = active;
+      const micLabel = document.getElementById('mic-label');
+      if (micLabel) micLabel.classList.toggle('listening', active);
+    }
 
     canvas.classList.add = function(...args) {
       origClassAdd(...args);
-      if (args.includes('recording')) {
-        isRecording = true;
-        const micLabel = document.getElementById('mic-label');
-        if (micLabel) { micLabel.classList.add('listening'); }
-      }
+      if (args.includes('recording')) applyRecording(true);
     };
     canvas.classList.remove = function(...args) {
       origClassRemove(...args);
-      if (args.includes('recording')) {
-        isRecording = false;
-        const micLabel = document.getElementById('mic-label');
-        if (micLabel) { micLabel.classList.remove('listening'); }
-      }
+      if (args.includes('recording')) applyRecording(false);
     };
+    canvas.classList.toggle = function(cls, force) {
+      const result = origClassToggle(cls, force);
+      if (cls === 'recording') applyRecording(typeof force === 'boolean' ? force : result);
+      return result;
+    };
+
+    // Also watch aria-pressed & aria-disabled via MutationObserver
+    // so processing states (TRANSCRIBING, RETRIEVING, etc.) also snap the orb to shape
+    new MutationObserver(() => {
+      const pressed   = canvas.getAttribute('aria-pressed') === 'true';
+      const disabled  = canvas.getAttribute('aria-disabled') === 'true';
+      // Snap to crisp shape when pressed (recording) OR disabled (processing)
+      isRecording = pressed || disabled;
+      const micLabel = document.getElementById('mic-label');
+      if (micLabel) micLabel.classList.toggle('listening', pressed);
+    }).observe(canvas, { attributes: true, attributeFilter: ['aria-pressed', 'aria-disabled'] });
 
     /* ── expose setAnalyser for app.js audio pipeline ── */
     window.orbSetAnalyser = function(a, d) { analyser = a; dataArr = d; };
+
 
     /* ── click handler ── */
     canvas.addEventListener('click', () => {
@@ -225,9 +241,11 @@
       /* ── 1. project vertices with morph noise ── */
       const t = performance.now() * 0.001; // seconds
 
-      // target morphBlend: idle = 1 (morphed), recording = 0 (crisp)
+      // target morphBlend: idle = 1 (morphed), recording/processing = 0 (crisp)
       const morphTarget = isRecording ? 0.0 : 1.0;
-      morphBlend += (morphTarget - morphBlend) * 0.04; // smooth 0.04 transition rate
+      // Snap to crisp quickly (0.10), drift back to organic slowly (0.022)
+      const lerpRate = morphTarget < morphBlend ? 0.10 : 0.022;
+      morphBlend += (morphTarget - morphBlend) * lerpRate;
 
       const projected = VERTS.map((v, idx) => {
         const ns = NOISE_SEEDS[idx];
