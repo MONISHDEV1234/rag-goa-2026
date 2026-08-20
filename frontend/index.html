@@ -36,7 +36,10 @@
       </div>
 
       <div class="header-right">
-        <!-- Install PWA Button (Visible when installable) -->
+        <!-- Demo Mode Badge -->
+        <span id="demo-badge" class="demo-badge" style="display:none;">DEMO</span>
+
+        <!-- Install PWA Button -->
         <button id="btn-install" class="btn-ghost btn-install" style="display:none;" aria-label="Install App">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -243,14 +246,24 @@
             <input type="range" id="setting-top-k" min="1" max="10" value="3" class="form-range" />
           </div>
 
+          <div class="form-group">
+            <label class="form-toggle-label" for="setting-demo-mode">
+              <span>
+                <strong>Demo Mode</strong>
+                <small>Simulate full pipeline without backend. Enable if backend is not running.</small>
+              </span>
+              <input type="checkbox" id="setting-demo-mode" role="switch" class="toggle-checkbox" />
+            </label>
+          </div>
+
           <div class="settings-info-box">
             <h4>Architecture Specs</h4>
             <ul>
               <li><strong>Dataset:</strong> AI4Bharat MSMARCO-XI</li>
-              <li><strong>STT Engine:</strong> Sarvam AI (saarika:v2)</li>
+              <li><strong>STT Engine:</strong> Sarvam AI (saarika:v2.5)</li>
               <li><strong>Embeddings:</strong> FastEmbed BGE-small-en-v1.5</li>
               <li><strong>Vector Store:</strong> FAISS In-Memory (RAM)</li>
-              <li><strong>LLM Generator:</strong> Groq Llama3 / Mixtral</li>
+              <li><strong>LLM Generator:</strong> Groq llama-3.1-8b-instant</li>
             </ul>
           </div>
         </div>

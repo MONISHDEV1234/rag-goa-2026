@@ -253,6 +253,85 @@ body {
   50% { opacity: 0.3; transform: scale(0.85); }
 }
 
+/* ── Demo Badge ── */
+.demo-badge {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-warning);
+  background: var(--color-warning-bg);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* Demo system status */
+.status-indicator.demo {
+  border-color: rgba(245, 158, 11, 0.3);
+  color: var(--color-warning);
+}
+.status-indicator.demo .dot {
+  background: var(--color-warning);
+  box-shadow: 0 0 6px var(--color-warning);
+}
+
+/* ── Settings toggle ── */
+.form-toggle-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  cursor: pointer;
+}
+.form-toggle-label span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.form-toggle-label strong {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+.form-toggle-label small {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+}
+.toggle-checkbox {
+  width: 40px;
+  height: 22px;
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--color-surface-3);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  transition: background var(--ease-smooth);
+}
+.toggle-checkbox::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: var(--color-text-muted);
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: all var(--ease-smooth);
+}
+.toggle-checkbox:checked {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+.toggle-checkbox:checked::after {
+  left: 20px;
+  background: #fff;
+}
+
 /* ── Voice Hero Section ── */
 .voice-section {
   display: flex;
