@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>SONAR — SOund Neural Answer Retrieval</title>
-  <meta name="description" content="Voice-Enabled RAG System — HH Goa 2026. Neural retrieval at the speed of thought." />
-  <meta name="theme-color" content="#00f0ff" />
+  <title>SONAR — Voice Neural RAG Engine</title>
+  <meta name="description" content="SONAR: SOund Neural Answer Retrieval. Voice-enabled RAG with MSMARCO-XI, Sarvam AI, FAISS, and Groq LLM." />
+  <meta name="theme-color" content="#000000" />
 
   <!-- PWA -->
   <link rel="manifest" href="/static/manifest.json" />
@@ -14,82 +14,80 @@
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="/static/style.css" />
 </head>
 <body>
 
-  <!-- CRT Scanlines overlay -->
-  <div class="scanlines" aria-hidden="true"></div>
-  <!-- Grid background -->
-  <div class="bg-grid" aria-hidden="true"></div>
-  <!-- Corner decorations -->
-  <div class="corner corner-tl" aria-hidden="true"></div>
-  <div class="corner corner-tr" aria-hidden="true"></div>
-  <div class="corner corner-bl" aria-hidden="true"></div>
-  <div class="corner corner-br" aria-hidden="true"></div>
+  <!-- Volumetric Prism Light Effect Background -->
+  <div class="prism-background" aria-hidden="true">
+    <div class="prism-ambient"></div>
+    <div class="prism-cone"></div>
+    <div class="prism-horizon"></div>
+  </div>
 
   <div class="app-wrapper">
 
     <!-- ══════════════════════════════════════
-         HEADER / HUD BAR
+         TOP NAVIGATION BAR
     ══════════════════════════════════════ -->
-    <header class="hud-header" role="banner">
-      <div class="hud-left">
-        <div class="hud-logo">
-          <span class="logo-bracket">[</span>
-          <span class="logo-text" data-text="SONAR">SONAR</span>
-          <span class="logo-bracket">]</span>
-        </div>
-        <div class="hud-sub">SOund Neural Answer Retrieval · HH GOA 2026</div>
+    <header class="navbar" role="banner">
+      <div class="nav-left">
+        <a href="/" class="brand-logo">SONAR</a>
+        <span class="nav-pipe">|</span>
+        <span class="nav-sub">NEURAL RETRIEVAL SYSTEM</span>
       </div>
 
-      <div class="hud-right">
+      <div class="nav-right">
         <!-- Demo Mode Badge -->
-        <span id="demo-badge" class="demo-badge" style="display:none;">◈ DEMO</span>
+        <span id="demo-badge" class="demo-badge" style="display:none;">&bull; DEMO</span>
 
         <!-- System status -->
         <div class="sys-status" id="system-status">
           <span class="status-dot" id="status-dot"></span>
-          <span class="status-text" id="system-status-text">INITIALIZING…</span>
+          <span class="status-text" id="system-status-text">ONLINE</span>
         </div>
 
+        <a href="/" class="nav-link">HOME</a>
+        <a href="/about" class="nav-link">ABOUT</a>
+        <a href="/tutorial" class="nav-link">TUTORIAL</a>
+
         <!-- Install -->
-        <button id="btn-install" class="hud-btn" style="display:none;" aria-label="Install App">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <button id="btn-install" class="nav-pill-btn small" style="display:none;" aria-label="Install App">
           INSTALL
         </button>
 
         <!-- Settings -->
-        <button id="btn-settings" class="hud-btn" aria-label="System settings">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-          SYS</button>
+        <button id="btn-settings" class="nav-pill-btn settings" aria-label="System settings">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          SYS
+        </button>
       </div>
     </header>
 
     <!-- ══════════════════════════════════════
-         STATUS TICKER
+         STATUS TICKER BAR
     ══════════════════════════════════════ -->
     <div class="status-ticker" id="status-bar" role="status" aria-live="polite">
-      <span class="ticker-arrow">▶</span>
+      <span class="ticker-dot"></span>
       <span class="ticker-text" id="status-text">SYSTEM READY</span>
       <span class="ticker-dots">
         <span></span><span></span><span></span>
       </span>
     </div>
 
-    <main class="hud-main" role="main">
+    <main class="main-content" role="main">
 
       <!-- ══════════════════════════════════
-           VOICE INPUT SECTION
+           VOICE INPUT & SEARCH HERO
       ══════════════════════════════════ -->
-      <section class="voice-section" aria-label="Voice input">
-        <div class="mic-ring-wrapper">
-          <!-- Animated rings -->
-          <div class="mic-ring ring-1" aria-hidden="true"></div>
-          <div class="mic-ring ring-2" aria-hidden="true"></div>
-          <div class="mic-ring ring-3" aria-hidden="true"></div>
+      <section class="voice-search-hero" aria-label="Voice and search input">
+
+        <div class="mic-stage-wrapper">
+          <!-- Multi-color Iris Pulsing Rings -->
+          <div class="iris-ring ring-1" aria-hidden="true"></div>
+          <div class="iris-ring ring-2" aria-hidden="true"></div>
 
           <!-- Canvas visualizer -->
           <canvas id="audio-visualizer" width="200" height="200" aria-hidden="true"></canvas>
@@ -98,183 +96,170 @@
           <button id="btn-mic"
             class="btn-mic"
             type="button"
-            aria-label="Start voice recording"
+            aria-label="Click to start voice recording"
             aria-pressed="false">
-            <svg class="mic-icon" viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="9" y="2" width="6" height="11" rx="3"/>
-              <path d="M5 10a7 7 0 0 0 14 0"/>
+            <svg class="mic-icon" viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
               <line x1="12" y1="19" x2="12" y2="23"/>
               <line x1="8" y1="23" x2="16" y2="23"/>
             </svg>
+            <span class="mic-pulse" aria-hidden="true"></span>
           </button>
         </div>
 
-        <div class="mic-label-box">
-          <span class="mic-label" id="mic-label">TAP TO SPEAK</span>
-        </div>
-      </section>
+        <div class="mic-instruction" id="mic-state-label">TAP TO SPEAK</div>
 
-      <!-- ══════════════════════════════════
-           TEXT INPUT
-      ══════════════════════════════════ -->
-      <section class="input-section" aria-label="Text query input">
-        <form id="text-query-form" class="query-form" autocomplete="off">
-          <div class="query-input-wrapper">
-            <span class="input-prompt">▶</span>
+        <!-- Text Input Search Box -->
+        <form id="text-query-form" class="search-form" role="search" onsubmit="return false;">
+          <div class="search-input-wrap">
             <input
+              id="text-input"
               type="text"
-              id="input-text-query"
-              class="query-input"
-              placeholder="ENTER QUERY // NEURAL SEARCH…"
-              aria-label="Text query input"
-              maxlength="400"
+              class="search-input"
+              placeholder="Enter question or query neural knowledge..."
+              autocomplete="off"
+              spellcheck="false"
+              aria-label="Search query"
             />
-            <button id="btn-submit-text" class="btn-query-submit" type="submit" aria-label="Submit query">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            <button id="btn-send" class="btn-send" type="button" aria-label="Submit query">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"/>
+                <polyline points="12 5 19 12 12 19"/>
+              </svg>
             </button>
           </div>
         </form>
 
-        <!-- Suggestion Chips -->
-        <div class="chips-row" role="list" aria-label="Quick queries">
-          <button class="chip" data-query="What is retrieval augmented generation?" role="listitem">RAG</button>
-          <button class="chip" data-query="How does FAISS vector search work?" role="listitem">FAISS</button>
-          <button class="chip" data-query="Explain semantic chunking vs sliding window" role="listitem">CHUNKING</button>
-          <button class="chip" data-query="How does the system achieve under 200ms latency?" role="listitem">LATENCY</button>
-          <button class="chip" data-query="How does Sarvam AI speech-to-text work?" role="listitem">STT</button>
-          <button class="chip" data-query="Why use Groq for LLM generation?" role="listitem">GROQ</button>
+        <!-- Quick suggestion chips -->
+        <div class="chips-container" id="query-chips" role="group" aria-label="Suggested search queries">
+          <button class="chip" type="button">RAG</button>
+          <button class="chip" type="button">FAISS</button>
+          <button class="chip" type="button">CHUNKING</button>
+          <button class="chip" type="button">LATENCY</button>
+          <button class="chip" type="button">STT</button>
+          <button class="chip" type="button">GROQ</button>
         </div>
+
       </section>
 
       <!-- ══════════════════════════════════
-           RESULTS PANEL
+           LIVE RESULTS PANEL
       ══════════════════════════════════ -->
-      <section class="results-panel" id="results-wrapper" style="display:none;" aria-label="Query results" aria-live="polite">
+      <section id="results-panel" class="results-panel" style="display:none;" aria-live="polite">
 
-        <!-- Error -->
-        <div class="cp-card cp-card-error" id="error-card" style="display:none;" role="alert">
-          <div class="card-label-row">
-            <span class="card-tag tag-error">ERR</span>
-            <span class="card-title">SYSTEM ERROR</span>
+        <!-- Voice Transcription Card (shows if voice query) -->
+        <div id="transcript-section" class="glass-card transcript-card" style="display:none;">
+          <div class="card-header">
+            <span class="card-tag">🎙 SPEECH TRANSCRIPTION</span>
+            <span id="transcript-meta" class="meta-tag"></span>
           </div>
-          <p class="card-body-text" id="error-text"></p>
-          <div class="card-hint">Enable <strong>DEMO MODE</strong> in SYS settings to run without backend.</div>
+          <p id="transcript-text" class="transcript-body"></p>
         </div>
 
-        <!-- Transcript -->
-        <div class="cp-card" id="transcript-card">
-          <div class="card-label-row">
-            <span class="card-tag tag-stt">STT</span>
-            <span class="card-title">NEURAL TRANSCRIPT</span>
-            <span class="card-sub">SARVAM AI · saarika:v2.5</span>
+        <!-- Generated Answer Card -->
+        <div id="answer-card" class="glass-card answer-card">
+          <div class="card-header">
+            <div class="header-left">
+              <span class="card-tag">✨ NEURAL RESPONSE</span>
+              <span id="badge-grounded" class="badge-grounded" style="display:none;">&check; Grounded</span>
+              <span id="badge-latency" class="badge-latency"></span>
+            </div>
+            <div class="header-actions">
+              <button id="btn-speak" class="action-btn" title="Read aloud" aria-label="Read answer aloud">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+                SPEAK
+              </button>
+              <button id="btn-copy" class="action-btn" title="Copy answer" aria-label="Copy answer">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                COPY
+              </button>
+            </div>
           </div>
-          <div class="card-body-text monospace" id="transcript-text"></div>
+          <div id="answer-text" class="answer-content"></div>
         </div>
 
-        <!-- Answer -->
-        <div class="cp-card cp-card-answer" id="answer-card">
-          <div class="card-label-row">
-            <span class="card-tag tag-llm">LLM</span>
-            <span class="card-title">GROUNDED RESPONSE</span>
-            <span class="grounded-badge" id="grounded-badge"></span>
+        <!-- Retrieved Nodes / Citations -->
+        <div id="nodes-section" class="glass-card nodes-card">
+          <div class="card-header">
+            <span class="card-tag">📚 RETRIEVED CITATIONS</span>
+            <span id="nodes-count" class="meta-tag"></span>
           </div>
-          <div class="card-body-text" id="answer-text"></div>
-          <div class="card-actions">
-            <button id="btn-speak-answer" class="cp-action-btn" type="button" title="Read aloud">
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-              SPEAK
-            </button>
-            <button id="btn-copy-answer" class="cp-action-btn" type="button" title="Copy answer">
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-              COPY
-            </button>
-          </div>
+          <div id="nodes-list" class="nodes-list"></div>
         </div>
 
-        <!-- Sources -->
-        <div class="cp-card" id="sources-section" style="display:none;">
-          <div class="card-label-row">
-            <span class="card-tag tag-db">DB</span>
-            <span class="card-title">RETRIEVED NODES</span>
-            <span class="card-sub">MSMARCO-XI · FAISS</span>
+        <!-- Telemetry Breakdown Grid -->
+        <div id="telemetry-section" class="glass-card telemetry-card">
+          <div class="card-header">
+            <span class="card-tag">⏱ LATENCY BREAKDOWN</span>
+            <span class="meta-tag">TARGET: &lt;200MS</span>
           </div>
-          <div class="sources-grid" id="sources-list"></div>
-        </div>
-
-        <!-- Latency -->
-        <div class="cp-card cp-card-latency" id="latency-section" style="display:none;">
-          <div class="card-label-row">
-            <span class="card-tag tag-perf">PERF</span>
-            <span class="card-title">LATENCY TELEMETRY</span>
-            <span class="card-sub">TARGET &lt;200ms</span>
+          <div class="telemetry-grid" id="telemetry-grid">
+            <div class="tel-item"><span class="tel-label">STT</span><span class="tel-val" id="t-stt">—</span></div>
+            <div class="tel-item"><span class="tel-label">EMBED</span><span class="tel-val" id="t-embed">—</span></div>
+            <div class="tel-item"><span class="tel-label">FAISS</span><span class="tel-val" id="t-faiss">—</span></div>
+            <div class="tel-item"><span class="tel-label">GROQ</span><span class="tel-val" id="t-llm">—</span></div>
+            <div class="tel-item"><span class="tel-label">GUARD</span><span class="tel-val" id="t-guard">—</span></div>
+            <div class="tel-item tel-total"><span class="tel-label">TOTAL</span><span class="tel-val" id="t-total">—</span></div>
           </div>
-          <div class="latency-grid" id="latency-grid"></div>
         </div>
 
       </section>
 
     </main>
 
-    <!-- Footer -->
-    <footer class="hud-footer">
-      <span>HH GOA 2026 · TASK 2 · VOICE-ENABLED RAG</span>
-      <span class="footer-sep">//</span>
-      <span>DEADLINE: 22 AUG 2026 · 23:59 IST</span>
-    </footer>
-
-  </div><!-- /app-wrapper -->
-
-  <!-- ══════════════════════════════════════
-       SETTINGS MODAL
-  ══════════════════════════════════════ -->
-  <div id="settings-modal" class="modal-overlay" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-    <div class="modal-card">
-      <div class="modal-header">
-        <span class="modal-tag">SYS//CONFIG</span>
-        <h3 id="modal-title">SYSTEM SETTINGS</h3>
-        <button id="btn-close-settings" class="modal-close-btn" aria-label="Close settings">✕</button>
-      </div>
-
-      <div class="modal-body">
-        <div class="form-group">
-          <label class="form-label" for="setting-api-url">BACKEND NODE URL</label>
-          <input type="text" id="setting-api-url" class="cp-input" placeholder="http://127.0.0.1:8000" />
-          <small class="form-hint">Leave empty to use current host.</small>
+    <!-- ══════════════════════════════════════
+         SETTINGS MODAL DRAWER
+    ══════════════════════════════════════ -->
+    <div id="settings-drawer" class="settings-modal-backdrop" aria-hidden="true">
+      <div class="settings-card" role="dialog" aria-labelledby="settings-title">
+        <div class="settings-header">
+          <h2 id="settings-title" class="settings-title">SYSTEM SETTINGS</h2>
+          <button id="btn-close-settings" class="close-btn" aria-label="Close settings">&times;</button>
         </div>
 
-        <div class="form-group">
-          <label class="form-label" for="setting-top-k">TOP-K RETRIEVAL NODES: <span id="top-k-val">3</span></label>
-          <input type="range" id="setting-top-k" min="1" max="10" value="3" class="cp-range" />
+        <div class="settings-body">
+          <div class="setting-row">
+            <div class="setting-label-group">
+              <span class="setting-name">Demo Mode</span>
+              <span class="setting-desc">Simulate speech &amp; RAG pipeline offline with mock data</span>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="toggle-demo" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label-group">
+              <span class="setting-name">Top-K Retrieval</span>
+              <span class="setting-desc">Number of candidate passages to retrieve (<span id="val-top-k">3</span>)</span>
+            </div>
+            <input type="range" id="slider-top-k" min="1" max="10" value="3" class="range-slider" />
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label-group">
+              <span class="setting-name">Backend API Base</span>
+              <span class="setting-desc">FastAPI server host URL</span>
+            </div>
+            <input type="text" id="input-api-base" class="text-field" placeholder="http://127.0.0.1:8000" />
+          </div>
         </div>
 
-        <div class="form-group">
-          <label class="form-toggle-label" for="setting-demo-mode">
-            <span>
-              <span class="form-label">DEMO MODE</span>
-              <small class="form-hint">Simulate full pipeline — no backend needed.</small>
-            </span>
-            <input type="checkbox" id="setting-demo-mode" role="switch" class="toggle-checkbox" />
-          </label>
+        <div class="settings-footer">
+          <button id="btn-save-settings" class="save-btn" type="button">SAVE &amp; APPLY</button>
         </div>
-
-        <div class="spec-grid">
-          <div class="spec-row"><span class="spec-key">DATASET</span><span class="spec-val">AI4Bharat MSMARCO-XI</span></div>
-          <div class="spec-row"><span class="spec-key">STT</span><span class="spec-val">Sarvam AI · saarika:v2.5</span></div>
-          <div class="spec-row"><span class="spec-key">EMBED</span><span class="spec-val">FastEmbed BGE-small-en-v1.5</span></div>
-          <div class="spec-row"><span class="spec-key">INDEX</span><span class="spec-val">FAISS In-RAM · IndexFlatIP</span></div>
-          <div class="spec-row"><span class="spec-key">LLM</span><span class="spec-val">Groq · llama-3.1-8b-instant</span></div>
-          <div class="spec-row"><span class="spec-key">TARGET</span><span class="spec-val">&lt;200ms end-to-end</span></div>
-        </div>
-      </div>
-
-      <div class="modal-footer">
-        <button id="btn-save-settings" class="btn-primary" type="button">SAVE CONFIG</button>
       </div>
     </div>
+
+    <!-- Bottom Footer -->
+    <footer class="footer">
+      <p class="footer-text">&copy; 2026 SONAR &mdash; SOund Neural Answer Retrieval. Built by <strong>INFERENTIA</strong>.</p>
+    </footer>
+
   </div>
 
   <script src="/static/app.js"></script>
 </body>
 </html>
-
-
