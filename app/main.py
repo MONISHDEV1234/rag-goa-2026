@@ -71,19 +71,29 @@ app.include_router(api_router)
 
 @app.get("/health", tags=["meta"])
 async def health():
-    """
-    Health check. Returns system readiness.
-    TODO (Role 3): extend to report FAISS index status, model load status.
-    """
     return JSONResponse({
         "status": "ok",
-        "mode": "skeleton",  # change to "live" when real pipeline is wired
+        "mode": "skeleton",
         "endpoints": ["/api/query", "/api/voice"],
     })
 
 
+# Explicit root → landing page
+@app.get("/", include_in_schema=False)
+async def root():
+    from fastapi.responses import FileResponse
+    return FileResponse(str(_frontend_dir / "landing.html"))
+
+
+# /app → main voice RAG UI
+@app.get("/app", include_in_schema=False)
+async def app_page():
+    from fastapi.responses import FileResponse
+    return FileResponse(str(_frontend_dir / "index.html"))
+
+
 # ---------------------------------------------------------------------------
-# Serve frontend — MUST be last (catches all unmatched routes)
+# Serve all other static assets (js, css, icons, sw.js, manifest.json…)
 # ---------------------------------------------------------------------------
 
 _frontend_dir = Path(__file__).parent.parent / "frontend"

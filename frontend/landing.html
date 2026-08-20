@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VOXRAIG — Voice Neural RAG · HH Goa 2026</title>
+  <meta name="description" content="Voice-Enabled Retrieval-Augmented Generation. MSMARCO-XI · Sarvam AI · FAISS · Groq LLM. Under 200ms." />
+  <meta name="theme-color" content="#00f0ff" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="landing.css" />
+</head>
+<body>
+
+  <!-- BG layers -->
+  <div class="scanlines" aria-hidden="true"></div>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="corner corner-tl" aria-hidden="true"></div>
+  <div class="corner corner-tr" aria-hidden="true"></div>
+  <div class="corner corner-bl" aria-hidden="true"></div>
+  <div class="corner corner-br" aria-hidden="true"></div>
+
+  <!-- ══════════════ NAV ══════════════ -->
+  <nav class="nav">
+    <div class="nav-logo">
+      <span class="bracket">[</span>
+      <span class="logo-glitch" data-text="VOXRAIG">VOXRAIG</span>
+      <span class="bracket">]</span>
+    </div>
+    <div class="nav-links">
+      <a href="#features">FEATURES</a>
+      <a href="#pipeline">PIPELINE</a>
+      <a href="#stack">STACK</a>
+      <a href="/app" class="nav-cta">LAUNCH APP ›</a>
+    </div>
+  </nav>
+
+  <!-- ══════════════ HERO ══════════════ -->
+  <section class="hero" id="home">
+    <div class="hero-badge">HH GOA 2026 · TASK 2 · SHORTLISTING</div>
+
+    <h1 class="hero-title">
+      <span class="hero-line-1" data-text="SPEAK.">SPEAK.</span>
+      <span class="hero-line-2" data-text="RETRIEVE.">RETRIEVE.</span>
+      <span class="hero-line-3">
+        <span data-text="KNOW.">KNOW.</span>
+      </span>
+    </h1>
+
+    <p class="hero-sub">
+      Voice-enabled neural retrieval system.<br/>
+      Sarvam STT → FAISS → Groq LLM → Grounded answers.<br/>
+      <span class="highlight-cyan">Target: &lt;200 ms end-to-end.</span>
+    </p>
+
+    <div class="hero-ctas">
+      <a href="/app" class="btn-launch">
+        <span class="btn-icon">▶</span>
+        LAUNCH SYSTEM
+      </a>
+      <a href="#pipeline" class="btn-ghost-link">
+        VIEW ARCHITECTURE ↓
+      </a>
+    </div>
+
+    <!-- Animated stats row -->
+    <div class="hero-stats">
+      <div class="stat-box">
+        <span class="stat-val cyan">&lt;200</span>
+        <span class="stat-label">MS LATENCY</span>
+      </div>
+      <div class="stat-sep">//</div>
+      <div class="stat-box">
+        <span class="stat-val magenta">3</span>
+        <span class="stat-label">CHUNK STRATEGIES</span>
+      </div>
+      <div class="stat-sep">//</div>
+      <div class="stat-box">
+        <span class="stat-val green">100%</span>
+        <span class="stat-label">GROUNDED</span>
+      </div>
+      <div class="stat-sep">//</div>
+      <div class="stat-box">
+        <span class="stat-val yellow">P50/P70/P100</span>
+        <span class="stat-label">BENCHMARKS</span>
+      </div>
+    </div>
+
+    <!-- Floating neon orb -->
+    <div class="hero-orb" aria-hidden="true"></div>
+  </section>
+
+  <!-- ══════════════ FEATURES ══════════════ -->
+  <section class="section" id="features">
+    <div class="section-label">
+      <span class="slabel-line"></span>
+      <span class="slabel-text">// CAPABILITIES</span>
+      <span class="slabel-line"></span>
+    </div>
+    <h2 class="section-title">SYSTEM CAPABILITIES</h2>
+
+    <div class="features-grid">
+
+      <div class="feature-card">
+        <div class="feature-icon cyan">🎙</div>
+        <div class="feature-tag tag-cyan">STT ENGINE</div>
+        <h3>Voice-First Input</h3>
+        <p>Browser MediaRecorder captures audio in WebM/Opus. Sarvam AI <code>saarika:v2.5</code> transcribes multilingual speech with Indian-accent optimization in under 60 ms.</p>
+        <div class="feature-metric"><span>~60 ms</span> avg transcription</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon magenta">🧩</div>
+        <div class="feature-tag tag-magenta">CHUNKING</div>
+        <h3>Triple Chunking</h3>
+        <p>Three strategies running on MSMARCO-XI: <strong>Semantic</strong> (embedding boundary detection), <strong>Sliding-Window</strong> (overlapping tokens), and <strong>Metadata-Aware</strong> (preserving doc provenance).</p>
+        <div class="feature-metric"><span>3</span> strategies benchmarked</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon yellow">⚡</div>
+        <div class="feature-tag tag-yellow">FAISS</div>
+        <h3>In-Memory Vector Search</h3>
+        <p>FAISS <code>IndexFlatIP</code> loaded entirely in RAM at startup. Cosine similarity over <code>BAAI/bge-small-en-v1.5</code> FastEmbed vectors. Zero disk I/O per request.</p>
+        <div class="feature-metric"><span>~5 ms</span> avg retrieval</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon green">🤖</div>
+        <div class="feature-tag tag-green">LLM</div>
+        <h3>Groq-Powered Generation</h3>
+        <p>Groq LPU serves <code>llama-3.1-8b-instant</code> at hardware speed. Prompt capped at 512 tokens, output at 256 tokens. Single LLM call — no chained generation.</p>
+        <div class="feature-metric"><span>~75 ms</span> avg generation</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon cyan">🛡</div>
+        <div class="feature-tag tag-cyan">GUARDRAILS</div>
+        <h3>Multi-Layer Safety</h3>
+        <p>Input guard rejects off-topic and unsafe queries. Similarity threshold refuses LLM calls when context is insufficient. Grounding checker validates every answer against retrieved passages.</p>
+        <div class="feature-metric"><span>4</span> guard layers</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon magenta">📊</div>
+        <div class="feature-tag tag-magenta">BENCHMARKS</div>
+        <h3>Real Latency Analytics</h3>
+        <p>100-query benchmark suite measuring per-stage latency (STT, embedding, retrieval, generation, grounding). Reports P50 / P70 / P100 percentiles. No fake numbers.</p>
+        <div class="feature-metric"><span>P50/P70/P100</span> reported</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════ PIPELINE ══════════════ -->
+  <section class="section" id="pipeline">
+    <div class="section-label">
+      <span class="slabel-line"></span>
+      <span class="slabel-text">// ARCHITECTURE</span>
+      <span class="slabel-line"></span>
+    </div>
+    <h2 class="section-title">NEURAL PIPELINE</h2>
+    <p class="section-sub">Every request flows through this deterministic, instrumented pipeline.</p>
+
+    <div class="pipeline-wrapper">
+      <div class="pipeline-step step-voice">
+        <div class="pstep-icon">🎙</div>
+        <div class="pstep-label">VOICE INPUT</div>
+        <div class="pstep-sub">Browser MediaRecorder</div>
+      </div>
+      <div class="pipeline-arrow">▼</div>
+
+      <div class="pipeline-step step-stt">
+        <div class="pstep-icon">📡</div>
+        <div class="pstep-label">SARVAM STT</div>
+        <div class="pstep-sub">saarika:v2.5 · ~60ms</div>
+      </div>
+      <div class="pipeline-arrow">▼</div>
+
+      <div class="pipeline-step step-guard">
+        <div class="pstep-icon">🛡</div>
+        <div class="pstep-label">INPUT GUARD</div>
+        <div class="pstep-sub">Off-topic · Unsafe · Empty</div>
+      </div>
+      <div class="pipeline-arrow">▼</div>
+
+      <div class="pipeline-step step-embed">
+        <div class="pstep-icon">⚙</div>
+        <div class="pstep-label">FASTEMBED</div>
+        <div class="pstep-sub">BGE-small-en-v1.5 · ~9ms</div>
+      </div>
+      <div class="pipeline-arrow">▼</div>
+
+      <div class="pipeline-step step-faiss">
+        <div class="pstep-icon">🔍</div>
+        <div class="pstep-label">FAISS SEARCH</div>
+        <div class="pstep-sub">In-RAM · IndexFlatIP · ~5ms</div>
+      </div>
+      <div class="pipeline-arrow">▼</div>
+
+      <div class="pipeline-step step-harness">
+        <div class="pstep-icon">⚡</div>
+        <div class="pstep-label">RAG HARNESS</div>
+        <div class="pstep-sub">Orchestration · Retry · Validation</div>
+      </div>
+      <div class="pipeline-arrow">▼</div>
+
+      <div class="pipeline-step step-llm">
+        <div class="pstep-icon">🤖</div>
+        <div class="pstep-label">GROQ LLM</div>
+        <div class="pstep-sub">llama-3.1-8b-instant · ~75ms</div>
+      </div>
+      <div class="pipeline-arrow">▼</div>
+
+      <div class="pipeline-step step-ground">
+        <div class="pstep-icon">✅</div>
+        <div class="pstep-label">GROUNDING CHECK</div>
+        <div class="pstep-sub">SUPPORTED / UNSUPPORTED · ~5ms</div>
+      </div>
+      <div class="pipeline-arrow">▼</div>
+
+      <div class="pipeline-step step-answer">
+        <div class="pstep-icon">💬</div>
+        <div class="pstep-label">GROUNDED ANSWER</div>
+        <div class="pstep-sub">Total &lt;200ms · P50/P70/P100</div>
+      </div>
+    </div>
+
+    <!-- Latency bar -->
+    <div class="latency-bar-wrapper">
+      <div class="latency-bar-label">LATENCY BUDGET</div>
+      <div class="latency-bar">
+        <div class="lb-seg lb-stt"    style="width:30%">STT ~60ms</div>
+        <div class="lb-seg lb-embed"  style="width:5%"></div>
+        <div class="lb-seg lb-faiss"  style="width:3%"></div>
+        <div class="lb-seg lb-llm"    style="width:38%">LLM ~75ms</div>
+        <div class="lb-seg lb-other"  style="width:7%">OTHER</div>
+      </div>
+      <div class="latency-bar-target">TARGET: 200ms TOTAL</div>
+    </div>
+  </section>
+
+  <!-- ══════════════ TECH STACK ══════════════ -->
+  <section class="section" id="stack">
+    <div class="section-label">
+      <span class="slabel-line"></span>
+      <span class="slabel-text">// TECHNOLOGY STACK</span>
+      <span class="slabel-line"></span>
+    </div>
+    <h2 class="section-title">NEURAL STACK</h2>
+
+    <div class="stack-grid">
+      <div class="stack-card">
+        <span class="stack-layer">FRONTEND</span>
+        <span class="stack-tech">HTML5 + CSS + Vanilla JS</span>
+        <span class="stack-detail">PWA · MediaRecorder · Web Audio API</span>
+      </div>
+      <div class="stack-card">
+        <span class="stack-layer">BACKEND</span>
+        <span class="stack-tech">FastAPI · Python 3.11</span>
+        <span class="stack-detail">Async · Pydantic v2 · Uvicorn</span>
+      </div>
+      <div class="stack-card">
+        <span class="stack-layer">STT</span>
+        <span class="stack-tech">Sarvam AI</span>
+        <span class="stack-detail">saarika:v2.5 · httpx async · Tenacity</span>
+      </div>
+      <div class="stack-card">
+        <span class="stack-layer">DATASET</span>
+        <span class="stack-tech">AI4Bharat MSMARCO-XI</span>
+        <span class="stack-detail">HuggingFace datasets · Multilingual</span>
+      </div>
+      <div class="stack-card">
+        <span class="stack-layer">EMBEDDINGS</span>
+        <span class="stack-tech">FastEmbed</span>
+        <span class="stack-detail">BAAI/bge-small-en-v1.5 · Local inference</span>
+      </div>
+      <div class="stack-card">
+        <span class="stack-layer">VECTOR DB</span>
+        <span class="stack-tech">FAISS</span>
+        <span class="stack-detail">In-RAM · IndexFlatIP · Prebuilt offline</span>
+      </div>
+      <div class="stack-card">
+        <span class="stack-layer">LLM</span>
+        <span class="stack-tech">Groq · llama-3.1-8b</span>
+        <span class="stack-detail">LPU inference · &lt;80ms generation</span>
+      </div>
+      <div class="stack-card">
+        <span class="stack-layer">RETRIES</span>
+        <span class="stack-tech">Tenacity</span>
+        <span class="stack-detail">Transient failure handling · No blind retry</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ CTA ══════════════ -->
+  <section class="cta-section">
+    <div class="cta-glow" aria-hidden="true"></div>
+    <div class="cta-badge">DEADLINE: AUG 22, 2026 · 23:59 IST</div>
+    <h2 class="cta-title">READY TO QUERY?</h2>
+    <p class="cta-sub">Speak your question. Get a grounded, cited answer in under 200ms.</p>
+    <a href="/app" class="btn-launch btn-large">
+      <span class="btn-icon">▶</span>
+      ENTER THE SYSTEM
+    </a>
+    <div class="cta-links">
+      <a href="https://github.com/piyushshukla11/rag-goa-2026" target="_blank" rel="noopener">GitHub ↗</a>
+      <span>//</span>
+      <a href="https://forms.gle/MNvCjcv23Hn2Eeu58" target="_blank" rel="noopener">Submit Form ↗</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="landing-footer">
+    <div class="footer-logo">
+      <span class="bracket">[</span>VOXRAIG<span class="bracket">]</span>
+    </div>
+    <div class="footer-meta">
+      HH GOA 2026 · VOICE-ENABLED RAG · #RAGInGoa
+    </div>
+    <div class="footer-links">
+      <a href="/app">LAUNCH APP</a>
+      <span>//</span>
+      <a href="https://github.com/piyushshukla11/rag-goa-2026" target="_blank" rel="noopener">GITHUB</a>
+      <span>//</span>
+      <a href="https://huggingface.co/datasets/ai4bharat/MSMARCO-XI" target="_blank" rel="noopener">DATASET</a>
+    </div>
+  </footer>
+
+</body>
+</html>
