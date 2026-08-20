@@ -14,18 +14,12 @@
     html, body {
       height: 100%; width: 100%;
       overflow: hidden;
-      background: #000;
+      background: #000000;
       font-family: 'Orbitron', monospace;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ── BG Canvas ── */
-    #bg-canvas {
-      position: fixed; inset: 0;
-      width: 100%; height: 100%;
-      z-index: 0;
-    }
-
+    /* ── Hero (centered) ── */
     .hero {
       position: fixed; inset: 0; z-index: 10;
       display: flex; flex-direction: column;
@@ -169,7 +163,6 @@
       pointer-events: none;
       z-index: 200;
       opacity: 0;
-      /* Invert everything behind them → opposite colors to cyan text */
       backdrop-filter: invert(1) hue-rotate(160deg) saturate(3) brightness(1.4);
       -webkit-backdrop-filter: invert(1) hue-rotate(160deg) saturate(3) brightness(1.4);
       mix-blend-mode: screen;
@@ -248,23 +241,15 @@
         transform: translateX(0);
       }
     }
-
-    /* ── Responsive ── */
-    @media (max-width: 480px) {
-      .ring-1, .ring-2 { width:280px; height:280px; }
-      .ring-3, .ring-4 { display:none; }
-    }
   </style>
 </head>
 <body>
 
-  <canvas id="bg-canvas"></canvas>
-
+  <!-- Page glitch ribbons -->
   <div class="glitch-strip glitch-strip-1" aria-hidden="true"></div>
   <div class="glitch-strip glitch-strip-2" aria-hidden="true"></div>
 
   <section class="hero">
-
     <div class="sonar-title">SONAR</div>
 
     <div class="tagline">
@@ -274,75 +259,5 @@
     <a href="/app" class="btn-enter">&#9658; ENTER SYSTEM</a>
   </section>
 
-  <script>
-    const canvas = document.getElementById('bg-canvas');
-    const ctx = canvas.getContext('2d');
-    let W, H, particles = [];
-
-    function resize() {
-      W = canvas.width  = window.innerWidth;
-      H = canvas.height = window.innerHeight;
-    }
-    resize();
-    window.addEventListener('resize', resize);
-
-    class Particle {
-      constructor() { this.reset(true); }
-      reset(rand) {
-        this.x  = Math.random() * W;
-        this.y  = rand ? Math.random() * H : H + 10;
-        this.vx = (Math.random() - 0.5) * 0.3;
-        this.vy = -(Math.random() * 0.5 + 0.1);
-        this.r  = Math.random() * 1.5 + 0.3;
-        this.alpha = Math.random() * 0.5 + 0.1;
-        const roll = Math.random();
-        this.color = roll > 0.6 ? '#00f0ff' : roll > 0.3 ? '#ff2a6d' : '#05ffa1';
-      }
-      update() {
-        this.x += this.vx; this.y += this.vy;
-        if (this.y < -10 || this.x < -10 || this.x > W + 10) this.reset(false);
-      }
-      draw() {
-        ctx.save();
-        ctx.globalAlpha = this.alpha;
-        ctx.fillStyle = this.color;
-        ctx.shadowColor = this.color;
-        ctx.shadowBlur = 6;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-      }
-    }
-
-    for (let i = 0; i < 120; i++) particles.push(new Particle());
-
-    let t = 0;
-    function draw() {
-      requestAnimationFrame(draw);
-      t += 0.004;
-
-      ctx.fillStyle = 'rgba(0,0,0,0.3)';
-      ctx.fillRect(0, 0, W, H);
-
-      // Center glow only (no grid)
-      const cx = W/2, cy = H/2;
-      const g = ctx.createRadialGradient(cx,cy,0,cx,cy,Math.min(W,H)*0.5);
-      g.addColorStop(0, `rgba(0,240,255,${0.025+Math.sin(t)*0.01})`);
-      g.addColorStop(0.5, `rgba(255,42,109,${0.01+Math.sin(t+1)*0.005})`);
-      g.addColorStop(1, 'transparent');
-      ctx.fillStyle = g;
-      ctx.fillRect(0, 0, W, H);
-
-      particles.forEach(p => { p.update(); p.draw(); });
-
-      // Glitch streaks
-      if (Math.random() < 0.008) {
-        ctx.fillStyle = `rgba(0,240,255,${Math.random()*0.06})`;
-        ctx.fillRect(0, Math.random()*H, Math.random()*200+50, Math.random()*2+1);
-      }
-    }
-    draw();
-  </script>
 </body>
 </html>
