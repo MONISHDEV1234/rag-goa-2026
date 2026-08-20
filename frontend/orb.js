@@ -138,6 +138,20 @@
     let isRecording = false;
     let frameId;
 
+    /* morph state — 1 = full organic morph (idle), 0 = perfect shape (recording) */
+    let morphBlend = 0.0;
+
+    // Per-vertex noise seeds — unique phase offsets so every vertex moves independently
+    const NOISE_SEEDS = VERTS.map(() => ({
+      f1: 0.4 + Math.random() * 0.5,   // freq 1
+      f2: 0.9 + Math.random() * 0.8,   // freq 2
+      f3: 1.6 + Math.random() * 1.2,   // freq 3
+      p1: Math.random() * Math.PI * 2,
+      p2: Math.random() * Math.PI * 2,
+      p3: Math.random() * Math.PI * 2,
+      amp: 0.06 + Math.random() * 0.10, // per-vertex morph strength
+    }));
+
     /* ── hook into app.js state transitions ── */
     // We'll monkey-patch DOM.btnMic class changes
     const origClassAdd = canvas.classList.add.bind(canvas.classList);
@@ -208,9 +222,28 @@
       /* clear */
       ctx.clearRect(0, 0, W, H);
 
-      /* ── 1. project vertices ── */
-      const projected = VERTS.map(v => {
-        let p = rotX(v, ax);
+      /* ── 1. project vertices with morph noise ── */
+      const t = performance.now() * 0.001; // seconds
+
+      // target morphBlend: idle = 1 (morphed), recording = 0 (crisp)
+      const morphTarget = isRecording ? 0.0 : 1.0;
+      morphBlend += (morphTarget - morphBlend) * 0.04; // smooth 0.04 transition rate
+
+      const projected = VERTS.map((v, idx) => {
+        const ns = NOISE_SEEDS[idx];
+        // Compose multi-frequency sine noise per vertex
+        const noise =
+          Math.sin(t * ns.f1 + ns.p1) * 0.4 +
+          Math.sin(t * ns.f2 + ns.p2) * 0.35 +
+          Math.sin(t * ns.f3 + ns.p3) * 0.25;
+        // Radial displacement — positive pushes vertex outward from sphere surface
+        const disp = noise * ns.amp * morphBlend;
+        const morphed = [
+          v[0] * (1 + disp),
+          v[1] * (1 + disp),
+          v[2] * (1 + disp),
+        ];
+        let p = rotX(morphed, ax);
         p = rotY(p, ay);
         p = rotZ(p, az);
         return project(p, cx, cy, scale, FOV);
