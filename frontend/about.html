@@ -4,316 +4,310 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ABOUT // SONAR</title>
-  <meta name="theme-color" content="#00f0ff" />
+  <meta name="theme-color" content="#000000" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@1,700;1,900&family=Orbitron:wght@700;900&family=Share+Tech+Mono&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     html, body {
       min-height: 100%;
       background: #000000;
-      color: #e8f4f8;
-      font-family: 'Rajdhani', sans-serif;
+      color: #ffffff;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
     }
 
-    ::selection { background: #ff2a6d; color: #000; }
-
-    .page-wrap {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 40px 24px 80px;
-      display: flex;
-      flex-direction: column;
-      gap: 32px;
+    /* Ambient Prism Glow */
+    .prism-glow {
+      position: fixed;
+      top: -15%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 85vw;
+      max-width: 1100px;
+      height: 60vh;
+      background: radial-gradient(
+        ellipse at 50% 30%,
+        rgba(0, 240, 255, 0.12) 0%,
+        rgba(0, 130, 255, 0.08) 35%,
+        rgba(255, 42, 109, 0.04) 60%,
+        transparent 80%
+      );
+      filter: blur(60px);
+      pointer-events: none;
+      z-index: 1;
     }
 
-    /* ── Header Bar ── */
-    .top-nav {
+    .page-wrap {
+      position: relative;
+      z-index: 10;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 32px 32px 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 48px;
+    }
+
+    /* Navbar */
+    .navbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid rgba(255, 42, 109, 0.25);
-      padding-bottom: 16px;
+      width: 100%;
     }
 
-    .nav-logo {
-      font-family: 'Chakra Petch', 'Orbitron', sans-serif;
+    .brand-logo {
+      font-family: 'Space Grotesk', sans-serif;
       font-weight: 900;
-      font-style: italic;
-      font-size: 1.5rem;
-      color: #ff2a6d;
-      text-shadow: 0 0 15px rgba(255,42,109,0.7);
+      font-size: 1.15rem;
+      letter-spacing: 0.28em;
+      color: #ffffff;
       text-decoration: none;
-      letter-spacing: 0.1em;
+      text-transform: uppercase;
     }
 
-    .nav-links {
-      display: flex;
-      gap: 12px;
-    }
-
-    .nav-btn {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.75rem;
-      letter-spacing: 0.15em;
-      padding: 8px 18px;
-      color: #00f0ff;
-      border: 1px solid rgba(0,240,255,0.4);
-      background: rgba(0,240,255,0.05);
-      text-decoration: none;
-      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
-      transition: all 0.2s;
-    }
-    .nav-btn:hover {
-      background: #00f0ff;
-      color: #000;
-      box-shadow: 0 0 20px rgba(0,240,255,0.5);
-    }
-    .nav-btn.primary {
-      background: #00f0ff;
-      color: #000;
+    .back-btn {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.8rem;
       font-weight: 700;
+      letter-spacing: 0.14em;
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 999px;
+      padding: 8px 22px;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+      backdrop-filter: blur(12px);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
-    .nav-btn.primary:hover {
-      background: #33f5ff;
-      box-shadow: 0 0 25px #00f0ff;
+    .back-btn:hover {
+      background: #ffffff;
+      color: #000000;
+      border-color: #ffffff;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.35);
+      transform: translateY(-1px);
     }
 
-    /* ── Hero Title ── */
-    .about-hero {
+    /* Center Hero Header */
+    .about-header {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      align-items: center;
+      text-align: center;
+      gap: 20px;
+      max-width: 760px;
+      margin: 20px auto 0;
     }
-    .about-badge {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.68rem;
-      letter-spacing: 0.2em;
-      color: #ff2a6d;
+
+    .tag-badge {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      color: rgba(255, 255, 255, 0.8);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 999px;
+      padding: 6px 18px;
+      text-transform: uppercase;
     }
-    .about-title {
-      font-family: 'Orbitron', monospace;
+
+    .main-heading {
+      font-family: 'Space Grotesk', sans-serif;
       font-weight: 900;
-      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-size: clamp(2.8rem, 7vw, 4.4rem);
+      letter-spacing: -0.02em;
+      line-height: 1.1;
       color: #ffffff;
-      text-shadow: 0 0 20px rgba(255, 42, 109, 0.4);
-      letter-spacing: 0.05em;
     }
-    .about-sub {
+
+    .main-desc {
       font-size: 1.1rem;
-      color: #9ab0bc;
-      line-height: 1.6;
+      font-weight: 400;
+      line-height: 1.75;
+      color: rgba(255, 255, 255, 0.7);
     }
-    .highlight {
-      color: #00f0ff;
+    .main-desc strong {
+      color: #ffffff;
       font-weight: 600;
     }
 
-    /* ── Section Cards ── */
-    .card-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 20px;
+    /* Chips Row */
+    .chips-row {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 8px;
     }
 
-    .cyber-card {
-      background: rgba(14, 14, 28, 0.7);
-      border: 1px solid rgba(255, 42, 109, 0.2);
-      border-left: 3px solid #ff2a6d;
-      padding: 24px;
-      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
+    .chip-pill {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.8);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 999px;
+      padding: 8px 20px;
+    }
+
+    /* Feature Grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 16px;
+    }
+
+    .card {
+      background: rgba(18, 18, 26, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 28px;
       display: flex;
       flex-direction: column;
       gap: 12px;
+      backdrop-filter: blur(16px);
       transition: all 0.25s;
     }
-    .cyber-card:hover {
-      border-color: #ff2a6d;
-      box-shadow: 0 0 25px rgba(255,42,109,0.25);
+    .card:hover {
+      border-color: rgba(0, 240, 255, 0.35);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.5);
+    }
+
+    .card-num {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: rgba(0, 240, 255, 0.85);
+      letter-spacing: 0.1em;
+    }
+
+    .card-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .card-text {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: rgba(255, 255, 255, 0.65);
+    }
+
+    /* Launch CTA Banner */
+    .cta-banner {
+      background: linear-gradient(135deg, rgba(20, 20, 32, 0.8), rgba(10, 10, 18, 0.9));
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 24px;
+      padding: 40px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .cta-btn {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: #000000;
+      background: #ffffff;
+      border: none;
+      border-radius: 999px;
+      padding: 14px 36px;
+      text-decoration: none;
+      text-transform: uppercase;
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
+      transition: all 0.25s;
+    }
+    .cta-btn:hover {
+      background: #00f0ff;
+      box-shadow: 0 0 35px rgba(0, 240, 255, 0.6);
       transform: translateY(-2px);
     }
-    .cyber-card.cyan {
-      border-left-color: #00f0ff;
-      border-color: rgba(0,240,255,0.2);
-    }
-    .cyber-card.cyan:hover {
-      border-color: #00f0ff;
-      box-shadow: 0 0 25px rgba(0,240,255,0.25);
-    }
-    .cyber-card.green {
-      border-left-color: #05ffa1;
-      border-color: rgba(5,255,161,0.2);
-    }
-    .cyber-card.green:hover {
-      border-color: #05ffa1;
-      box-shadow: 0 0 25px rgba(5,255,161,0.25);
-    }
 
-    .card-tag {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.15em;
-      color: #ff2a6d;
-      text-transform: uppercase;
-    }
-    .cyber-card.cyan .card-tag { color: #00f0ff; }
-    .cyber-card.green .card-tag { color: #05ffa1; }
-
-    .card-heading {
-      font-family: 'Orbitron', monospace;
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #fff;
-    }
-
-    .card-body {
-      font-size: 0.95rem;
-      color: #9ab0bc;
-      line-height: 1.6;
-    }
-
-    /* ── Spec List ── */
-    .spec-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.85rem;
-      background: rgba(10, 10, 20, 0.8);
-      border: 1px solid rgba(0,240,255,0.2);
-    }
-    .spec-table td {
-      padding: 12px 18px;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-    }
-    .spec-key {
-      color: #00f0ff;
-      width: 35%;
-    }
-    .spec-val {
-      color: #e8f4f8;
-    }
-
-    /* ── Footer / CTA ── */
-    .about-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-top: 1px solid rgba(255,255,255,0.1);
-      padding-top: 24px;
-      flex-wrap: wrap;
-      gap: 16px;
-    }
-    .footer-meta {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.72rem;
-      color: #4a6070;
-      letter-spacing: 0.1em;
+    .footer-text {
+      text-align: center;
+      font-size: 0.78rem;
+      color: rgba(255, 255, 255, 0.35);
     }
   </style>
 </head>
 <body>
 
+  <div class="prism-glow"></div>
+
   <div class="page-wrap">
 
-    <nav class="top-nav">
-      <a href="/" class="nav-logo">SONAR</a>
-      <div class="nav-links">
-        <a href="/" class="nav-btn">◀ HOME</a>
-        <a href="/tutorial" class="nav-btn">⚡ TUTORIAL</a>
-        <a href="/app" class="nav-btn primary">&#9658; LAUNCH APP</a>
-      </div>
-    </nav>
+    <header class="navbar">
+      <a href="/" class="brand-logo">SONAR</a>
+      <a href="/" class="back-btn">&larr; BACK</a>
+    </header>
 
-    <section class="about-hero">
-      <span class="about-badge">// SYSTEM ARCHITECTURE & PROJECT BRIEF</span>
-      <h1 class="about-title">SOund Neural Answer Retrieval</h1>
-      <p class="about-sub">
-        <span class="highlight">SONAR</span> is an ultra-low latency, voice-first Retrieval-Augmented Generation (RAG) system built for <span class="highlight">HH Goa 2026</span>. It merges multilingual Indian-accent speech recognition with high-density vector retrieval and Groq LPU inference to deliver grounded answers under 200 milliseconds.
+    <section class="about-header">
+      <div class="tag-badge">ABOUT THE SYSTEM</div>
+      <h1 class="main-heading">What is SONAR?</h1>
+      <p class="main-desc">
+        SONAR &mdash; <strong>SOund Neural Answer Retrieval</strong> &mdash; is an ultra-low latency, voice-first Retrieval-Augmented Generation system engineered for <strong>HH Goa 2026</strong>. It seamlessly combines multilingual Indian-accent speech transcription with in-memory dense vector search and Groq LPU acceleration to deliver factual, cited answers in under <strong>200ms</strong>.
       </p>
+
+      <div class="chips-row">
+        <span class="chip-pill">Sarvam AI STT</span>
+        <span class="chip-pill">FastEmbed</span>
+        <span class="chip-pill">FAISS IndexFlatIP</span>
+        <span class="chip-pill">Groq LPU</span>
+        <span class="chip-pill">MSMARCO-XI</span>
+      </div>
     </section>
 
-    <div class="card-grid">
-
-      <div class="cyber-card cyan">
-        <span class="card-tag">PIPELINE STAGE 01</span>
-        <h3 class="card-heading">Sarvam STT Engine</h3>
-        <p class="card-body">
-          Captures raw browser audio using MediaRecorder (WebM/Opus) and transcribes with Sarvam AI's <code>saarika:v2.5</code> endpoint in ~60ms with Indian-language and accent optimization.
+    <div class="features-grid">
+      <div class="card">
+        <span class="card-num">01 // VOICE FIRST</span>
+        <h3 class="card-title">Sarvam AI Speech Engine</h3>
+        <p class="card-text">
+          Streams WebM/Opus audio to Sarvam AI <code>saarika:v2.5</code>, performing transcription optimized for Indian accents in ~60ms.
         </p>
       </div>
 
-      <div class="cyber-card">
-        <span class="card-tag">PIPELINE STAGE 02</span>
-        <h3 class="card-heading">FAISS Neural Retrieval</h3>
-        <p class="card-body">
-          Queries embedded via <code>FastEmbed BGE-small-en-v1.5</code> in ~9ms. Retieved from in-memory <code>FAISS IndexFlatIP</code> index against AI4Bharat MSMARCO-XI dataset in &lt;5ms.
+      <div class="card">
+        <span class="card-num">02 // SUB-5MS VECTOR SEARCH</span>
+        <h3 class="card-title">In-Memory FAISS</h3>
+        <p class="card-text">
+          Queries BGE-small-en-v1.5 embeddings directly in RAM across 3 chunking strategies (Semantic, Sliding-Window, Metadata-Aware) with zero disk I/O.
         </p>
       </div>
 
-      <div class="cyber-card green">
-        <span class="card-tag">PIPELINE STAGE 03</span>
-        <h3 class="card-heading">Groq LPU Generation</h3>
-        <p class="card-body">
-          Generates grounded answers via <code>llama-3.1-8b-instant</code> with strict citation constraints in ~75ms. Guardrails verify factuality against retrieved passages.
+      <div class="card">
+        <span class="card-num">03 // HARDWARE INFERENCE</span>
+        <h3 class="card-title">Groq LPU Generation</h3>
+        <p class="card-text">
+          Processes strict context-grounded prompts using <code>llama-3.1-8b-instant</code> with automatic citation verification and hallucination guards.
         </p>
       </div>
-
     </div>
 
-    <section>
-      <h2 style="font-family: 'Orbitron', monospace; font-size: 1.3rem; margin-bottom: 16px; color: #00f0ff;">
-        // TECHNICAL SPECIFICATIONS
-      </h2>
+    <div class="cta-banner">
+      <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem; font-weight: 800;">Experience the Neural Engine</h2>
+      <p style="color: rgba(255, 255, 255, 0.65); max-width: 500px;">Ask any question using your voice or keyboard and get grounded answers in real time.</p>
+      <a href="/app" class="cta-btn">&#9658; LAUNCH SYSTEM</a>
+    </div>
 
-      <table class="spec-table">
-        <tbody>
-          <tr>
-            <td class="spec-key">PRIMARY OBJECTIVE</td>
-            <td class="spec-val">Voice-Enabled RAG &lt;200ms Latency Budget</td>
-          </tr>
-          <tr>
-            <td class="spec-key">DATASET</td>
-            <td class="spec-val">AI4Bharat MSMARCO-XI Multilingual Corpus</td>
-          </tr>
-          <tr>
-            <td class="spec-key">CHUNK STRATEGIES</td>
-            <td class="spec-val">Semantic, Sliding-Window, Metadata-Aware</td>
-          </tr>
-          <tr>
-            <td class="spec-key">SPEECH-TO-TEXT</td>
-            <td class="spec-val">Sarvam AI (saarika:v2.5) via async httpx + Tenacity</td>
-          </tr>
-          <tr>
-            <td class="spec-key">EMBEDDING MODEL</td>
-            <td class="spec-val">BAAI/bge-small-en-v1.5 (FastEmbed In-Process)</td>
-          </tr>
-          <tr>
-            <td class="spec-key">VECTOR INDEX</td>
-            <td class="spec-val">FAISS IndexFlatIP (Loaded entirely in RAM)</td>
-          </tr>
-          <tr>
-            <td class="spec-key">LLM INFERENCE</td>
-            <td class="spec-val">Groq LPU (llama-3.1-8b-instant)</td>
-          </tr>
-          <tr>
-            <td class="spec-key">GROUNDING GUARD</td>
-            <td class="spec-val">4-Layer Safety &amp; Citation Verification Engine</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-
-    <footer class="about-footer">
-      <div class="footer-meta">
-        HH GOA 2026 · TASK 2 · #RAGInGoa
-      </div>
-      <div>
-        <a href="/app" class="nav-btn primary">&#9658; ENTER SYSTEM NOW</a>
-      </div>
+    <footer class="footer-text">
+      &copy; 2026 SONAR &mdash; SOund Neural Answer Retrieval. All rights reserved.
     </footer>
 
   </div>
