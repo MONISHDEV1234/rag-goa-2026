@@ -9,262 +9,192 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
   <style>
-    /* ══════════════════════════════════════════
-       RESET & BASE
-    ══════════════════════════════════════════ */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     html, body {
-      height: 100%;
-      width: 100%;
+      height: 100%; width: 100%;
       overflow: hidden;
       background: #05050d;
       font-family: 'Orbitron', monospace;
       -webkit-font-smoothing: antialiased;
     }
-    ::selection { background: #00f0ff; color: #05050d; }
 
-    /* ══════════════════════════════════════════
-       CRT SCANLINES
-    ══════════════════════════════════════════ */
+    /* ── CRT Scanlines ── */
     body::before {
       content: '';
-      position: fixed;
-      inset: 0;
-      z-index: 1000;
-      pointer-events: none;
+      position: fixed; inset: 0; z-index: 1000; pointer-events: none;
       background: repeating-linear-gradient(
         to bottom,
         transparent 0px, transparent 3px,
-        rgba(0, 0, 0, 0.22) 3px, rgba(0, 0, 0, 0.22) 4px
+        rgba(0,0,0,0.2) 3px, rgba(0,0,0,0.2) 4px
       );
-      animation: crt-flicker 12s linear infinite;
+      animation: flicker 12s linear infinite;
     }
-    @keyframes crt-flicker {
-      0%,100% { opacity: 1; }
-      94% { opacity: 1; }
-      95% { opacity: 0.78; }
-      96% { opacity: 1; }
-      98% { opacity: 0.88; }
-      99% { opacity: 1; }
+    @keyframes flicker {
+      0%,100%{opacity:1} 94%{opacity:1} 95%{opacity:0.75} 96%{opacity:1} 98%{opacity:0.88} 99%{opacity:1}
     }
 
-    /* Scanline sweep */
+    /* ── Scanline sweep ── */
     body::after {
       content: '';
-      position: fixed;
-      inset: 0;
-      z-index: 999;
-      pointer-events: none;
-      background: linear-gradient(
-        to bottom,
-        transparent 0%,
-        rgba(0, 240, 255, 0.025) 50%,
-        transparent 100%
-      );
+      position: fixed; inset: 0; z-index: 999; pointer-events: none;
+      background: linear-gradient(to bottom, transparent 0%, rgba(0,240,255,0.025) 50%, transparent 100%);
       background-size: 100% 300%;
-      animation: scanline-sweep 6s linear infinite;
+      animation: sweep 6s linear infinite;
     }
-    @keyframes scanline-sweep {
-      0%   { background-position: 0 -200%; }
-      100% { background-position: 0 200%; }
-    }
+    @keyframes sweep { 0%{background-position:0 -200%} 100%{background-position:0 200%} }
 
-    /* ══════════════════════════════════════════
-       CANVAS BACKGROUND
-    ══════════════════════════════════════════ */
+    /* ── BG Canvas ── */
     #bg-canvas {
-      position: fixed;
-      inset: 0;
-      width: 100%;
-      height: 100%;
+      position: fixed; inset: 0;
+      width: 100%; height: 100%;
       z-index: 0;
     }
 
-    /* ══════════════════════════════════════════
-       CORNER DECORATIONS
-    ══════════════════════════════════════════ */
+    /* ── Corner HUD brackets ── */
     .corner {
-      position: fixed;
-      width: 48px; height: 48px;
-      pointer-events: none;
-      z-index: 50;
-      opacity: 0.7;
+      position: fixed; width: 44px; height: 44px;
+      pointer-events: none; z-index: 50; opacity: 0.6;
     }
-    .c-tl { top: 16px; left: 16px; border-top: 2px solid #00f0ff; border-left: 2px solid #00f0ff; box-shadow: -4px -4px 12px rgba(0,240,255,0.2); }
-    .c-tr { top: 16px; right: 16px; border-top: 2px solid #00f0ff; border-right: 2px solid #00f0ff; box-shadow: 4px -4px 12px rgba(0,240,255,0.2); }
-    .c-bl { bottom: 16px; left: 16px; border-bottom: 2px solid #00f0ff; border-left: 2px solid #00f0ff; box-shadow: -4px 4px 12px rgba(0,240,255,0.2); }
-    .c-br { bottom: 16px; right: 16px; border-bottom: 2px solid #00f0ff; border-right: 2px solid #00f0ff; box-shadow: 4px 4px 12px rgba(0,240,255,0.2); }
+    .c-tl { top:14px; left:14px;  border-top:2px solid #00f0ff; border-left:2px solid #00f0ff; }
+    .c-tr { top:14px; right:14px; border-top:2px solid #00f0ff; border-right:2px solid #00f0ff; }
+    .c-bl { bottom:14px; left:14px;  border-bottom:2px solid #00f0ff; border-left:2px solid #00f0ff; }
+    .c-br { bottom:14px; right:14px; border-bottom:2px solid #00f0ff; border-right:2px solid #00f0ff; }
 
-    /* Corner inner ticks */
-    .corner::before, .corner::after {
-      content: '';
-      position: absolute;
-      background: #00f0ff;
-      opacity: 0.5;
-    }
-    .c-tl::before { width: 6px; height: 1px; top: 8px; left: -2px; }
-    .c-tl::after  { width: 1px; height: 6px; top: -2px; left: 8px; }
-    .c-tr::before { width: 6px; height: 1px; top: 8px; right: -2px; }
-    .c-tr::after  { width: 1px; height: 6px; top: -2px; right: 8px; }
-    .c-bl::before { width: 6px; height: 1px; bottom: 8px; left: -2px; }
-    .c-bl::after  { width: 1px; height: 6px; bottom: -2px; left: 8px; }
-    .c-br::before { width: 6px; height: 1px; bottom: 8px; right: -2px; }
-    .c-br::after  { width: 1px; height: 6px; bottom: -2px; right: 8px; }
-
-            /* ══════════════════════════════════════════
-       MAIN HERO CENTER
-    ══════════════════════════════════════════ */
+    /* ── Hero (centered) ── */
     .hero {
-      position: fixed;
-      inset: 0;
-      z-index: 10;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      gap: 0;
+      position: fixed; inset: 0; z-index: 10;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; gap: 0;
     }
 
-    /* Neon ring pulse wrapper */
+    /* ── Spinning rings ── */
     .rings-wrapper {
       position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 28px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
     }
     .ring {
-      position: absolute;
-      border-radius: 50%;
-      border: 1px solid rgba(0,240,255,0.12);
+      position: absolute; border-radius: 50%;
     }
-    .ring-1 { width: 480px; height: 480px; border-color: rgba(0,240,255,0.08); animation: ring-rot 25s linear infinite; }
-    .ring-2 { width: 420px; height: 420px; border-color: rgba(255,42,109,0.08); border-style: dashed; animation: ring-rot 18s linear infinite reverse; }
-    .ring-3 { width: 360px; height: 360px; border-color: rgba(0,240,255,0.06); border-style: dotted; animation: ring-rot 35s linear infinite; }
-    .ring-4 { width: 300px; height: 300px; border-color: rgba(252,238,10,0.05); animation: ring-rot 15s linear infinite reverse; }
-    @keyframes ring-rot { to { transform: rotate(360deg); } }
+    .ring-1 { width:480px; height:480px; border:1px solid rgba(0,240,255,0.08); animation:spin 25s linear infinite; }
+    .ring-2 { width:420px; height:420px; border:1px dashed rgba(255,42,109,0.08); animation:spin 18s linear infinite reverse; }
+    .ring-3 { width:360px; height:360px; border:1px dotted rgba(0,240,255,0.06); animation:spin 35s linear infinite; }
+    .ring-4 { width:300px; height:300px; border:1px solid rgba(252,238,10,0.04); animation:spin 15s linear infinite reverse; }
+    @keyframes spin { to { transform:rotate(360deg); } }
 
-    /* ── THE MAIN WORD ── */
-    .SONAR-word {
+    /* ══════════════════════════════════════
+       THE BIG SONAR WORD
+    ══════════════════════════════════════ */
+    .sonar-title {
       position: relative;
       font-family: 'Orbitron', monospace;
       font-weight: 900;
       font-size: clamp(5rem, 20vw, 14rem);
       letter-spacing: 0.12em;
       color: #00f0ff;
-      /* Multi-layer neon text glow */
       text-shadow:
         0 0 10px #00f0ff,
         0 0 30px #00f0ff,
-        0 0 60px rgba(0,240,255,0.7),
-        0 0 120px rgba(0,240,255,0.3),
-        0 0 200px rgba(0,240,255,0.1);
-      animation: SONAR-breathe 4s ease-in-out infinite;
+        0 0 70px rgba(0,240,255,0.7),
+        0 0 140px rgba(0,240,255,0.3),
+        0 0 220px rgba(0,240,255,0.1);
+      animation: breathe 4s ease-in-out infinite;
       user-select: none;
+      z-index: 1;
     }
-    @keyframes SONAR-breathe {
+    @keyframes breathe {
       0%,100% {
         text-shadow:
           0 0 10px #00f0ff,
           0 0 30px #00f0ff,
-          0 0 60px rgba(0,240,255,0.7),
-          0 0 120px rgba(0,240,255,0.3),
-          0 0 200px rgba(0,240,255,0.1);
-        color: #00f0ff;
+          0 0 70px rgba(0,240,255,0.7),
+          0 0 140px rgba(0,240,255,0.3),
+          0 0 220px rgba(0,240,255,0.1);
       }
       50% {
         text-shadow:
-          0 0 15px #00f0ff,
-          0 0 45px #00f0ff,
-          0 0 90px rgba(0,240,255,0.85),
-          0 0 180px rgba(0,240,255,0.45),
-          0 0 300px rgba(0,240,255,0.15);
+          0 0 18px #00f0ff,
+          0 0 50px #00f0ff,
+          0 0 100px rgba(0,240,255,0.85),
+          0 0 200px rgba(0,240,255,0.45),
+          0 0 320px rgba(0,240,255,0.15);
         color: #33f5ff;
       }
     }
 
-    /* GLITCH LAYERS */
-    .SONAR-word::before,
-    .SONAR-word::after {
+    /* Glitch layers */
+    .sonar-title::before,
+    .sonar-title::after {
       content: 'SONAR';
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      position: absolute; top:0; left:0;
+      width:100%; height:100%;
+      font-family: 'Orbitron', monospace;
+      font-weight: 900;
+      font-size: inherit;
+      letter-spacing: inherit;
     }
-    .SONAR-word::before {
+    .sonar-title::before {
       color: #ff2a6d;
-      text-shadow: 0 0 12px #ff2a6d, 0 0 30px rgba(255,42,109,0.5);
-      clip-path: inset(20% 0 55% 0);
+      text-shadow: 0 0 12px #ff2a6d;
+      clip-path: inset(22% 0 55% 0);
       animation: glitch-r 5s infinite;
-      z-index: 1;
     }
-    .SONAR-word::after {
+    .sonar-title::after {
       color: #05ffa1;
-      text-shadow: 0 0 12px #05ffa1, 0 0 30px rgba(5,255,161,0.5);
-      clip-path: inset(60% 0 8% 0);
-      animation: glitch-g 5s infinite 0.3s;
-      z-index: 1;
+      text-shadow: 0 0 12px #05ffa1;
+      clip-path: inset(62% 0 8% 0);
+      animation: glitch-g 5s infinite 0.35s;
     }
     @keyframes glitch-r {
-      0%,85%,100%  { opacity:0; transform:translate(0); }
-      87% { opacity:1; transform:translateX(-6px) skewX(-1deg); }
-      89% { opacity:1; transform:translateX(5px); }
-      91% { opacity:0.8; transform:translateX(-3px); }
-      93% { opacity:0; }
+      0%,84%,100% { opacity:0; transform:translate(0); }
+      86% { opacity:1; transform:translateX(-6px) skewX(-1deg); }
+      88% { opacity:1; transform:translateX(5px); }
+      90% { opacity:0.7; transform:translateX(-3px); }
+      92% { opacity:0; }
     }
     @keyframes glitch-g {
-      0%,85%,100%  { opacity:0; transform:translate(0); }
-      88% { opacity:1; transform:translateX(7px) skewX(1deg); }
-      90% { opacity:1; transform:translateX(-4px); }
-      92% { opacity:0.7; transform:translateX(3px); }
-      94% { opacity:0; }
+      0%,84%,100% { opacity:0; transform:translate(0); }
+      87% { opacity:1; transform:translateX(7px) skewX(1deg); }
+      89% { opacity:1; transform:translateX(-4px); }
+      91% { opacity:0.7; transform:translateX(2px); }
+      93% { opacity:0; }
     }
 
-    /* ── Subtitle / tagline ── */
+    /* ── Tagline ── */
     .tagline {
       font-family: 'Share Tech Mono', monospace;
       font-size: clamp(0.6rem, 2vw, 0.85rem);
       letter-spacing: 0.35em;
       color: rgba(0,240,255,0.45);
-      text-transform: uppercase;
-      margin-top: 8px;
+      margin-top: 10px;
       margin-bottom: 48px;
     }
-    .tagline .cursor {
-      display: inline-block;
-      width: 1ch;
+    .cursor {
+      display: inline-block; width: 1ch;
       background: rgba(0,240,255,0.6);
-      animation: cursor-blink 1s steps(1) infinite;
+      animation: cur 1s steps(1) infinite;
     }
-    @keyframes cursor-blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    @keyframes cur { 0%,100%{opacity:1} 50%{opacity:0} }
 
     /* ── Enter button ── */
     .btn-enter {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
+      display: inline-flex; align-items: center; gap: 10px;
       padding: 14px 44px;
       font-family: 'Share Tech Mono', monospace;
-      font-size: 0.78rem;
-      font-weight: 700;
-      letter-spacing: 0.22em;
+      font-size: 0.8rem; letter-spacing: 0.2em;
       color: #05050d;
       background: #00f0ff;
       text-decoration: none;
       clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
-      box-shadow:
-        0 0 20px #00f0ff,
-        0 0 50px rgba(0,240,255,0.45),
-        inset 0 0 20px rgba(0,240,255,0.1);
+      box-shadow: 0 0 20px #00f0ff, 0 0 50px rgba(0,240,255,0.4);
       transition: all 0.25s cubic-bezier(0.2,0,0,1);
-      position: relative;
-      overflow: hidden;
+      position: relative; overflow: hidden;
     }
     .btn-enter::before {
       content: '';
-      position: absolute;
-      inset: 0;
+      position: absolute; inset: 0;
       background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
       transform: translateX(-100%);
       transition: transform 0.5s;
@@ -277,27 +207,22 @@
     }
     .btn-enter:active { transform: translateY(0) scale(0.98); }
 
-        /* ══════════════════════════════════════════
-       RESPONSIVE
-    ══════════════════════════════════════════ */
+    /* ── Responsive ── */
     @media (max-width: 480px) {
-      .ring-1, .ring-2 { width: 280px; height: 280px; }
-      .ring-3, .ring-4 { display: none; }
+      .ring-1, .ring-2 { width:280px; height:280px; }
+      .ring-3, .ring-4 { display:none; }
     }
   </style>
 </head>
 <body>
 
-  <!-- BG Canvas (particles + grid) -->
   <canvas id="bg-canvas"></canvas>
 
-  <!-- CRT corners -->
   <div class="corner c-tl"></div>
   <div class="corner c-tr"></div>
   <div class="corner c-bl"></div>
   <div class="corner c-br"></div>
 
-  <!-- HERO -->
   <section class="hero">
     <div class="rings-wrapper">
       <div class="ring ring-1"></div>
@@ -306,24 +231,18 @@
       <div class="ring ring-4"></div>
     </div>
 
-    <div class="solar-word">SONAR</div>
+    <div class="sonar-title">SONAR</div>
 
     <div class="tagline">
       SOund Neural Answer Retrieval<span class="cursor">&nbsp;</span>
     </div>
 
-    <a href="/app" class="btn-enter">
-      ▶ ENTER SYSTEM
-    </a>
+    <a href="/app" class="btn-enter">&#9658; ENTER SYSTEM</a>
   </section>
 
   <script>
-    /* ═══════════════════════════════════════
-       CANVAS: Animated grid + floating particles
-    ═══════════════════════════════════════ */
     const canvas = document.getElementById('bg-canvas');
-    const ctx    = canvas.getContext('2d');
-
+    const ctx = canvas.getContext('2d');
     let W, H, particles = [];
 
     function resize() {
@@ -333,22 +252,21 @@
     resize();
     window.addEventListener('resize', resize);
 
-    // Particle class
     class Particle {
       constructor() { this.reset(true); }
-      reset(random = false) {
+      reset(rand) {
         this.x  = Math.random() * W;
-        this.y  = random ? Math.random() * H : H + 10;
+        this.y  = rand ? Math.random() * H : H + 10;
         this.vx = (Math.random() - 0.5) * 0.3;
         this.vy = -(Math.random() * 0.5 + 0.1);
         this.r  = Math.random() * 1.5 + 0.3;
         this.alpha = Math.random() * 0.5 + 0.1;
-        this.color = Math.random() > 0.6 ? '#00f0ff' : Math.random() > 0.5 ? '#ff2a6d' : '#05ffa1';
+        const roll = Math.random();
+        this.color = roll > 0.6 ? '#00f0ff' : roll > 0.3 ? '#ff2a6d' : '#05ffa1';
       }
       update() {
-        this.x += this.vx;
-        this.y += this.vy;
-        if (this.y < -10 || this.x < -10 || this.x > W + 10) this.reset();
+        this.x += this.vx; this.y += this.vy;
+        if (this.y < -10 || this.x < -10 || this.x > W + 10) this.reset(false);
       }
       draw() {
         ctx.save();
@@ -363,7 +281,6 @@
       }
     }
 
-    // Init particles
     for (let i = 0; i < 120; i++) particles.push(new Particle());
 
     let t = 0;
@@ -371,46 +288,33 @@
       requestAnimationFrame(draw);
       t += 0.004;
 
-      // Clear
-      ctx.fillStyle = 'rgba(5, 5, 13, 0.25)';
+      ctx.fillStyle = 'rgba(5,5,13,0.25)';
       ctx.fillRect(0, 0, W, H);
 
       // Grid
-      const gSize = 60;
-      ctx.strokeStyle = 'rgba(0, 240, 255, 0.03)';
+      ctx.strokeStyle = 'rgba(0,240,255,0.03)';
       ctx.lineWidth = 1;
-      for (let x = 0; x < W; x += gSize) {
-        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
-      }
-      for (let y = 0; y < H; y += gSize) {
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
-      }
+      for (let x = 0; x < W; x += 60) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+      for (let y = 0; y < H; y += 60) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
 
-      // Horizon glow
-      const cx = W / 2, cy = H / 2;
-      const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.min(W, H) * 0.5);
-      grad.addColorStop(0, `rgba(0, 240, 255, ${0.025 + Math.sin(t) * 0.01})`);
-      grad.addColorStop(0.5, `rgba(255, 42, 109, ${0.01 + Math.sin(t + 1) * 0.005})`);
-      grad.addColorStop(1, 'transparent');
-      ctx.fillStyle = grad;
+      // Center glow
+      const cx = W/2, cy = H/2;
+      const g = ctx.createRadialGradient(cx,cy,0,cx,cy,Math.min(W,H)*0.5);
+      g.addColorStop(0, `rgba(0,240,255,${0.025+Math.sin(t)*0.01})`);
+      g.addColorStop(0.5, `rgba(255,42,109,${0.01+Math.sin(t+1)*0.005})`);
+      g.addColorStop(1, 'transparent');
+      ctx.fillStyle = g;
       ctx.fillRect(0, 0, W, H);
 
-      // Particles
       particles.forEach(p => { p.update(); p.draw(); });
 
-      // Occasional horizontal glitch streak
+      // Glitch streaks
       if (Math.random() < 0.008) {
-        const gy = Math.random() * H;
-        const gw = Math.random() * 200 + 50;
-        ctx.fillStyle = `rgba(0, 240, 255, ${Math.random() * 0.06})`;
-        ctx.fillRect(0, gy, gw, Math.random() * 2 + 1);
+        ctx.fillStyle = `rgba(0,240,255,${Math.random()*0.06})`;
+        ctx.fillRect(0, Math.random()*H, Math.random()*200+50, Math.random()*2+1);
       }
     }
     draw();
   </script>
-
 </body>
 </html>
-
-
-
