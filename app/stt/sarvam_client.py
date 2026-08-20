@@ -175,13 +175,14 @@ async def _call_sarvam(audio_bytes: bytes, filename: str) -> str:
     """
     client = _get_client()
     file_obj = audio_to_file_like(audio_bytes, filename)
+    model_name = os.environ.get("SARVAM_STT_MODEL", "saarika:v2.5")
 
     try:
         response = await client.post(
             SARVAM_API_URL,
             files={"file": (filename, file_obj, "audio/webm")},
             data={
-                "model": "saarika:v2",
+                "model": model_name,
                 "language_code": "en-IN",
             },
         )
