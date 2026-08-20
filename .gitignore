@@ -1,0 +1,29 @@
+.env
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.venv/
+venv/
+env/
+.eggs/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Large generated data — do not commit FAISS indexes or processed corpus
+data/raw/
+data/processed/
+data/index/
+
+# Benchmark raw results (large JSON)
+benchmarks/results.json
+
+# IDE
+.vscode/
+.idea/
+*.swp

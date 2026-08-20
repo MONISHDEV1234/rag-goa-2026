@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="HH Goa 2026 — Voice-Enabled RAG System. Ask a question aloud and receive a grounded, source-cited answer in under 200 ms." />
+  <title>HH Goa RAG — Voice Assistant</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-wrapper">
+
+    <!-- ══════════════════════════════════
+         HEADER
+    ══════════════════════════════════ -->
+    <header class="app-header">
+      <div class="header-brand">
+        <h1>HH Goa RAG</h1>
+        <span class="subtitle">Voice-Enabled Retrieval-Augmented Generation · HH Goa 2026</span>
+      </div>
+      <div class="status-indicator loading" id="system-status" role="status" aria-live="polite">
+        <span class="dot"></span>
+        <span id="system-status-text">Connecting…</span>
+      </div>
+    </header>
+
+    <!-- ══════════════════════════════════
+         VOICE CONTROL
+    ══════════════════════════════════ -->
+    <section class="voice-section" aria-label="Voice input">
+      <h2>Voice RAG Assistant</h2>
+      <p class="voice-tagline">Ask a question about the knowledge base</p>
+
+      <div class="mic-container">
+        <button
+          id="btn-mic"
+          type="button"
+          aria-label="Start recording"
+          aria-pressed="false"
+          disabled
+        >
+          <!-- Microphone icon -->
+          <svg class="mic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="9" y="2" width="6" height="11" rx="3"/>
+            <path d="M5 10a7 7 0 0 0 14 0"/>
+            <line x1="12" y1="19" x2="12" y2="22"/>
+            <line x1="8" y1="22" x2="16" y2="22"/>
+          </svg>
+          <!-- Stop / square icon — shown while recording -->
+          <svg class="stop-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <rect x="6" y="6" width="12" height="12" rx="2"/>
+          </svg>
+        </button>
+
+        <span class="mic-label" id="mic-label" aria-live="polite">Click to speak</span>
+      </div>
+
+      <!-- Processing status -->
+      <div id="status-bar" role="status" aria-live="polite">
+        <span class="spinner" aria-hidden="true"></span>
+        <span id="status-text"></span>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════
+         RESULTS (shown after a query)
+    ══════════════════════════════════ -->
+    <div class="results-wrapper" id="results-wrapper" style="display:none;">
+
+      <!-- Error / refusal card -->
+      <div class="card" id="error-card" role="alert" aria-live="assertive">
+        <div class="card-label"><span class="error-icon">⚠</span>Notice</div>
+        <div class="card-body filled" id="error-text"></div>
+      </div>
+
+      <!-- Transcript -->
+      <div class="card" id="transcript-card">
+        <div class="card-label">Transcript</div>
+        <div class="card-body" id="transcript-text">Your transcribed question appears here.</div>
+      </div>
+
+      <!-- Answer -->
+      <div class="card" id="answer-card">
+        <div class="answer-header">
+          <div class="card-label">Answer</div>
+          <div class="grounded-badge" id="grounded-badge" aria-label="Grounding status"></div>
+        </div>
+        <div class="card-body" id="answer-text">The grounded answer appears here.</div>
+      </div>
+
+      <!-- Sources -->
+      <section id="sources-section" aria-label="Retrieved sources">
+        <div class="card">
+          <div class="card-label">Sources</div>
+          <div class="sources-grid" id="sources-list"></div>
+        </div>
+      </section>
+
+      <!-- Latency -->
+      <section id="latency-section" aria-label="Latency breakdown">
+        <div class="card">
+          <div class="card-label">Latency</div>
+          <div class="latency-grid" id="latency-grid">
+            <!-- injected by JS -->
+          </div>
+        </div>
+      </section>
+
+    </div><!-- /results-wrapper -->
+
+  </div><!-- /app-wrapper -->
+
+  <script src="app.js"></script>
+</body>
+</html>

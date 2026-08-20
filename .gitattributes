@@ -1,0 +1,18 @@
+# Normalize line endings cross-platform
+* text=auto
+
+# Always use LF for these
+*.py   text eol=lf
+*.js   text eol=lf
+*.css  text eol=lf
+*.html text eol=lf
+*.json text eol=lf
+*.md   text eol=lf
+*.txt  text eol=lf
+*.ini  text eol=lf
+
+# Binary — don't touch
+*.png  binary
+*.jpg  binary
+*.webm binary
+*.wav  binary
