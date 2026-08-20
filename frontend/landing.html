@@ -207,6 +207,99 @@
     }
     .btn-enter:active { transform: translateY(0) scale(0.98); }
 
+    /* ══════════════════════════════════════
+       PAGE GLITCH STRIPS
+       - 2 horizontal ribbons across the whole width
+       - Use backdrop-filter invert + hue-rotate for OPPOSITE color
+       - Fire at completely different times than the text glitch
+    ══════════════════════════════════════ */
+    .glitch-strip {
+      position: fixed;
+      left: -5%;
+      width: 110%;
+      pointer-events: none;
+      z-index: 200;
+      opacity: 0;
+      /* Invert everything behind them → opposite colors to cyan text */
+      backdrop-filter: invert(1) hue-rotate(160deg) saturate(3) brightness(1.4);
+      -webkit-backdrop-filter: invert(1) hue-rotate(160deg) saturate(3) brightness(1.4);
+      mix-blend-mode: screen;
+    }
+
+    /* Strip 1 — thicker, fires first */
+    .glitch-strip-1 {
+      top: 32%;
+      height: 22px;
+      animation: strip1 4.5s infinite 0.8s;
+    }
+    /* Strip 2 — thinner, fires after a gap */
+    .glitch-strip-2 {
+      top: 61%;
+      height: 13px;
+      animation: strip2 4.5s infinite 2.1s;
+    }
+
+    @keyframes strip1 {
+      0%,78%,100% {
+        opacity: 0;
+        transform: translateX(0) skewX(0deg);
+      }
+      79% {
+        opacity: 1;
+        transform: translateX(-40px) skewX(-2deg);
+        height: 22px;
+      }
+      80% {
+        opacity: 0.9;
+        transform: translateX(60px) skewX(1.5deg);
+        height: 28px;
+      }
+      81% {
+        opacity: 1;
+        transform: translateX(-25px) skewX(-1deg);
+        height: 18px;
+      }
+      82% {
+        opacity: 0.6;
+        transform: translateX(80px) skewX(2deg);
+        height: 22px;
+      }
+      83% {
+        opacity: 0;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes strip2 {
+      0%,72%,100% {
+        opacity: 0;
+        transform: translateX(0) skewX(0deg);
+      }
+      73% {
+        opacity: 1;
+        transform: translateX(55px) skewX(2deg);
+        height: 13px;
+      }
+      74% {
+        opacity: 0.8;
+        transform: translateX(-70px) skewX(-2.5deg);
+        height: 20px;
+      }
+      75% {
+        opacity: 1;
+        transform: translateX(35px) skewX(1deg);
+        height: 10px;
+      }
+      76% {
+        opacity: 0.5;
+        transform: translateX(-90px) skewX(-1.5deg);
+      }
+      77% {
+        opacity: 0;
+        transform: translateX(0);
+      }
+    }
+
     /* ── Responsive ── */
     @media (max-width: 480px) {
       .ring-1, .ring-2 { width:280px; height:280px; }
@@ -222,6 +315,10 @@
   <div class="corner c-tr"></div>
   <div class="corner c-bl"></div>
   <div class="corner c-br"></div>
+
+  <!-- Page glitch ribbons — fire at different time from text glitch -->
+  <div class="glitch-strip glitch-strip-1" aria-hidden="true"></div>
+  <div class="glitch-strip glitch-strip-2" aria-hidden="true"></div>
 
   <section class="hero">
     <div class="rings-wrapper">
