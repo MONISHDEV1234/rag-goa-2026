@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#00f0ff" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@1,700;1,900&family=Orbitron:wght@900&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -15,7 +15,7 @@
       height: 100%; width: 100%;
       overflow: hidden;
       background: #000000;
-      font-family: 'Orbitron', monospace;
+      font-family: 'Chakra Petch', 'Orbitron', monospace;
       -webkit-font-smoothing: antialiased;
     }
 
@@ -28,90 +28,141 @@
     }
 
     /* ══════════════════════════════════════
-       THE BIG SONAR WORD
+       CYBERPUNK 2077 LOGO TEXT STYLE
+       - Aggressive forward slant / skew
+       - Slashed horizontal split line
+       - Razor sharp angular edges
+       - Same cyan neon colors & glitch effects
     ══════════════════════════════════════ */
-    .sonar-title {
+    .cyber-logo-wrap {
       position: relative;
-      font-family: 'Orbitron', monospace;
-      font-weight: 900;
-      font-size: clamp(5rem, 20vw, 14rem);
-      letter-spacing: 0.12em;
-      color: #00f0ff;
-      text-shadow:
-        0 0 10px #00f0ff,
-        0 0 30px #00f0ff,
-        0 0 70px rgba(0,240,255,0.7),
-        0 0 140px rgba(0,240,255,0.3),
-        0 0 220px rgba(0,240,255,0.1);
-      animation: breathe 4s ease-in-out infinite;
+      display: inline-block;
+      transform: skewX(-15deg) rotate(-1deg);
       user-select: none;
-      z-index: 1;
-    }
-    @keyframes breathe {
-      0%,100% {
-        text-shadow:
-          0 0 10px #00f0ff,
-          0 0 30px #00f0ff,
-          0 0 70px rgba(0,240,255,0.7),
-          0 0 140px rgba(0,240,255,0.3),
-          0 0 220px rgba(0,240,255,0.1);
-      }
-      50% {
-        text-shadow:
-          0 0 18px #00f0ff,
-          0 0 50px #00f0ff,
-          0 0 100px rgba(0,240,255,0.85),
-          0 0 200px rgba(0,240,255,0.45),
-          0 0 320px rgba(0,240,255,0.15);
-        color: #33f5ff;
-      }
+      filter: drop-shadow(0 0 25px rgba(0, 240, 255, 0.6))
+              drop-shadow(0 0 60px rgba(0, 240, 255, 0.3));
+      animation: breathe 4s ease-in-out infinite;
+      margin-bottom: 24px;
     }
 
-    /* Glitch layers */
-    .sonar-title::before,
-    .sonar-title::after {
-      content: 'SONAR';
-      position: absolute; top:0; left:0;
-      width:100%; height:100%;
-      font-family: 'Orbitron', monospace;
+    .sonar-cyber-text {
+      position: relative;
+      font-family: 'Chakra Petch', 'Orbitron', sans-serif;
       font-weight: 900;
+      font-style: italic;
+      font-size: clamp(5.5rem, 22vw, 15rem);
+      line-height: 0.95;
+      letter-spacing: 0.08em;
+      color: #00f0ff;
+      text-transform: uppercase;
+      display: block;
+      /* Cyberpunk sliced cut: top & bottom separated with razor gap */
+      clip-path: polygon(
+        0% 0%,
+        100% 0%,
+        100% 43%,
+        0% 48%,
+        0% 52%,
+        100% 47%,
+        100% 100%,
+        0% 100%
+      );
+      text-shadow:
+        0 0 10px #00f0ff,
+        0 0 25px #00f0ff,
+        0 0 50px rgba(0,240,255,0.7);
+    }
+
+    /* Cyberpunk sharp underline / speed slash */
+    .cyber-logo-wrap::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: -4%;
+      width: 108%;
+      height: 4px;
+      background: #00f0ff;
+      box-shadow: 0 0 12px #00f0ff, 0 0 25px rgba(0,240,255,0.8);
+      clip-path: polygon(0 0, 100% 0, 92% 100%, 8% 100%);
+    }
+
+    /* Razor slash cut streak across middle */
+    .cyber-logo-wrap::before {
+      content: '';
+      position: absolute;
+      top: 48%;
+      left: -8%;
+      width: 116%;
+      height: 2px;
+      background: rgba(0, 240, 255, 0.8);
+      box-shadow: 0 0 8px #00f0ff;
+      transform: skewY(1.2deg);
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    /* Chromatic glitch layers (Red/Magenta & Green) */
+    .sonar-cyber-text::before,
+    .sonar-cyber-text::after {
+      content: 'SONAR';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      font-family: inherit;
+      font-weight: inherit;
+      font-style: inherit;
       font-size: inherit;
       letter-spacing: inherit;
     }
-    .sonar-title::before {
+    .sonar-cyber-text::before {
       color: #ff2a6d;
-      text-shadow: 0 0 12px #ff2a6d;
-      clip-path: inset(22% 0 55% 0);
+      text-shadow: 0 0 15px #ff2a6d;
+      clip-path: inset(20% 0 52% 0);
       animation: glitch-r 5s infinite;
+      z-index: -1;
     }
-    .sonar-title::after {
+    .sonar-cyber-text::after {
       color: #05ffa1;
-      text-shadow: 0 0 12px #05ffa1;
-      clip-path: inset(62% 0 8% 0);
+      text-shadow: 0 0 15px #05ffa1;
+      clip-path: inset(58% 0 10% 0);
       animation: glitch-g 5s infinite 0.35s;
+      z-index: -1;
     }
+
+    @keyframes breathe {
+      0%,100% {
+        filter: drop-shadow(0 0 25px rgba(0, 240, 255, 0.6))
+                drop-shadow(0 0 60px rgba(0, 240, 255, 0.3));
+      }
+      50% {
+        filter: drop-shadow(0 0 40px rgba(0, 240, 255, 0.9))
+                drop-shadow(0 0 100px rgba(0, 240, 255, 0.5));
+      }
+    }
+
     @keyframes glitch-r {
       0%,84%,100% { opacity:0; transform:translate(0); }
-      86% { opacity:1; transform:translateX(-6px) skewX(-1deg); }
-      88% { opacity:1; transform:translateX(5px); }
-      90% { opacity:0.7; transform:translateX(-3px); }
+      86% { opacity:1; transform:translateX(-8px) skewX(-2deg); }
+      88% { opacity:1; transform:translateX(6px); }
+      90% { opacity:0.7; transform:translateX(-4px); }
       92% { opacity:0; }
     }
     @keyframes glitch-g {
       0%,84%,100% { opacity:0; transform:translate(0); }
-      87% { opacity:1; transform:translateX(7px) skewX(1deg); }
-      89% { opacity:1; transform:translateX(-4px); }
-      91% { opacity:0.7; transform:translateX(2px); }
+      87% { opacity:1; transform:translateX(8px) skewX(2deg); }
+      89% { opacity:1; transform:translateX(-6px); }
+      91% { opacity:0.7; transform:translateX(3px); }
       93% { opacity:0; }
     }
 
     /* ── Tagline ── */
     .tagline {
       font-family: 'Share Tech Mono', monospace;
-      font-size: clamp(0.6rem, 2vw, 0.85rem);
+      font-size: clamp(0.65rem, 2vw, 0.88rem);
       letter-spacing: 0.35em;
-      color: rgba(0,240,255,0.45);
-      margin-top: 10px;
+      color: rgba(0,240,255,0.5);
+      text-transform: uppercase;
+      margin-top: 12px;
       margin-bottom: 48px;
     }
     .cursor {
@@ -121,16 +172,17 @@
     }
     @keyframes cur { 0%,100%{opacity:1} 50%{opacity:0} }
 
-    /* ── Enter button ── */
+    /* ── Enter button (Cyberpunk cut-corner style) ── */
     .btn-enter {
       display: inline-flex; align-items: center; gap: 10px;
       padding: 14px 44px;
       font-family: 'Share Tech Mono', monospace;
-      font-size: 0.8rem; letter-spacing: 0.2em;
+      font-size: 0.82rem; letter-spacing: 0.22em;
+      font-weight: 700;
       color: #05050d;
       background: #00f0ff;
       text-decoration: none;
-      clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
+      clip-path: polygon(14px 0%, 100% 0%, calc(100% - 14px) 100%, 0% 100%);
       box-shadow: 0 0 20px #00f0ff, 0 0 50px rgba(0,240,255,0.4);
       transition: all 0.25s cubic-bezier(0.2,0,0,1);
       position: relative; overflow: hidden;
@@ -138,7 +190,7 @@
     .btn-enter::before {
       content: '';
       position: absolute; inset: 0;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
       transform: translateX(-100%);
       transition: transform 0.5s;
     }
@@ -152,9 +204,6 @@
 
     /* ══════════════════════════════════════
        PAGE GLITCH STRIPS
-       - 2 horizontal ribbons across the whole width
-       - Use backdrop-filter invert + hue-rotate for OPPOSITE color
-       - Fire at completely different times than the text glitch
     ══════════════════════════════════════ */
     .glitch-strip {
       position: fixed;
@@ -168,13 +217,11 @@
       mix-blend-mode: screen;
     }
 
-    /* Strip 1 — thicker, fires first */
     .glitch-strip-1 {
       top: 32%;
       height: 22px;
       animation: strip1 4.5s infinite 0.8s;
     }
-    /* Strip 2 — thinner, fires after a gap */
     .glitch-strip-2 {
       top: 61%;
       height: 13px;
@@ -250,7 +297,9 @@
   <div class="glitch-strip glitch-strip-2" aria-hidden="true"></div>
 
   <section class="hero">
-    <div class="sonar-title">SONAR</div>
+    <div class="cyber-logo-wrap">
+      <div class="sonar-cyber-text">SONAR</div>
+    </div>
 
     <div class="tagline">
       SOund Neural Answer Retrieval<span class="cursor">&nbsp;</span>
