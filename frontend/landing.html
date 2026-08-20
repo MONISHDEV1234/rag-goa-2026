@@ -14,35 +14,10 @@
     html, body {
       height: 100%; width: 100%;
       overflow: hidden;
-      background: #05050d;
+      background: #000;
       font-family: 'Orbitron', monospace;
       -webkit-font-smoothing: antialiased;
     }
-
-    /* ── CRT Scanlines ── */
-    body::before {
-      content: '';
-      position: fixed; inset: 0; z-index: 1000; pointer-events: none;
-      background: repeating-linear-gradient(
-        to bottom,
-        transparent 0px, transparent 3px,
-        rgba(0,0,0,0.2) 3px, rgba(0,0,0,0.2) 4px
-      );
-      animation: flicker 12s linear infinite;
-    }
-    @keyframes flicker {
-      0%,100%{opacity:1} 94%{opacity:1} 95%{opacity:0.75} 96%{opacity:1} 98%{opacity:0.88} 99%{opacity:1}
-    }
-
-    /* ── Scanline sweep ── */
-    body::after {
-      content: '';
-      position: fixed; inset: 0; z-index: 999; pointer-events: none;
-      background: linear-gradient(to bottom, transparent 0%, rgba(0,240,255,0.025) 50%, transparent 100%);
-      background-size: 100% 300%;
-      animation: sweep 6s linear infinite;
-    }
-    @keyframes sweep { 0%{background-position:0 -200%} 100%{background-position:0 200%} }
 
     /* ── BG Canvas ── */
     #bg-canvas {
@@ -385,16 +360,10 @@
       requestAnimationFrame(draw);
       t += 0.004;
 
-      ctx.fillStyle = 'rgba(5,5,13,0.25)';
+      ctx.fillStyle = 'rgba(0,0,0,0.3)';
       ctx.fillRect(0, 0, W, H);
 
-      // Grid
-      ctx.strokeStyle = 'rgba(0,240,255,0.03)';
-      ctx.lineWidth = 1;
-      for (let x = 0; x < W; x += 60) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
-      for (let y = 0; y < H; y += 60) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
-
-      // Center glow
+      // Center glow only (no grid)
       const cx = W/2, cy = H/2;
       const g = ctx.createRadialGradient(cx,cy,0,cx,cy,Math.min(W,H)*0.5);
       g.addColorStop(0, `rgba(0,240,255,${0.025+Math.sin(t)*0.01})`);
