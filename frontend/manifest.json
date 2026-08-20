@@ -1,0 +1,20 @@
+{
+  "name": "HH Goa Voice RAG",
+  "short_name": "Voice RAG",
+  "description": "Voice-Enabled Retrieval-Augmented Generation with sub-200ms target latency.",
+  "start_url": "/",
+  "id": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f1117",
+  "theme_color": "#0f1117",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities", "education"]
+}
