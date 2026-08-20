@@ -22,9 +22,9 @@
 ══════════════════════════════════════════════════════════════ */
 
 const CONFIG = {
-  apiBase:        localStorage.getItem('hh_goa_api_base') || '',
-  topK:           parseInt(localStorage.getItem('hh_goa_top_k'), 10) || 3,
-  demoMode:       localStorage.getItem('hh_goa_demo') === 'true', // default OFF — uses real skeleton backend
+  apiBase:        localStorage.getItem('sonar_api_base') || '',
+  topK:           parseInt(localStorage.getItem('sonar_top_k'), 10) || 3,
+  demoMode:       localStorage.getItem('sonar_demo') === 'true', // default OFF — uses real skeleton backend
   latencyTarget:  200,
 };
 
@@ -772,9 +772,9 @@ DOM.btnSaveSettings.addEventListener('click', () => {
   CONFIG.apiBase  = DOM.settingApiUrl.value.trim();
   CONFIG.topK     = parseInt(DOM.settingTopK.value, 10);
   CONFIG.demoMode = DOM.settingDemoMode?.checked ?? CONFIG.demoMode;
-  localStorage.setItem('hh_goa_api_base', CONFIG.apiBase);
-  localStorage.setItem('hh_goa_top_k',    CONFIG.topK);
-  localStorage.setItem('hh_goa_demo',     CONFIG.demoMode);
+  localStorage.setItem('sonar_api_base', CONFIG.apiBase);
+  localStorage.setItem('sonar_top_k',    CONFIG.topK);
+  localStorage.setItem('sonar_demo',     CONFIG.demoMode);
   DOM.settingsModal.style.display = 'none';
   updateDemoUI();
   checkHealth();
@@ -846,3 +846,4 @@ if ('serviceWorker' in navigator) {
 setState(State.IDLE);
 updateDemoUI();
 checkHealth();
+
