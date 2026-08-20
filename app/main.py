@@ -75,6 +75,16 @@ async def app_page():
     """Serve SONAR voice RAG app."""
     return FileResponse(str(_frontend_dir / "index.html"))
 
+@app.get("/about", include_in_schema=False)
+async def about_page():
+    """Serve SONAR about page."""
+    return FileResponse(str(_frontend_dir / "about.html"))
+
+@app.get("/tutorial", include_in_schema=False)
+async def tutorial_page():
+    """Serve SONAR tutorial page."""
+    return FileResponse(str(_frontend_dir / "tutorial.html"))
+
 # ---------------------------------------------------------------------------
 # Static assets — mounted at /static so it doesn't shadow page routes
 # ---------------------------------------------------------------------------

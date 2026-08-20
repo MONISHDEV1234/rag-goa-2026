@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ABOUT // SONAR</title>
+  <meta name="theme-color" content="#00f0ff" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@1,700;1,900&family=Orbitron:wght@700;900&family=Share+Tech+Mono&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      min-height: 100%;
+      background: #000000;
+      color: #e8f4f8;
+      font-family: 'Rajdhani', sans-serif;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    ::selection { background: #ff2a6d; color: #000; }
+
+    .page-wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    /* ── Header Bar ── */
+    .top-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 42, 109, 0.25);
+      padding-bottom: 16px;
+    }
+
+    .nav-logo {
+      font-family: 'Chakra Petch', 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-style: italic;
+      font-size: 1.5rem;
+      color: #ff2a6d;
+      text-shadow: 0 0 15px rgba(255,42,109,0.7);
+      text-decoration: none;
+      letter-spacing: 0.1em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 12px;
+    }
+
+    .nav-btn {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      padding: 8px 18px;
+      color: #00f0ff;
+      border: 1px solid rgba(0,240,255,0.4);
+      background: rgba(0,240,255,0.05);
+      text-decoration: none;
+      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+      transition: all 0.2s;
+    }
+    .nav-btn:hover {
+      background: #00f0ff;
+      color: #000;
+      box-shadow: 0 0 20px rgba(0,240,255,0.5);
+    }
+    .nav-btn.primary {
+      background: #00f0ff;
+      color: #000;
+      font-weight: 700;
+    }
+    .nav-btn.primary:hover {
+      background: #33f5ff;
+      box-shadow: 0 0 25px #00f0ff;
+    }
+
+    /* ── Hero Title ── */
+    .about-hero {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .about-badge {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      color: #ff2a6d;
+    }
+    .about-title {
+      font-family: 'Orbitron', monospace;
+      font-weight: 900;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      color: #ffffff;
+      text-shadow: 0 0 20px rgba(255, 42, 109, 0.4);
+      letter-spacing: 0.05em;
+    }
+    .about-sub {
+      font-size: 1.1rem;
+      color: #9ab0bc;
+      line-height: 1.6;
+    }
+    .highlight {
+      color: #00f0ff;
+      font-weight: 600;
+    }
+
+    /* ── Section Cards ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .cyber-card {
+      background: rgba(14, 14, 28, 0.7);
+      border: 1px solid rgba(255, 42, 109, 0.2);
+      border-left: 3px solid #ff2a6d;
+      padding: 24px;
+      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: all 0.25s;
+    }
+    .cyber-card:hover {
+      border-color: #ff2a6d;
+      box-shadow: 0 0 25px rgba(255,42,109,0.25);
+      transform: translateY(-2px);
+    }
+    .cyber-card.cyan {
+      border-left-color: #00f0ff;
+      border-color: rgba(0,240,255,0.2);
+    }
+    .cyber-card.cyan:hover {
+      border-color: #00f0ff;
+      box-shadow: 0 0 25px rgba(0,240,255,0.25);
+    }
+    .cyber-card.green {
+      border-left-color: #05ffa1;
+      border-color: rgba(5,255,161,0.2);
+    }
+    .cyber-card.green:hover {
+      border-color: #05ffa1;
+      box-shadow: 0 0 25px rgba(5,255,161,0.25);
+    }
+
+    .card-tag {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: #ff2a6d;
+      text-transform: uppercase;
+    }
+    .cyber-card.cyan .card-tag { color: #00f0ff; }
+    .cyber-card.green .card-tag { color: #05ffa1; }
+
+    .card-heading {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .card-body {
+      font-size: 0.95rem;
+      color: #9ab0bc;
+      line-height: 1.6;
+    }
+
+    /* ── Spec List ── */
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.85rem;
+      background: rgba(10, 10, 20, 0.8);
+      border: 1px solid rgba(0,240,255,0.2);
+    }
+    .spec-table td {
+      padding: 12px 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .spec-key {
+      color: #00f0ff;
+      width: 35%;
+    }
+    .spec-val {
+      color: #e8f4f8;
+    }
+
+    /* ── Footer / CTA ── */
+    .about-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-meta {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem;
+      color: #4a6070;
+      letter-spacing: 0.1em;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-wrap">
+
+    <nav class="top-nav">
+      <a href="/" class="nav-logo">SONAR</a>
+      <div class="nav-links">
+        <a href="/" class="nav-btn">◀ HOME</a>
+        <a href="/tutorial" class="nav-btn">⚡ TUTORIAL</a>
+        <a href="/app" class="nav-btn primary">&#9658; LAUNCH APP</a>
+      </div>
+    </nav>
+
+    <section class="about-hero">
+      <span class="about-badge">// SYSTEM ARCHITECTURE & PROJECT BRIEF</span>
+      <h1 class="about-title">SOund Neural Answer Retrieval</h1>
+      <p class="about-sub">
+        <span class="highlight">SONAR</span> is an ultra-low latency, voice-first Retrieval-Augmented Generation (RAG) system built for <span class="highlight">HH Goa 2026</span>. It merges multilingual Indian-accent speech recognition with high-density vector retrieval and Groq LPU inference to deliver grounded answers under 200 milliseconds.
+      </p>
+    </section>
+
+    <div class="card-grid">
+
+      <div class="cyber-card cyan">
+        <span class="card-tag">PIPELINE STAGE 01</span>
+        <h3 class="card-heading">Sarvam STT Engine</h3>
+        <p class="card-body">
+          Captures raw browser audio using MediaRecorder (WebM/Opus) and transcribes with Sarvam AI's <code>saarika:v2.5</code> endpoint in ~60ms with Indian-language and accent optimization.
+        </p>
+      </div>
+
+      <div class="cyber-card">
+        <span class="card-tag">PIPELINE STAGE 02</span>
+        <h3 class="card-heading">FAISS Neural Retrieval</h3>
+        <p class="card-body">
+          Queries embedded via <code>FastEmbed BGE-small-en-v1.5</code> in ~9ms. Retieved from in-memory <code>FAISS IndexFlatIP</code> index against AI4Bharat MSMARCO-XI dataset in &lt;5ms.
+        </p>
+      </div>
+
+      <div class="cyber-card green">
+        <span class="card-tag">PIPELINE STAGE 03</span>
+        <h3 class="card-heading">Groq LPU Generation</h3>
+        <p class="card-body">
+          Generates grounded answers via <code>llama-3.1-8b-instant</code> with strict citation constraints in ~75ms. Guardrails verify factuality against retrieved passages.
+        </p>
+      </div>
+
+    </div>
+
+    <section>
+      <h2 style="font-family: 'Orbitron', monospace; font-size: 1.3rem; margin-bottom: 16px; color: #00f0ff;">
+        // TECHNICAL SPECIFICATIONS
+      </h2>
+
+      <table class="spec-table">
+        <tbody>
+          <tr>
+            <td class="spec-key">PRIMARY OBJECTIVE</td>
+            <td class="spec-val">Voice-Enabled RAG &lt;200ms Latency Budget</td>
+          </tr>
+          <tr>
+            <td class="spec-key">DATASET</td>
+            <td class="spec-val">AI4Bharat MSMARCO-XI Multilingual Corpus</td>
+          </tr>
+          <tr>
+            <td class="spec-key">CHUNK STRATEGIES</td>
+            <td class="spec-val">Semantic, Sliding-Window, Metadata-Aware</td>
+          </tr>
+          <tr>
+            <td class="spec-key">SPEECH-TO-TEXT</td>
+            <td class="spec-val">Sarvam AI (saarika:v2.5) via async httpx + Tenacity</td>
+          </tr>
+          <tr>
+            <td class="spec-key">EMBEDDING MODEL</td>
+            <td class="spec-val">BAAI/bge-small-en-v1.5 (FastEmbed In-Process)</td>
+          </tr>
+          <tr>
+            <td class="spec-key">VECTOR INDEX</td>
+            <td class="spec-val">FAISS IndexFlatIP (Loaded entirely in RAM)</td>
+          </tr>
+          <tr>
+            <td class="spec-key">LLM INFERENCE</td>
+            <td class="spec-val">Groq LPU (llama-3.1-8b-instant)</td>
+          </tr>
+          <tr>
+            <td class="spec-key">GROUNDING GUARD</td>
+            <td class="spec-val">4-Layer Safety &amp; Citation Verification Engine</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <footer class="about-footer">
+      <div class="footer-meta">
+        HH GOA 2026 · TASK 2 · #RAGInGoa
+      </div>
+      <div>
+        <a href="/app" class="nav-btn primary">&#9658; ENTER SYSTEM NOW</a>
+      </div>
+    </footer>
+
+  </div>
+
+</body>
+</html>

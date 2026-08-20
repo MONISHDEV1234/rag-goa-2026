@@ -147,9 +147,19 @@
     @keyframes cur { 0%,100%{opacity:1} 50%{opacity:0} }
 
     /* ── Enter button (Cyberpunk cut-corner style) ── */
+    /* Button group container */
+    .btn-group {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      z-index: 10;
+    }
+
     .btn-enter {
       display: inline-flex; align-items: center; gap: 10px;
-      padding: 14px 44px;
+      padding: 14px 38px;
       font-family: 'Share Tech Mono', monospace;
       font-size: 0.82rem; letter-spacing: 0.22em;
       font-weight: 700;
@@ -175,6 +185,44 @@
       transform: translateY(-2px) scale(1.03);
     }
     .btn-enter:active { transform: translateY(0) scale(0.98); }
+
+    /* Secondary Cyberpunk Buttons (About & Tutorial) */
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 28px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.8rem; letter-spacing: 0.18em;
+      font-weight: 700;
+      color: #00f0ff;
+      background: rgba(0, 240, 255, 0.05);
+      border: 1px solid rgba(0, 240, 255, 0.4);
+      text-decoration: none;
+      clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
+      transition: all 0.25s cubic-bezier(0.2,0,0,1);
+      position: relative; overflow: hidden;
+    }
+    .btn-secondary:hover {
+      color: #05050d;
+      background: #00f0ff;
+      box-shadow: 0 0 25px rgba(0,240,255,0.5);
+      transform: translateY(-2px);
+    }
+    .btn-secondary.tutorial:hover {
+      color: #05050d;
+      background: #05ffa1;
+      border-color: #05ffa1;
+      box-shadow: 0 0 25px rgba(5,255,161,0.5);
+    }
+    .btn-secondary.about {
+      color: #ff2a6d;
+      border-color: rgba(255, 42, 109, 0.4);
+      background: rgba(255, 42, 109, 0.05);
+    }
+    .btn-secondary.about:hover {
+      color: #05050d;
+      background: #ff2a6d;
+      box-shadow: 0 0 25px rgba(255,42,109,0.5);
+    }
 
     /* ══════════════════════════════════════
        PAGE GLITCH STRIPS
@@ -279,7 +327,11 @@
       SOund Neural Answer Retrieval<span class="cursor">&nbsp;</span>
     </div>
 
-    <a href="/app" class="btn-enter">&#9658; ENTER SYSTEM</a>
+    <div class="btn-group">
+      <a href="/app" class="btn-enter">&#9658; ENTER SYSTEM</a>
+      <a href="/about" class="btn-secondary about">ℹ ABOUT</a>
+      <a href="/tutorial" class="btn-secondary tutorial">⚡ TUTORIAL</a>
+    </div>
   </section>
 
 </body>

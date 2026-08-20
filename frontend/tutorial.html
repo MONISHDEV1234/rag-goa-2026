@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TUTORIAL // SONAR</title>
+  <meta name="theme-color" content="#05ffa1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@1,700;1,900&family=Orbitron:wght@700;900&family=Share+Tech+Mono&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      min-height: 100%;
+      background: #000000;
+      color: #e8f4f8;
+      font-family: 'Rajdhani', sans-serif;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    ::selection { background: #05ffa1; color: #000; }
+
+    .page-wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    /* ── Header Bar ── */
+    .top-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(5, 255, 161, 0.25);
+      padding-bottom: 16px;
+    }
+
+    .nav-logo {
+      font-family: 'Chakra Petch', 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-style: italic;
+      font-size: 1.5rem;
+      color: #05ffa1;
+      text-shadow: 0 0 15px rgba(5,255,161,0.7);
+      text-decoration: none;
+      letter-spacing: 0.1em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 12px;
+    }
+
+    .nav-btn {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      padding: 8px 18px;
+      color: #05ffa1;
+      border: 1px solid rgba(5,255,161,0.4);
+      background: rgba(5,255,161,0.05);
+      text-decoration: none;
+      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+      transition: all 0.2s;
+    }
+    .nav-btn:hover {
+      background: #05ffa1;
+      color: #000;
+      box-shadow: 0 0 20px rgba(5,255,161,0.5);
+    }
+    .nav-btn.primary {
+      background: #00f0ff;
+      border-color: #00f0ff;
+      color: #000;
+      font-weight: 700;
+    }
+    .nav-btn.primary:hover {
+      background: #33f5ff;
+      box-shadow: 0 0 25px #00f0ff;
+    }
+
+    /* ── Hero Title ── */
+    .tutorial-hero {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .tutorial-badge {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      color: #05ffa1;
+    }
+    .tutorial-title {
+      font-family: 'Orbitron', monospace;
+      font-weight: 900;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      color: #ffffff;
+      text-shadow: 0 0 20px rgba(5, 255, 161, 0.4);
+      letter-spacing: 0.05em;
+    }
+    .tutorial-sub {
+      font-size: 1.1rem;
+      color: #9ab0bc;
+      line-height: 1.6;
+    }
+    .highlight {
+      color: #05ffa1;
+      font-weight: 600;
+    }
+
+    /* ── Steps Timeline ── */
+    .steps-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .step-card {
+      background: rgba(14, 14, 28, 0.7);
+      border: 1px solid rgba(5, 255, 161, 0.2);
+      border-left: 3px solid #05ffa1;
+      padding: 24px;
+      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: all 0.25s;
+    }
+    .step-card:hover {
+      border-color: #05ffa1;
+      box-shadow: 0 0 25px rgba(5,255,161,0.25);
+      transform: translateX(4px);
+    }
+    .step-card.cyan {
+      border-left-color: #00f0ff;
+      border-color: rgba(0,240,255,0.2);
+    }
+    .step-card.cyan:hover {
+      border-color: #00f0ff;
+      box-shadow: 0 0 25px rgba(0,240,255,0.25);
+    }
+    .step-card.magenta {
+      border-left-color: #ff2a6d;
+      border-color: rgba(255,42,109,0.2);
+    }
+    .step-card.magenta:hover {
+      border-color: #ff2a6d;
+      box-shadow: 0 0 25px rgba(255,42,109,0.25);
+    }
+    .step-card.yellow {
+      border-left-color: #fcee0a;
+      border-color: rgba(252,238,10,0.2);
+    }
+    .step-card.yellow:hover {
+      border-color: #fcee0a;
+      box-shadow: 0 0 25px rgba(252,238,10,0.25);
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .step-number {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      padding: 3px 8px;
+      background: rgba(5, 255, 161, 0.15);
+      color: #05ffa1;
+      border: 1px solid rgba(5, 255, 161, 0.4);
+      clip-path: polygon(4px 0%, 100% 0%, calc(100% - 4px) 100%, 0% 100%);
+    }
+    .step-card.cyan .step-number { background: rgba(0,240,255,0.15); color: #00f0ff; border-color: rgba(0,240,255,0.4); }
+    .step-card.magenta .step-number { background: rgba(255,42,109,0.15); color: #ff2a6d; border-color: rgba(255,42,109,0.4); }
+    .step-card.yellow .step-number { background: rgba(252,238,10,0.15); color: #fcee0a; border-color: rgba(252,238,10,0.4); }
+
+    .step-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .step-desc {
+      font-size: 0.95rem;
+      color: #9ab0bc;
+      line-height: 1.6;
+    }
+    .step-desc code {
+      font-family: 'Share Tech Mono', monospace;
+      color: #00f0ff;
+      background: rgba(0,240,255,0.1);
+      padding: 2px 6px;
+    }
+
+    /* ── Footer / CTA ── */
+    .tutorial-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-meta {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem;
+      color: #4a6070;
+      letter-spacing: 0.1em;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-wrap">
+
+    <nav class="top-nav">
+      <a href="/" class="nav-logo">SONAR</a>
+      <div class="nav-links">
+        <a href="/" class="nav-btn">◀ HOME</a>
+        <a href="/about" class="nav-btn">ℹ ABOUT</a>
+        <a href="/app" class="nav-btn primary">&#9658; LAUNCH APP</a>
+      </div>
+    </nav>
+
+    <section class="tutorial-hero">
+      <span class="tutorial-badge">// STEP-BY-STEP OPERATIONAL GUIDE</span>
+      <h1 class="tutorial-title">System User Guide</h1>
+      <p class="tutorial-sub">
+        Follow these steps to query the <span class="highlight">SONAR</span> voice neural retrieval system, inspect retrieved knowledge chunks, verify source citations, and monitor latency metrics.
+      </p>
+    </section>
+
+    <div class="steps-list">
+
+      <div class="step-card cyan">
+        <div class="step-header">
+          <span class="step-number">STEP 01</span>
+          <h3 class="step-title">Voice Recording or Text Query</h3>
+        </div>
+        <p class="step-desc">
+          Click the large <strong>Microphone Button</strong> in the center to begin speaking your question in English or Indian languages. When finished, tap it again to stop. Alternatively, you can type your query in the terminal input bar or tap any of the quick-launch suggestion chips (<code>RAG</code>, <code>FAISS</code>, <code>CHUNKING</code>, <code>LATENCY</code>).
+        </p>
+      </div>
+
+      <div class="step-card magenta">
+        <div class="step-header">
+          <span class="step-number">STEP 02</span>
+          <h3 class="step-title">Live Pipeline Status Monitoring</h3>
+        </div>
+        <p class="step-desc">
+          Watch the real-time status ticker transition through each neural stage:
+          <br/>
+          <code>STT TRANSCRIBING</code> → <code>FAISS SEARCHING</code> → <code>LLM GENERATING</code> → <code>GROUNDING CHECK</code>.
+        </p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-header">
+          <span class="step-number">STEP 03</span>
+          <h3 class="step-title">Grounded Answer &amp; Citations</h3>
+        </div>
+        <p class="step-desc">
+          The system displays a high-accuracy answer along with a <strong>✓ Grounded</strong> verification badge. Below the answer card, you can inspect the retrieved document nodes, chunking strategy used, and vector cosine similarity scores. Use the <strong>SPEAK</strong> button to read answers aloud via Web Speech synthesis.
+        </p>
+      </div>
+
+      <div class="step-card yellow">
+        <div class="step-header">
+          <span class="step-number">STEP 04</span>
+          <h3 class="step-title">Latency Telemetry &amp; Demo Mode</h3>
+        </div>
+        <p class="step-desc">
+          Examine the <strong>Latency Telemetry</strong> panel to see exact milliseconds spent on STT, embedding, retrieval, and generation against our <code>&lt;200ms</code> target. Tap the <strong>⚙ SYS</strong> button in the top header to toggle <strong>Demo Mode</strong> or adjust Top-K document retrieval.
+        </p>
+      </div>
+
+    </div>
+
+    <footer class="tutorial-footer">
+      <div class="footer-meta">
+        HH GOA 2026 · TASK 2 · #RAGInGoa
+      </div>
+      <div>
+        <a href="/app" class="nav-btn primary">&#9658; TRY IT LIVE NOW</a>
+      </div>
+    </footer>
+
+  </div>
+
+</body>
+</html>
