@@ -237,17 +237,61 @@
         ctx.fill();
       }
 
-      /* ── 3. draw soft glow halo ── */
-      const haloR = scale * (0.72 + amplitude * 0.28);
-      const haloAlpha = 0.08 + amplitude * 0.18;
-      const halo = ctx.createRadialGradient(cx, cy, 0, cx, cy, haloR * 1.6);
-      halo.addColorStop(0, `rgba(255, 200, 40, ${haloAlpha * 2})`);
-      halo.addColorStop(0.5, `rgba(255, 160, 20, ${haloAlpha})`);
-      halo.addColorStop(1, `rgba(255, 140, 10, 0)`);
-      ctx.beginPath();
-      ctx.arc(cx, cy, haloR * 1.6, 0, Math.PI * 2);
-      ctx.fillStyle = halo;
-      ctx.fill();
+      /* ── 3. Multi-layer loudness-driven golden aura ── */
+      // Layer 0: always-on soft ambient warmth (tiny)
+      {
+        const r = scale * 0.85;
+        const g = ctx.createRadialGradient(cx, cy, scale * 0.35, cx, cy, r * 1.4);
+        g.addColorStop(0, 'rgba(255, 210, 60, 0.06)');
+        g.addColorStop(1, 'rgba(255, 140, 10, 0)');
+        ctx.beginPath(); ctx.arc(cx, cy, r * 1.4, 0, Math.PI * 2);
+        ctx.fillStyle = g; ctx.fill();
+      }
+
+      if (isRecording) {
+        // Layer 1: core bright burst — tight, very reactive
+        const coreR = scale * (0.78 + amplitude * 0.55);
+        const coreA = Math.min(0.55, amplitude * 0.65);
+        const g1 = ctx.createRadialGradient(cx, cy, scale * 0.25, cx, cy, coreR);
+        g1.addColorStop(0,   `rgba(255, 240, 100, ${coreA * 1.3})`);
+        g1.addColorStop(0.3, `rgba(255, 200, 40,  ${coreA})`);
+        g1.addColorStop(0.7, `rgba(255, 150, 10,  ${coreA * 0.45})`);
+        g1.addColorStop(1,   'rgba(200, 100, 0, 0)');
+        ctx.beginPath(); ctx.arc(cx, cy, coreR, 0, Math.PI * 2);
+        ctx.fillStyle = g1; ctx.fill();
+
+        // Layer 2: mid ring — softer, broader spread
+        const midR = scale * (1.15 + amplitude * 0.9);
+        const midA = Math.min(0.38, amplitude * 0.48);
+        const g2 = ctx.createRadialGradient(cx, cy, scale * 0.5, cx, cy, midR);
+        g2.addColorStop(0,   `rgba(255, 220, 60, ${midA * 0.6})`);
+        g2.addColorStop(0.4, `rgba(255, 170, 20, ${midA})`);
+        g2.addColorStop(1,   'rgba(180, 80, 0, 0)');
+        ctx.beginPath(); ctx.arc(cx, cy, midR, 0, Math.PI * 2);
+        ctx.fillStyle = g2; ctx.fill();
+
+        // Layer 3: outer corona — huge, dramatic, very loud = very wide
+        const outerR = scale * (1.6 + amplitude * 1.4);
+        const outerA = Math.min(0.22, amplitude * 0.28);
+        const g3 = ctx.createRadialGradient(cx, cy, scale * 0.6, cx, cy, outerR);
+        g3.addColorStop(0,   `rgba(255, 200, 40, ${outerA * 0.5})`);
+        g3.addColorStop(0.5, `rgba(255, 140, 10, ${outerA})`);
+        g3.addColorStop(1,   'rgba(120, 60, 0, 0)');
+        ctx.beginPath(); ctx.arc(cx, cy, outerR, 0, Math.PI * 2);
+        ctx.fillStyle = g3; ctx.fill();
+
+        // Layer 4: sharp edge shimmer ring at surface — flickers with amplitude
+        const ringR = scale * (0.75 + amplitude * 0.18);
+        const shimmer = 0.1 + amplitude * 0.55 + Math.sin(Date.now() * 0.012) * 0.05;
+        ctx.beginPath();
+        ctx.arc(cx, cy, ringR, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(255, 235, 80, ${Math.min(0.75, shimmer)})`;
+        ctx.lineWidth = 1.5 + amplitude * 3.5;
+        ctx.shadowBlur = 18 + amplitude * 40;
+        ctx.shadowColor = '#ffc820';
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+      }
 
       /* ── 4. draw wireframe edges ── */
       ctx.save();
