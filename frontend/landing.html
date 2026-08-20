@@ -111,62 +111,7 @@
     .c-br::before { width: 6px; height: 1px; bottom: 8px; right: -2px; }
     .c-br::after  { width: 1px; height: 6px; bottom: -2px; right: 8px; }
 
-    /* ══════════════════════════════════════════
-       TOP HUD BAR
-    ══════════════════════════════════════════ */
-    .hud-bar {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 72px;
-      border-bottom: 1px solid rgba(0,240,255,0.1);
-      background: rgba(5,5,13,0.6);
-      backdrop-filter: blur(8px);
-    }
-    .hud-id {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.62rem;
-      letter-spacing: 0.2em;
-      color: rgba(0,240,255,0.45);
-    }
-    .hud-status {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.62rem;
-      letter-spacing: 0.15em;
-      color: rgba(0,240,255,0.45);
-    }
-    .hud-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: #05ffa1;
-      box-shadow: 0 0 8px #05ffa1;
-      animation: hud-blink 2s ease-in-out infinite;
-    }
-    @keyframes hud-blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
-
-    /* ══════════════════════════════════════════
-       BOTTOM HUD BAR
-    ══════════════════════════════════════════ */
-    .hud-bottom {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 72px;
-      border-top: 1px solid rgba(0,240,255,0.1);
-      background: rgba(5,5,13,0.6);
-      backdrop-filter: blur(8px);
-    }
-
-    /* ══════════════════════════════════════════
+            /* ══════════════════════════════════════════
        MAIN HERO CENTER
     ══════════════════════════════════════════ */
     .hero {
@@ -332,33 +277,10 @@
     }
     .btn-enter:active { transform: translateY(0) scale(0.98); }
 
-    /* ══════════════════════════════════════════
-       SIDE DECORATIONS (left/right HUD lines)
-    ══════════════════════════════════════════ */
-    .side-deco {
-      position: fixed;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 50;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.55rem;
-      letter-spacing: 0.15em;
-      color: rgba(0,240,255,0.25);
-      writing-mode: vertical-rl;
-    }
-    .side-deco.left  { left: 20px; text-orientation: mixed; transform: translateY(-50%) rotate(180deg); }
-    .side-deco.right { right: 20px; }
-
-    /* ══════════════════════════════════════════
+        /* ══════════════════════════════════════════
        RESPONSIVE
     ══════════════════════════════════════════ */
     @media (max-width: 480px) {
-      .hud-bar, .hud-bottom { padding: 10px 20px; }
-      .hud-id:last-child { display: none; }
-      .side-deco { display: none; }
       .ring-1, .ring-2 { width: 280px; height: 280px; }
       .ring-3, .ring-4 { display: none; }
     }
@@ -375,30 +297,6 @@
   <div class="corner c-bl"></div>
   <div class="corner c-br"></div>
 
-  <!-- Top HUD -->
-  <div class="hud-bar">
-    <div class="hud-id">HH//GOA//2026 · TASK-02 · VOICE-RAG</div>
-    <div class="hud-status">
-      <span class="hud-dot"></span>
-      SYS ONLINE
-    </div>
-    <div class="hud-id">v0.1.0-SKELETON · 22-AUG-2026</div>
-  </div>
-
-  <!-- Bottom HUD -->
-  <div class="hud-bottom">
-    <div class="hud-id" style="font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;color:rgba(0,240,255,0.35);">
-      SARVAM AI · FAISS · GROQ LLM · MSMARCO-XI
-    </div>
-    <div class="hud-id" style="font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacing:0.15em;color:rgba(0,240,255,0.35);">
-      #RAGInGoa
-    </div>
-  </div>
-
-  <!-- Side decorations -->
-  <div class="side-deco left">SOund Neural Answer Retrieval · &lt;200ms</div>
-  <div class="side-deco right">Voice → STT → FAISS → LLM → Answer</div>
-
   <!-- HERO -->
   <section class="hero">
     <div class="rings-wrapper">
@@ -408,7 +306,7 @@
       <div class="ring ring-4"></div>
     </div>
 
-    <div class="SONAR-word">SONAR</div>
+    <div class="solar-word">SONAR</div>
 
     <div class="tagline">
       SOund Neural Answer Retrieval<span class="cursor">&nbsp;</span>
@@ -513,5 +411,6 @@
 
 </body>
 </html>
+
 
 
