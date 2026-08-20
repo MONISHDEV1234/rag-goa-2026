@@ -75,6 +75,14 @@ class TestValidateAudio:
         valid = b"x" * MIN_AUDIO_BYTES
         validate_audio(valid, content_type=None)
 
+    def test_generated_wav_audio_validates(self):
+        from pathlib import Path
+        wav_path = Path(__file__).parent.parent / "benchmarks" / "audio" / "1.wav"
+        if wav_path.exists():
+            data = wav_path.read_bytes()
+            assert len(data) >= MIN_AUDIO_BYTES
+            validate_audio(data, content_type="audio/wav")
+
 
 class TestAudioToFileLike:
 

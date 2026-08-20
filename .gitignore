@@ -20,8 +20,9 @@ data/raw/
 data/processed/
 data/index/
 
-# Benchmark raw results (large JSON)
+# Benchmark raw results (large JSON) and generated audio
 benchmarks/results.json
+benchmarks/audio/
 
 # IDE
 .vscode/
