@@ -170,21 +170,47 @@
       width: 4px; height: 4px;
       border-radius: 50%;
       background: rgba(255, 255, 255, 0.2);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .top-mini-dot.active {
       width: 18px;
       border-radius: 999px;
       background: #5b6df5;
+      box-shadow: 0 0 8px rgba(91, 109, 245, 0.7);
     }
 
-    /* 2-Column Body */
+    /* ── Smooth 2-Column Viewport ── */
+    .tour-viewport {
+      position: relative;
+      margin: 18px 0;
+      min-height: 290px;
+      overflow: hidden;
+    }
+
     .tour-body-grid {
       display: grid;
       grid-template-columns: 1.15fr 0.95fr;
       gap: 36px;
       align-items: center;
-      margin: 20px 0;
-      min-height: 280px;
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transform: translateX(45px) scale(0.98);
+      pointer-events: none;
+      transition: opacity 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .tour-body-grid.active {
+      position: relative;
+      opacity: 1;
+      transform: translateX(0) scale(1);
+      pointer-events: auto;
+    }
+    .tour-body-grid.passed {
+      opacity: 0;
+      transform: translateX(-45px) scale(0.98);
     }
 
     .tour-left-col {
@@ -282,7 +308,10 @@
       position: relative;
       margin-bottom: 20px;
       box-shadow: 0 0 35px rgba(0, 240, 255, 0.35);
+      animation: rotateIris 18s linear infinite;
     }
+    @keyframes rotateIris { to { transform: rotate(360deg); } }
+
     .iris-inner {
       width: 74px;
       height: 74px;
@@ -293,7 +322,9 @@
       justify-content: center;
       font-size: 1.5rem;
       color: #ffffff;
+      animation: counterRotate 18s linear infinite;
     }
+    @keyframes counterRotate { to { transform: rotate(-360deg); } }
 
     .tag-chips-row {
       display: flex;
@@ -377,6 +408,7 @@
     .metric-fill {
       height: 100%;
       border-radius: 999px;
+      transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .metric-pct {
       font-family: 'Space Mono', monospace;
@@ -406,7 +438,7 @@
       border: none;
       cursor: pointer;
       padding: 0;
-      transition: all 0.3s;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .b-dot.active {
       width: 22px;
@@ -431,11 +463,12 @@
       border-radius: 999px;
       padding: 8px 20px;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .tour-btn-prev:hover:not(:disabled) {
       background: rgba(255, 255, 255, 0.15);
       color: #ffffff;
+      transform: translateY(-1px);
     }
     .tour-btn-prev:disabled {
       opacity: 0.3;
@@ -452,7 +485,7 @@
       border-radius: 999px;
       padding: 9px 24px;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       box-shadow: 0 0 20px rgba(91, 109, 245, 0.4);
     }
     .tour-btn-next:hover {
@@ -473,7 +506,7 @@
       text-decoration: none;
       text-transform: uppercase;
       box-shadow: 0 0 25px rgba(0, 240, 255, 0.5);
-      transition: all 0.2s;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       display: none;
     }
     .tour-btn-launch:hover {
@@ -526,11 +559,11 @@
           </div>
         </div>
 
-        <!-- Tour Body Viewport (Step 1 to 4) -->
-        <div id="tour-step-container">
+        <!-- Tour Viewport Track -->
+        <div class="tour-viewport" id="tour-step-container">
 
           <!-- Slide 0: Introduction -->
-          <div class="tour-body-grid" data-step="0">
+          <div class="tour-body-grid active" data-step="0">
             <div class="tour-left-col">
               <span class="tour-tag-pill">&bull; INTRODUCTION</span>
               <h2 class="tour-heading">Welcome to <span class="text-orange">SONAR</span></h2>
@@ -554,7 +587,7 @@
           </div>
 
           <!-- Slide 1: Speech to Text -->
-          <div class="tour-body-grid" data-step="1" style="display: none;">
+          <div class="tour-body-grid" data-step="1">
             <div class="tour-left-col">
               <span class="tour-tag-pill">&bull; VOICE INGESTION</span>
               <h2 class="tour-heading">Multilingual <span class="text-orange">Speech Engine</span></h2>
@@ -577,7 +610,7 @@
           </div>
 
           <!-- Slide 2: FAISS Dense Retrieval -->
-          <div class="tour-body-grid" data-step="2" style="display: none;">
+          <div class="tour-body-grid" data-step="2">
             <div class="tour-left-col">
               <span class="tour-tag-pill">&bull; VECTOR SEARCH</span>
               <h2 class="tour-heading">In-Memory <span class="text-orange">FAISS Index</span></h2>
@@ -614,7 +647,7 @@
           </div>
 
           <!-- Slide 3: Grounded Answers & Citations -->
-          <div class="tour-body-grid" data-step="3" style="display: none;">
+          <div class="tour-body-grid" data-step="3">
             <div class="tour-left-col">
               <span class="tour-tag-pill">&bull; HARDWARE LLM</span>
               <h2 class="tour-heading">Grounded <span class="text-orange">Citations</span></h2>
@@ -626,11 +659,12 @@
             </div>
             <div class="tour-right-col">
               <div style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
-                <div style="background: rgba(5,255,161,0.12); border: 1px solid rgba(5,255,161,0.3); border-radius: 10px; padding: 10px 14px; font-size: 0.78rem; color: #05ffa1; font-weight: 700;">
-                  &check; Citation Grounding Verified
+                <div style="background: rgba(5,255,161,0.12); border: 1px solid rgba(5,255,161,0.3); border-radius: 10px; padding: 12px 14px; font-size: 0.78rem; color: #05ffa1; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                  <span>&check;</span> Citation Grounding Verified
                 </div>
-                <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 10px 14px; font-size: 0.75rem; color: rgba(255,255,255,0.7);">
-                  Total Latency: <strong style="color: #ffffff;">149 ms</strong> (&lt; 200 ms budget)
+                <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px 14px; font-size: 0.75rem; color: rgba(255,255,255,0.7); display: flex; justify-content: space-between;">
+                  <span>Total Latency:</span>
+                  <strong style="color: #ffffff;">149 ms (&lt; 200ms target)</strong>
                 </div>
               </div>
             </div>
@@ -678,7 +712,12 @@
       if (idx < 0 || idx >= totalSteps) return;
 
       slides.forEach((slide, i) => {
-        slide.style.display = (i === idx) ? 'grid' : 'none';
+        slide.classList.remove('active', 'passed');
+        if (i < idx) {
+          slide.classList.add('passed');
+        } else if (i === idx) {
+          slide.classList.add('active');
+        }
       });
 
       topDots.forEach((dot, i) => {
