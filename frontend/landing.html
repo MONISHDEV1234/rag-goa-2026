@@ -117,14 +117,25 @@
       color: #ffffff;
       text-decoration: none;
       text-transform: uppercase;
-      transition: opacity 0.2s;
+      transition: transform 0.2s cubic-bezier(0.2, 0, 0.2, 1), opacity 0.2s;
+      display: inline-block;
     }
-    .brand-logo:hover { opacity: 0.8; }
+    .brand-logo:hover { opacity: 0.85; }
 
     .nav-actions {
       display: flex;
       align-items: center;
-      gap: 32px;
+      gap: 20px;
+    }
+
+    /* Magnetic Item Wrap */
+    .magnetic-item {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+      will-change: transform;
     }
 
     .nav-link {
@@ -135,35 +146,87 @@
       color: rgba(255, 255, 255, 0.65);
       text-decoration: none;
       text-transform: uppercase;
-      transition: color 0.2s;
+      transition: color 0.25s, transform 0.25s cubic-bezier(0.25, 1, 0.5, 1);
       background: none;
       border: none;
       cursor: pointer;
-      padding: 0;
+      padding: 8px 16px;
+      border-radius: 999px;
+      position: relative;
+      overflow: hidden;
     }
-    .nav-link:hover { color: #ffffff; }
+    .nav-link::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 999px;
+      padding: 1px;
+      background: radial-gradient(
+        70px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+        rgba(255, 140, 40, 0.55),
+        transparent 70%
+      );
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    .nav-link:hover {
+      color: #ffffff;
+    }
+    .nav-link:hover::before {
+      opacity: 1;
+    }
 
     .nav-pill-btn {
+      position: relative;
       font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 0.8rem;
       font-weight: 700;
       letter-spacing: 0.14em;
       color: #ffffff;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.18);
       border-radius: 999px;
-      padding: 9px 24px;
+      padding: 10px 26px;
       text-decoration: none;
       text-transform: uppercase;
-      transition: all 0.25s;
+      transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
       backdrop-filter: blur(12px);
+      overflow: hidden;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .nav-pill-btn::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 999px;
+      padding: 1.5px;
+      background: radial-gradient(
+        100px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+        rgba(255, 140, 40, 0.9),
+        rgba(0, 240, 255, 0.4) 40%,
+        transparent 75%
+      );
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
     }
     .nav-pill-btn:hover {
-      background: #ffffff;
-      color: #000000;
-      border-color: #ffffff;
-      box-shadow: 0 0 25px rgba(255, 255, 255, 0.4);
-      transform: translateY(-1px);
+      background: rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+      box-shadow: 0 0 30px rgba(255, 140, 40, 0.35), 0 0 60px rgba(0, 240, 255, 0.15);
+      border-color: rgba(255, 140, 40, 0.4);
+    }
+    .nav-pill-btn:hover::before {
+      opacity: 1;
     }
 
     /* ── Center Hero ── */
@@ -745,11 +808,19 @@
 
     <!-- Top Navigation Bar -->
     <header class="navbar">
-      <a href="/" class="brand-logo">SONAR</a>
+      <div class="magnetic-item">
+        <a href="/" class="brand-logo">SONAR</a>
+      </div>
       <nav class="nav-actions">
-        <a href="/about" class="nav-link">ABOUT</a>
-        <button id="btn-open-tutorial" class="nav-link" type="button">TUTORIAL</button>
-        <a href="/app" class="nav-pill-btn">LAUNCH APP</a>
+        <div class="magnetic-item">
+          <a href="/about" class="nav-link">ABOUT</a>
+        </div>
+        <div class="magnetic-item">
+          <button id="btn-open-tutorial" class="nav-link" type="button">TUTORIAL</button>
+        </div>
+        <div class="magnetic-item">
+          <a href="/app" class="nav-pill-btn">LAUNCH APP</a>
+        </div>
       </nav>
     </header>
 
@@ -999,6 +1070,35 @@
       dot.addEventListener('click', () => {
         const i = parseInt(dot.getAttribute('data-index'), 10);
         goToStep(i);
+      });
+    });
+
+    /* ── Magnetic Navbar Buttons & Radial Spotlight Glow ── */
+    const magneticItems = document.querySelectorAll('.magnetic-item');
+
+    magneticItems.forEach((item) => {
+      const target = item.querySelector('a, button') || item;
+
+      item.addEventListener('mousemove', (e) => {
+        const rect = item.getBoundingClientRect();
+        const x = e.clientX - rect.left; // mouse pos within element
+        const y = e.clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const deltaX = (x - centerX) * 0.32;
+        const deltaY = (y - centerY) * 0.32;
+
+        // Apply magnetic pull
+        target.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0)`;
+
+        // Set CSS variables for radial spotlight border
+        target.style.setProperty('--mouse-x', `${x}px`);
+        target.style.setProperty('--mouse-y', `${y}px`);
+      });
+
+      item.addEventListener('mouseleave', () => {
+        // Smoothly release back to center
+        target.style.transform = 'translate3d(0, 0, 0)';
       });
     });
   </script>
