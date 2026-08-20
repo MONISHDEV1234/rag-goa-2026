@@ -233,6 +233,7 @@ const DOM = {
   latencyGrid:      document.getElementById('latency-grid'),
   systemStatus:     document.getElementById('system-status'),
   systemStatusText: document.getElementById('system-status-text'),
+  statusDot:        document.getElementById('status-dot'),
   demoBadge:        document.getElementById('demo-badge'),
   btnInstall:       document.getElementById('btn-install'),
   btnSettings:      document.getElementById('btn-settings'),
@@ -265,21 +266,21 @@ function setState(s) {
 
   // Mic label
   if (isError) {
-    DOM.micLabel.textContent = 'Tap to try again';
+    DOM.micLabel.textContent = 'TAP TO RETRY';
   } else if (isRecording) {
-    DOM.micLabel.textContent = 'Listening… tap to stop';
+    DOM.micLabel.textContent = 'LISTENING… TAP TO STOP';
   } else if (isDone) {
-    DOM.micLabel.textContent = 'Tap to ask another';
+    DOM.micLabel.textContent = 'TAP FOR NEW QUERY';
   } else {
-    DOM.micLabel.textContent = 'Tap to speak';
+    DOM.micLabel.textContent = 'TAP TO SPEAK';
   }
 
-  // Status bar
+  // Status ticker
   const statusMessages = {
-    [State.TRANSCRIBING]: CONFIG.demoMode ? '🎙 Transcribing speech (demo)…'  : 'Transcribing speech…',
-    [State.RETRIEVING]:   CONFIG.demoMode ? '🔍 Searching MSMARCO-XI (demo)…' : 'Searching MSMARCO-XI index…',
-    [State.GENERATING]:   CONFIG.demoMode ? '🤖 Generating answer (demo)…'    : 'Generating grounded answer…',
-    [State.GROUNDING]:    CONFIG.demoMode ? '✅ Verifying citations (demo)…'   : 'Verifying citations & grounding…',
+    [State.TRANSCRIBING]: CONFIG.demoMode ? 'STT // TRANSCRIBING NEURAL INPUT (DEMO)' : 'STT // SARVAM AI TRANSCRIBING…',
+    [State.RETRIEVING]:   CONFIG.demoMode ? 'FAISS // SEARCHING MSMARCO-XI (DEMO)'   : 'FAISS // SEARCHING MSMARCO-XI INDEX…',
+    [State.GENERATING]:   CONFIG.demoMode ? 'LLM // GROQ GENERATING RESPONSE (DEMO)' : 'LLM // GROQ GENERATING RESPONSE…',
+    [State.GROUNDING]:    CONFIG.demoMode ? 'GUARD // VERIFYING CITATIONS (DEMO)'    : 'GUARD // GROUNDING VERIFICATION…',
   };
   const msg = statusMessages[s];
   if (msg) {
@@ -303,8 +304,8 @@ function updateDemoUI() {
     DOM.demoBadge.style.display = CONFIG.demoMode ? 'inline-flex' : 'none';
   }
   if (CONFIG.demoMode) {
-    DOM.systemStatus.className = 'status-indicator demo';
-    DOM.systemStatusText.textContent = 'Demo Mode';
+    DOM.systemStatus.className = 'sys-status demo';
+    DOM.systemStatusText.textContent = 'DEMO MODE';
     DOM.btnMic.disabled = false;
   }
 }
@@ -728,19 +729,21 @@ window.addEventListener('appinstalled', () => {
 
 async function checkHealth() {
   if (CONFIG.demoMode) { updateDemoUI(); return; }
+  DOM.systemStatus.className = 'sys-status';
+  DOM.systemStatusText.textContent = 'CONNECTING…';
   try {
     const res = await fetch(getEndpoint('/health'), { signal: AbortSignal.timeout(4000) });
     if (res.ok) {
-      DOM.systemStatus.className = 'status-indicator ready';
-      DOM.systemStatusText.textContent = 'System Ready';
+      DOM.systemStatus.className = 'sys-status ready';
+      DOM.systemStatusText.textContent = 'ONLINE';
       DOM.btnMic.disabled = false;
     } else {
-      DOM.systemStatus.className = 'status-indicator error';
-      DOM.systemStatusText.textContent = 'Backend Error';
+      DOM.systemStatus.className = 'sys-status error';
+      DOM.systemStatusText.textContent = 'BACKEND ERR';
     }
   } catch (_) {
-    DOM.systemStatus.className = 'status-indicator error';
-    DOM.systemStatusText.textContent = 'Backend Offline';
+    DOM.systemStatus.className = 'sys-status error';
+    DOM.systemStatusText.textContent = 'OFFLINE';
     DOM.btnMic.disabled = false;
   }
 }
