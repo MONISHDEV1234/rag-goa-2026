@@ -26,38 +26,12 @@
       z-index: 0;
     }
 
-    /* ── Corner HUD brackets ── */
-    .corner {
-      position: fixed; width: 44px; height: 44px;
-      pointer-events: none; z-index: 50; opacity: 0.6;
-    }
-    .c-tl { top:14px; left:14px;  border-top:2px solid #00f0ff; border-left:2px solid #00f0ff; }
-    .c-tr { top:14px; right:14px; border-top:2px solid #00f0ff; border-right:2px solid #00f0ff; }
-    .c-bl { bottom:14px; left:14px;  border-bottom:2px solid #00f0ff; border-left:2px solid #00f0ff; }
-    .c-br { bottom:14px; right:14px; border-bottom:2px solid #00f0ff; border-right:2px solid #00f0ff; }
-
-    /* ── Hero (centered) ── */
     .hero {
       position: fixed; inset: 0; z-index: 10;
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
       text-align: center; gap: 0;
     }
-
-    /* ── Spinning rings ── */
-    .rings-wrapper {
-      position: relative;
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 20px;
-    }
-    .ring {
-      position: absolute; border-radius: 50%;
-    }
-    .ring-1 { width:480px; height:480px; border:1px solid rgba(0,240,255,0.08); animation:spin 25s linear infinite; }
-    .ring-2 { width:420px; height:420px; border:1px dashed rgba(255,42,109,0.08); animation:spin 18s linear infinite reverse; }
-    .ring-3 { width:360px; height:360px; border:1px dotted rgba(0,240,255,0.06); animation:spin 35s linear infinite; }
-    .ring-4 { width:300px; height:300px; border:1px solid rgba(252,238,10,0.04); animation:spin 15s linear infinite reverse; }
-    @keyframes spin { to { transform:rotate(360deg); } }
 
     /* ══════════════════════════════════════
        THE BIG SONAR WORD
@@ -286,22 +260,10 @@
 
   <canvas id="bg-canvas"></canvas>
 
-  <div class="corner c-tl"></div>
-  <div class="corner c-tr"></div>
-  <div class="corner c-bl"></div>
-  <div class="corner c-br"></div>
-
-  <!-- Page glitch ribbons — fire at different time from text glitch -->
   <div class="glitch-strip glitch-strip-1" aria-hidden="true"></div>
   <div class="glitch-strip glitch-strip-2" aria-hidden="true"></div>
 
   <section class="hero">
-    <div class="rings-wrapper">
-      <div class="ring ring-1"></div>
-      <div class="ring ring-2"></div>
-      <div class="ring ring-3"></div>
-      <div class="ring ring-4"></div>
-    </div>
 
     <div class="sonar-title">SONAR</div>
 
