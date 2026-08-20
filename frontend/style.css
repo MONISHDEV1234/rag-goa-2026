@@ -306,92 +306,34 @@ html, body {
   max-width: 680px;
 }
 
-.mic-stage-wrapper {
+
+/* ── AI Orb Stage ─────────────────────────────────── */
+.orb-stage-wrapper {
   position: relative;
-  width: 180px;
-  height: 180px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-top: 6px;
 }
 
-/* Multi-color Iris Ring */
-.iris-ring {
-  position: absolute;
-  border-radius: 50%;
-  pointer-events: none;
-}
-
-.iris-ring.ring-1 {
-  width: 170px;
-  height: 170px;
-  background: conic-gradient(
-    #ff2a6d 0deg,
-    #ff8c28 90deg,
-    #05ffa1 180deg,
-    #00f0ff 270deg,
-    #ff2a6d 360deg
-  );
-  opacity: 0.75;
-  filter: blur(14px);
-  animation: rotateIris 20s linear infinite;
-}
-
-.iris-ring.ring-2 {
-  width: 140px;
-  height: 140px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  animation: rotateIris 12s linear infinite reverse;
-}
-
-@keyframes rotateIris { to { transform: rotate(360deg); } }
-
-#audio-visualizer {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 2;
-}
-
-/* Mic Button */
-.btn-mic {
-  position: relative;
-  z-index: 5;
-  width: 86px;
-  height: 86px;
-  border-radius: 50%;
-  background: rgba(18, 20, 32, 0.9);
-  border: 1.5px solid rgba(255, 255, 255, 0.25);
-  color: var(--accent-cyan);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.ai-orb-canvas {
+  display: block;
+  width: 260px;
+  height: 260px;
   cursor: pointer;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 25px rgba(0, 240, 255, 0.25);
-  backdrop-filter: blur(16px);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+  border: none;
+  background: transparent;
+  filter: drop-shadow(0 0 28px rgba(255, 196, 40, 0.45));
+  transition: filter 0.3s;
 }
 
-.btn-mic:hover {
-  border-color: var(--accent-cyan);
-  color: #ffffff;
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.9), 0 0 35px rgba(0, 240, 255, 0.6);
-  transform: scale(1.05);
+.ai-orb-canvas.recording {
+  filter: drop-shadow(0 0 48px rgba(255, 196, 40, 0.95));
 }
 
-.btn-mic.recording {
-  border-color: var(--accent-magenta);
-  color: var(--accent-magenta);
-  box-shadow: 0 0 40px rgba(255, 42, 109, 0.7);
-  animation: recPulse 1.2s ease-in-out infinite alternate;
-}
-
-@keyframes recPulse {
-  0% { transform: scale(1); box-shadow: 0 0 30px rgba(255, 42, 109, 0.6); }
-  100% { transform: scale(1.08); box-shadow: 0 0 50px rgba(255, 42, 109, 0.9); }
+.ai-orb-canvas:hover {
+  filter: drop-shadow(0 0 36px rgba(255, 196, 40, 0.7));
 }
 
 .mic-instruction {
@@ -401,7 +343,14 @@ html, body {
   color: var(--text-muted);
   text-transform: uppercase;
   user-select: none;
+  transition: color 0.3s;
 }
+
+.mic-instruction.listening {
+  color: #ffc428;
+  text-shadow: 0 0 12px rgba(255, 196, 40, 0.8);
+}
+
 
 /* Search Input Box */
 .search-form {

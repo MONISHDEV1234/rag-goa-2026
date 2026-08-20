@@ -258,11 +258,17 @@ function setState(s) {
   const isDone       = s === State.ANSWER || s === State.NO_CONTEXT;
   const isError      = [State.STT_ERROR, State.RETRIEVAL_ERROR, State.GEN_ERROR, State.NO_SPEECH].includes(s);
 
-  // Mic button
-  DOM.btnMic.disabled = isProcessing;
+  // Mic canvas orb state
+  if (isProcessing) {
+    DOM.btnMic.setAttribute('aria-disabled', 'true');
+    DOM.btnMic.style.pointerEvents = 'none';
+  } else {
+    DOM.btnMic.removeAttribute('aria-disabled');
+    DOM.btnMic.style.pointerEvents = '';
+  }
+  DOM.btnMic.classList.toggle('recording', isRecording);
   DOM.btnMic.setAttribute('aria-pressed', isRecording ? 'true' : 'false');
   DOM.btnMic.setAttribute('aria-label', isRecording ? 'Stop recording' : 'Start voice recording');
-  DOM.btnMic.classList.toggle('recording', isRecording);
 
   // Mic label
   if (isError) {
@@ -306,7 +312,7 @@ function updateDemoUI() {
   if (CONFIG.demoMode) {
     DOM.systemStatus.className = 'sys-status demo';
     DOM.systemStatusText.textContent = 'DEMO MODE';
-    DOM.btnMic.disabled = false;
+    DOM.btnMic.removeAttribute('disabled');
   }
 }
 
@@ -327,9 +333,14 @@ function setupVisualizer(stream) {
 
     const source = audioCtx.createMediaStreamSource(stream);
     analyser = audioCtx.createAnalyser();
-    analyser.fftSize = 64;
+    analyser.fftSize = 256;
+    const dataArray = new Uint8Array(analyser.frequencyBinCount);
     source.connect(analyser);
-    drawVisualizer();
+
+    // Expose to orb.js
+    window.sonarAnalyser  = analyser;
+    window.sonarDataArray = dataArray;
+    if (window.orbSetAnalyser) window.orbSetAnalyser(analyser, dataArray);
   } catch (e) { /* optional enhancement */ }
 }
 
@@ -384,11 +395,10 @@ function drawVisualizer() {
 function stopVisualizer() {
   if (visualizerAnimId) cancelAnimationFrame(visualizerAnimId);
   visualizerAnimId = null;
-  if (DOM.canvasVisualizer) {
-    DOM.canvasVisualizer.getContext('2d').clearRect(
-      0, 0, DOM.canvasVisualizer.width, DOM.canvasVisualizer.height
-    );
-  }
+  // Clear analyser ref in orb
+  window.sonarAnalyser  = null;
+  window.sonarDataArray = null;
+  if (window.orbSetAnalyser) window.orbSetAnalyser(null, null);
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -736,7 +746,7 @@ async function checkHealth() {
     if (res.ok) {
       DOM.systemStatus.className = 'sys-status ready';
       DOM.systemStatusText.textContent = 'ONLINE';
-      DOM.btnMic.disabled = false;
+      DOM.btnMic.removeAttribute('disabled');
     } else {
       DOM.systemStatus.className = 'sys-status error';
       DOM.systemStatusText.textContent = 'BACKEND ERR';
@@ -744,7 +754,7 @@ async function checkHealth() {
   } catch (_) {
     DOM.systemStatus.className = 'sys-status error';
     DOM.systemStatusText.textContent = 'OFFLINE';
-    DOM.btnMic.disabled = false;
+    DOM.btnMic.removeAttribute('disabled');
   }
 }
 

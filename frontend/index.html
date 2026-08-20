@@ -84,31 +84,23 @@
       ══════════════════════════════════ -->
       <section class="voice-search-hero" aria-label="Voice and search input">
 
-        <div class="mic-stage-wrapper">
-          <!-- Multi-color Iris Pulsing Rings -->
-          <div class="iris-ring ring-1" aria-hidden="true"></div>
-          <div class="iris-ring ring-2" aria-hidden="true"></div>
-
-          <!-- Canvas visualizer -->
-          <canvas id="audio-visualizer" width="200" height="200" aria-hidden="true"></canvas>
-
-          <!-- Mic Button -->
-          <button id="btn-mic"
-            class="btn-mic"
-            type="button"
+        <!-- Golden AI Orb — click anywhere on the canvas to toggle recording -->
+        <div class="orb-stage-wrapper">
+          <canvas
+            id="btn-mic"
+            class="ai-orb-canvas"
+            width="340"
+            height="340"
+            role="button"
+            tabindex="0"
             aria-label="Click to start voice recording"
-            aria-pressed="false">
-            <svg class="mic-icon" viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-              <line x1="12" y1="19" x2="12" y2="23"/>
-              <line x1="8" y1="23" x2="16" y2="23"/>
-            </svg>
-            <span class="mic-pulse" aria-hidden="true"></span>
-          </button>
+            aria-pressed="false"
+          ></canvas>
+          <!-- hidden real button so app.js event listeners still attach -->
+          <button id="btn-mic-real" style="display:none;" aria-hidden="true"></button>
         </div>
 
-        <div class="mic-instruction" id="mic-label">TAP TO SPEAK</div>
+        <div class="mic-instruction" id="mic-label">TAP ORB TO SPEAK</div>
 
         <!-- Text Input Search Box -->
         <form id="text-query-form" class="search-form" role="search">
@@ -257,6 +249,7 @@
 
   </div>
 
+  <script src="/static/orb.js"></script>
   <script src="/static/app.js"></script>
 </body>
 </html>
