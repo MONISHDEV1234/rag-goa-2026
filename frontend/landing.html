@@ -757,15 +757,6 @@
     <main class="hero-center">
       <h1 class="hero-title">SONAR</h1>
       <p class="hero-subtitle">SOund Neural Answer Retrieval</p>
-
-      <!-- Dynamic Island Quick Guide Trigger -->
-      <div class="island-trigger-wrap">
-        <button id="island-trigger" class="floating-island-btn" type="button" aria-label="Open Platform Tour">
-          <span class="island-dot"></span>
-          <span>EXPLORE PLATFORM TOUR</span>
-          <span style="opacity: 0.6; font-size: 0.85rem;">&rarr;</span>
-        </button>
-      </div>
     </main>
 
     <!-- Bottom Footer -->
@@ -934,8 +925,7 @@
 
   <script>
     const modal       = document.getElementById('tour-modal');
-    const openBtn1    = document.getElementById('island-trigger');
-    const openBtn2    = document.getElementById('btn-open-tutorial');
+    const openBtn     = document.getElementById('btn-open-tutorial');
     const closeBtn    = document.getElementById('btn-close-tour');
     const prevBtn     = document.getElementById('btn-tour-prev');
     const nextBtn     = document.getElementById('btn-tour-next');
@@ -988,9 +978,8 @@
       }
     }
 
-    openBtn1.addEventListener('click', openModal);
-    openBtn2.addEventListener('click', openModal);
-    closeBtn.addEventListener('click', closeModal);
+    if (openBtn) openBtn.addEventListener('click', openModal);
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
 
     modal.addEventListener('click', (e) => {
       if (e.target === modal) closeModal();
