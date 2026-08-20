@@ -21,7 +21,7 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ── Volumetric Prism Lighting / Horizon Glow ── */
+    /* ── Volumetric Prism Lighting ── */
     .prism-background {
       position: fixed;
       inset: 0;
@@ -42,7 +42,7 @@
         from 180deg at 50% 100%,
         rgba(0, 240, 255, 0) 0deg,
         rgba(0, 180, 255, 0.08) 25deg,
-        rgba(255, 42, 109, 0.06) 45deg,
+        rgba(255, 120, 30, 0.06) 45deg,
         rgba(252, 238, 10, 0.05) 55deg,
         rgba(5, 255, 161, 0.08) 70deg,
         rgba(0, 240, 255, 0.12) 85deg,
@@ -65,7 +65,7 @@
         rgba(255, 255, 255, 0.85) 0%,
         rgba(0, 240, 255, 0.8) 18%,
         rgba(0, 130, 255, 0.45) 42%,
-        rgba(255, 42, 109, 0.15) 65%,
+        rgba(255, 120, 30, 0.15) 65%,
         transparent 85%
       );
       filter: blur(35px);
@@ -79,7 +79,7 @@
       transform: translateX(-50%);
       width: 80vw;
       height: 50vh;
-      background: radial-gradient(circle, rgba(0, 240, 255, 0.06) 0%, rgba(255, 42, 109, 0.03) 40%, transparent 70%);
+      background: radial-gradient(circle, rgba(0, 240, 255, 0.06) 0%, rgba(255, 120, 30, 0.03) 40%, transparent 70%);
       filter: blur(70px);
     }
 
@@ -117,9 +117,7 @@
       color: #ffffff;
       text-decoration: none;
       text-transform: uppercase;
-      transition: opacity 0.2s;
     }
-    .brand-logo:hover { opacity: 0.8; }
 
     .nav-actions {
       display: flex;
@@ -155,7 +153,7 @@
       padding: 9px 24px;
       text-decoration: none;
       text-transform: uppercase;
-      transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+      transition: all 0.25s;
       backdrop-filter: blur(12px);
     }
     .nav-pill-btn:hover {
@@ -202,7 +200,6 @@
       margin-top: 18px;
     }
 
-    /* ── Floating Island Button ── */
     .island-trigger-wrap {
       margin-top: 28px;
     }
@@ -211,31 +208,30 @@
       display: inline-flex;
       align-items: center;
       gap: 10px;
-      padding: 10px 22px;
-      background: rgba(20, 20, 30, 0.75);
-      border: 1px solid rgba(255, 255, 255, 0.18);
+      padding: 11px 26px;
+      background: rgba(20, 20, 30, 0.8);
+      border: 1px solid rgba(255, 140, 40, 0.5);
       border-radius: 999px;
-      color: rgba(255, 255, 255, 0.85);
+      color: #ffffff;
       font-size: 0.82rem;
-      font-weight: 600;
+      font-weight: 700;
       letter-spacing: 0.08em;
       cursor: pointer;
       backdrop-filter: blur(16px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 240, 255, 0.15);
-      transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 25px rgba(255, 120, 30, 0.3);
+      transition: all 0.25s;
     }
     .floating-island-btn:hover {
-      background: rgba(30, 30, 45, 0.9);
-      border-color: rgba(0, 240, 255, 0.5);
-      color: #ffffff;
-      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7), 0 0 30px rgba(0, 240, 255, 0.35);
+      background: rgba(30, 30, 45, 0.95);
+      border-color: #ff8c28;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.9), 0 0 35px rgba(255, 140, 40, 0.55);
       transform: translateY(-2px);
     }
     .island-dot {
       width: 7px; height: 7px;
       border-radius: 50%;
-      background: #00f0ff;
-      box-shadow: 0 0 8px #00f0ff;
+      background: #ff8c28;
+      box-shadow: 0 0 8px #ff8c28;
       animation: blink 2s infinite;
     }
     @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
@@ -256,14 +252,14 @@
     }
 
     /* ══════════════════════════════════════════
-       INTERACTIVE DYNAMIC ISLAND TUTORIAL MODAL
+       ORANGE-BORDERED PRISM TUTORIAL TOUR MODAL
     ══════════════════════════════════════════ */
-    .island-modal-backdrop {
+    .tour-modal-backdrop {
       position: fixed;
       inset: 0;
       z-index: 500;
-      background: rgba(0, 0, 0, 0.75);
-      backdrop-filter: blur(14px);
+      background: rgba(0, 0, 0, 0.82);
+      backdrop-filter: blur(16px);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -272,59 +268,91 @@
       pointer-events: none;
       transition: opacity 0.3s cubic-bezier(0.2, 0, 0, 1);
     }
-    .island-modal-backdrop.active {
+    .tour-modal-backdrop.active {
       opacity: 1;
       pointer-events: auto;
     }
 
-    .island-card {
+    /* Orange glowing card */
+    .tour-card {
       width: 100%;
-      max-width: 520px;
-      background: rgba(14, 14, 22, 0.92);
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      border-radius: 28px;
-      padding: 32px 32px 28px;
+      max-width: 820px;
+      min-height: 480px;
+      background: #0d0f1a;
+      border: 1.5px solid #ff7a18;
+      border-radius: 24px;
+      padding: 28px 32px;
       box-shadow:
-        0 25px 60px rgba(0, 0, 0, 0.85),
-        0 0 40px rgba(0, 240, 255, 0.12),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(24px);
-      transform: scale(0.92) translateY(12px);
+        0 25px 70px rgba(0, 0, 0, 0.95),
+        0 0 50px rgba(255, 122, 24, 0.35),
+        inset 0 0 2px rgba(255, 180, 80, 0.3);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transform: scale(0.94) translateY(12px);
       transition: all 0.35s cubic-bezier(0.2, 0, 0, 1);
       position: relative;
-      overflow: hidden;
     }
-    .island-modal-backdrop.active .island-card {
+    .tour-modal-backdrop.active .tour-card {
       transform: scale(1) translateY(0);
     }
 
-    /* Top bar of island */
-    .island-top-bar {
+    /* Top Tour Header */
+    .tour-top-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
     }
 
-    .island-step-pill {
+    .tour-brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .tour-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 900;
+      font-size: 1.1rem;
+      letter-spacing: 0.2em;
+      color: #ffffff;
+    }
+    .tour-pipe { color: rgba(255, 255, 255, 0.25); }
+    .tour-category {
       font-family: 'Space Mono', monospace;
       font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      color: #00f0ff;
-      background: rgba(0, 240, 255, 0.1);
-      border: 1px solid rgba(0, 240, 255, 0.25);
-      border-radius: 999px;
-      padding: 4px 12px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
+      letter-spacing: 0.15em;
+      color: #ff8c28;
+      text-transform: uppercase;
     }
 
-    .island-close-btn {
+    .tour-top-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .top-progress-dots {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .top-mini-dot {
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .top-mini-dot.active {
+      width: 18px;
+      border-radius: 999px;
+      background: #5b6df5;
+    }
+
+    .tour-close-btn {
       width: 32px; height: 32px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.06);
       border: 1px solid rgba(255, 255, 255, 0.15);
       color: rgba(255, 255, 255, 0.7);
       display: flex;
@@ -334,167 +362,330 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-    .island-close-btn:hover {
+    .tour-close-btn:hover {
       background: rgba(255, 255, 255, 0.2);
       color: #ffffff;
-      transform: scale(1.05);
     }
 
-    /* Pockets / Slide Track */
-    .pockets-viewport {
-      position: relative;
-      min-height: 180px;
-      overflow: hidden;
+    /* ── Split 2-Column Body ── */
+    .tour-body-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.95fr;
+      gap: 36px;
+      align-items: center;
+      margin: 20px 0;
+      min-height: 280px;
     }
 
-    .pocket-slide {
-      position: absolute;
-      inset: 0;
+    /* Left Column */
+    .tour-left-col {
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      opacity: 0;
-      transform: translateX(40px);
-      pointer-events: none;
-      transition: all 0.35s cubic-bezier(0.2, 0, 0, 1);
-    }
-    .pocket-slide.active {
-      position: relative;
-      opacity: 1;
-      transform: translateX(0);
-      pointer-events: auto;
-    }
-    .pocket-slide.passed {
-      transform: translateX(-40px);
-      opacity: 0;
+      gap: 14px;
     }
 
-    .pocket-icon-badge {
-      width: 44px; height: 44px;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      display: flex;
+    .tour-tag-pill {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: #ff8c28;
+      background: rgba(255, 140, 40, 0.1);
+      border: 1px solid rgba(255, 140, 40, 0.35);
+      border-radius: 999px;
+      padding: 4px 14px;
+      display: inline-flex;
       align-items: center;
-      justify-content: center;
-      font-size: 1.3rem;
-      margin-bottom: 4px;
+      gap: 6px;
+      width: fit-content;
+      text-transform: uppercase;
     }
 
-    .pocket-heading {
+    .tour-heading {
       font-family: 'Space Grotesk', sans-serif;
       font-weight: 800;
-      font-size: 1.45rem;
+      font-size: 1.85rem;
       color: #ffffff;
+      line-height: 1.2;
       letter-spacing: -0.01em;
     }
-
-    .pocket-desc {
-      font-size: 0.95rem;
-      line-height: 1.65;
-      color: rgba(255, 255, 255, 0.68);
+    .text-orange {
+      color: #ff8c28;
     }
-    .pocket-desc code {
+
+    .tour-subheading {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #6375ff;
+      margin-top: -6px;
+    }
+    .tour-subheading.green { color: #05ffa1; }
+    .tour-subheading.cyan  { color: #00f0ff; }
+
+    .tour-desc {
+      font-size: 0.92rem;
+      line-height: 1.65;
+      color: rgba(255, 255, 255, 0.65);
+    }
+    .tour-desc code {
       font-family: 'Space Mono', monospace;
-      font-size: 0.85rem;
-      color: #00f0ff;
-      background: rgba(0, 240, 255, 0.1);
-      padding: 1px 6px;
+      font-size: 0.82rem;
+      color: #ff8c28;
+      background: rgba(255, 140, 40, 0.1);
+      padding: 2px 6px;
       border-radius: 4px;
     }
 
-    /* Island Footer (Arrows + White Dots) */
-    .island-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 24px;
-      padding-top: 18px;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    .tour-step-counter {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.35);
+      letter-spacing: 0.1em;
+      margin-top: 4px;
     }
 
-    /* White Dots pagination */
-    .dots-container {
+    /* Right Column (Visual Mockup Box) */
+    .tour-right-col {
+      background: rgba(18, 20, 32, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 28px 24px;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
+      min-height: 240px;
+      position: relative;
     }
 
-    .step-dot {
-      width: 8px; height: 8px;
+    /* Visual 1: Multi-color Iris Ring */
+    .iris-ring-visual {
+      width: 100px;
+      height: 100px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.25);
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
-    }
-    .step-dot.active {
-      width: 24px;
-      border-radius: 999px;
-      background: #ffffff;
-      box-shadow: 0 0 12px rgba(255, 255, 255, 0.8);
-    }
-    .step-dot:hover:not(.active) {
-      background: rgba(255, 255, 255, 0.5);
-    }
-
-    /* Navigation Arrow Buttons */
-    .nav-arrow-group {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .arrow-btn {
-      width: 38px; height: 38px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: #ffffff;
+      background: conic-gradient(
+        #ff2a6d 0deg,
+        #fcee0a 90deg,
+        #05ffa1 180deg,
+        #00f0ff 270deg,
+        #ff2a6d 360deg
+      );
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.1rem;
-      cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+      position: relative;
+      margin-bottom: 20px;
+      box-shadow: 0 0 35px rgba(0, 240, 255, 0.35);
     }
-    .arrow-btn:hover:not(:disabled) {
-      background: #ffffff;
-      color: #000000;
-      box-shadow: 0 0 18px rgba(255, 255, 255, 0.4);
-      transform: scale(1.05);
-    }
-    .arrow-btn:disabled {
-      opacity: 0.25;
-      cursor: not-allowed;
+    .iris-inner {
+      width: 74px;
+      height: 74px;
+      border-radius: 50%;
+      background: #0d0f1a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: #ffffff;
     }
 
-    .launch-btn-small {
+    .tag-chips-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .chip-item {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.7);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 999px;
+      padding: 5px 14px;
+    }
+
+    /* Visual 2: Latency Score Gauge */
+    .gauge-visual {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      border: 6px solid #1a2030;
+      border-top-color: #05ffa1;
+      border-right-color: #05ffa1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 30px rgba(5, 255, 161, 0.35);
+      margin-bottom: 16px;
+    }
+    .gauge-val {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #ffffff;
+    }
+    .gauge-label {
+      font-size: 0.65rem;
+      color: #05ffa1;
+      letter-spacing: 0.05em;
+    }
+
+    .legend-row {
+      display: flex;
+      gap: 14px;
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .dot-green  { width: 6px; height: 6px; border-radius: 50%; background: #05ffa1; }
+    .dot-orange { width: 6px; height: 6px; border-radius: 50%; background: #ff8c28; }
+    .dot-red    { width: 6px; height: 6px; border-radius: 50%; background: #ff2a6d; }
+
+    /* Visual 3: Progress Bars / Citation Confidence */
+    .bar-list-visual {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .metric-bar-row {
+      display: grid;
+      grid-template-columns: 85px 1fr 38px;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.75rem;
+    }
+    .metric-name {
+      color: rgba(255, 255, 255, 0.7);
+      white-space: nowrap;
+    }
+    .metric-track {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .metric-fill {
+      height: 100%;
+      border-radius: 999px;
+    }
+    .metric-pct {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.85);
+      text-align: right;
+    }
+
+    /* ── Bottom Tour Navigation Footer ── */
+    .tour-bottom-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    .bottom-dots {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .b-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.25);
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: all 0.3s;
+    }
+    .b-dot.active {
+      width: 22px;
+      border-radius: 999px;
+      background: #5b6df5;
+      box-shadow: 0 0 10px rgba(91, 109, 245, 0.8);
+    }
+
+    .tour-btn-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .tour-btn-prev {
       font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 0.8rem;
       font-weight: 700;
-      letter-spacing: 0.1em;
+      color: rgba(255, 255, 255, 0.7);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 999px;
+      padding: 8px 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tour-btn-prev:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+    }
+    .tour-btn-prev:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .tour-btn-next {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #ffffff;
+      background: #5b6df5;
+      border: none;
+      border-radius: 999px;
+      padding: 9px 24px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 0 20px rgba(91, 109, 245, 0.4);
+    }
+    .tour-btn-next:hover {
+      background: #6f7eff;
+      box-shadow: 0 0 25px rgba(91, 109, 245, 0.7);
+      transform: translateY(-1px);
+    }
+
+    .tour-btn-launch {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
       color: #000000;
       background: #00f0ff;
       border: none;
       border-radius: 999px;
-      padding: 9px 20px;
+      padding: 9px 24px;
       text-decoration: none;
       text-transform: uppercase;
-      box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.5);
       transition: all 0.2s;
+      display: none;
     }
-    .launch-btn-small:hover {
+    .tour-btn-launch:hover {
       background: #33f5ff;
-      box-shadow: 0 0 28px rgba(0, 240, 255, 0.7);
-      transform: scale(1.03);
+      box-shadow: 0 0 35px rgba(0, 240, 255, 0.8);
+      transform: translateY(-1px);
     }
 
     /* ── Responsive ── */
     @media (max-width: 768px) {
       .page-container { padding: 20px 24px; }
       .nav-actions { gap: 18px; }
-      .hero-subtitle { letter-spacing: 0.2em; }
-      .island-card { padding: 24px; border-radius: 22px; }
+      .tour-body-grid { grid-template-columns: 1fr; gap: 24px; }
+      .tour-card { padding: 24px; min-height: auto; }
+      .tour-heading { font-size: 1.5rem; }
     }
   </style>
 </head>
@@ -526,10 +717,10 @@
 
       <!-- Dynamic Island Quick Guide Trigger -->
       <div class="island-trigger-wrap">
-        <button id="island-trigger" class="floating-island-btn" type="button" aria-label="Open Interactive Tutorial Island">
+        <button id="island-trigger" class="floating-island-btn" type="button" aria-label="Open Platform Tour">
           <span class="island-dot"></span>
-          <span>HOW IT WORKS &bull; 4 STEPS</span>
-          <span style="opacity: 0.5; font-size: 0.75rem;">&rarr;</span>
+          <span>EXPLORE PLATFORM TOUR</span>
+          <span style="opacity: 0.6; font-size: 0.85rem;">&rarr;</span>
         </button>
       </div>
     </main>
@@ -542,98 +733,172 @@
   </div>
 
   <!-- ══════════════════════════════════════════
-       INTERACTIVE DYNAMIC ISLAND TUTORIAL MODAL
+       ORANGE-BORDERED PRISM TOUR MODAL
   ══════════════════════════════════════════ -->
-  <div id="tutorial-modal" class="island-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="pocket-title">
-    <div class="island-card">
+  <div id="tour-modal" class="tour-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="tour-headline">
+    <div class="tour-card">
 
-      <!-- Top Island Bar -->
-      <div class="island-top-bar">
-        <span class="island-step-pill" id="step-indicator">
-          <span>STEP</span>
-          <strong id="step-num-text">01 / 04</strong>
-        </span>
-        <button id="btn-close-island" class="island-close-btn" aria-label="Close tutorial">&times;</button>
+      <!-- Top Header -->
+      <div class="tour-top-header">
+        <div class="tour-brand-group">
+          <span class="tour-logo">SONAR</span>
+          <span class="tour-pipe">|</span>
+          <span class="tour-category">PLATFORM TOUR</span>
+        </div>
+
+        <div class="tour-top-right">
+          <div class="top-progress-dots" id="top-dots">
+            <span class="top-mini-dot active"></span>
+            <span class="top-mini-dot"></span>
+            <span class="top-mini-dot"></span>
+            <span class="top-mini-dot"></span>
+          </div>
+          <button id="btn-close-tour" class="tour-close-btn" aria-label="Close tour">&times;</button>
+        </div>
       </div>
 
-      <!-- Step Pockets Viewport -->
-      <div class="pockets-viewport">
+      <!-- Tour Body Viewport (Step 1 to 4) -->
+      <div id="tour-step-container">
 
-        <!-- Pocket 1 -->
-        <div class="pocket-slide active" data-step="0">
-          <div class="pocket-icon-badge">🎙</div>
-          <h2 class="pocket-heading" id="pocket-title">Speak or Type Query</h2>
-          <p class="pocket-desc">
-            Tap the central microphone button to record voice input in English or Indian languages with <code>Sarvam AI</code> speech transcription, or type directly in the search terminal.
-          </p>
+        <!-- Slide 0: Introduction -->
+        <div class="tour-body-grid" data-step="0">
+          <div class="tour-left-col">
+            <span class="tour-tag-pill">&bull; INTRODUCTION</span>
+            <h2 class="tour-heading" id="tour-headline">Welcome to <span class="text-orange">SONAR</span></h2>
+            <div class="tour-subheading">Voice-Enabled Neural Retrieval Platform</div>
+            <p class="tour-desc">
+              SONAR integrates high-speed speech transcription, in-memory dense vector search, and Groq LPU inference to deliver grounded answers to complex questions in under 200 milliseconds.
+            </p>
+            <div class="tour-step-counter">01 / 04</div>
+          </div>
+          <div class="tour-right-col">
+            <div class="iris-ring-visual">
+              <div class="iris-inner">🎙</div>
+            </div>
+            <div class="tag-chips-row">
+              <span class="chip-item">Sarvam STT</span>
+              <span class="chip-item">FAISS</span>
+              <span class="chip-item">Groq LPU</span>
+              <span class="chip-item">MSMARCO</span>
+            </div>
+          </div>
         </div>
 
-        <!-- Pocket 2 -->
-        <div class="pocket-slide" data-step="1">
-          <div class="pocket-icon-badge">⚡</div>
-          <h2 class="pocket-heading">Live Neural Pipeline</h2>
-          <p class="pocket-desc">
-            Watch the live status ticker transition across stages:
-            <br/>
-            <code>STT Transcribing (~60ms)</code> &rarr; <code>FAISS Search (~5ms)</code> &rarr; <code>Groq LLM Generation (~75ms)</code>.
-          </p>
+        <!-- Slide 1: Speech to Text -->
+        <div class="tour-body-grid" data-step="1" style="display: none;">
+          <div class="tour-left-col">
+            <span class="tour-tag-pill">&bull; VOICE INGESTION</span>
+            <h2 class="tour-heading">Multilingual <span class="text-orange">Speech Engine</span></h2>
+            <div class="tour-subheading green">Indian-accent optimized transcription</div>
+            <p class="tour-desc">
+              Browser WebM/Opus audio streams directly to Sarvam AI <code>saarika:v2.5</code>. Transcription completes in ~60ms with automatic language detection across Indian accents and regional dialects.
+            </p>
+            <div class="tour-step-counter">02 / 04</div>
+          </div>
+          <div class="tour-right-col">
+            <div class="gauge-visual">
+              <span class="gauge-val">60ms</span>
+              <span class="gauge-label">STT SPEED</span>
+            </div>
+            <div class="legend-row">
+              <span class="legend-item"><span class="dot-green"></span> Optimal</span>
+              <span class="legend-item"><span class="dot-orange"></span> Target &lt;80ms</span>
+            </div>
+          </div>
         </div>
 
-        <!-- Pocket 3 -->
-        <div class="pocket-slide" data-step="2">
-          <div class="pocket-icon-badge">📚</div>
-          <h2 class="pocket-heading">Grounded Citations</h2>
-          <p class="pocket-desc">
-            Every response carries a <strong>✓ Grounded</strong> verification badge. Review retrieved source passages, chunking strategies, and vector cosine similarity scores.
-          </p>
+        <!-- Slide 2: FAISS Dense Retrieval -->
+        <div class="tour-body-grid" data-step="2" style="display: none;">
+          <div class="tour-left-col">
+            <span class="tour-tag-pill">&bull; VECTOR SEARCH</span>
+            <h2 class="tour-heading">In-Memory <span class="text-orange">FAISS Index</span></h2>
+            <div class="tour-subheading cyan">BGE-small-en embeddings &bull; Zero Disk I/O</div>
+            <p class="tour-desc">
+              FastEmbed generates query vectors in 9ms. FAISS <code>IndexFlatIP</code> scans thousands of MSMARCO-XI chunks in RAM in ~5ms, ranking candidates by cosine similarity.
+            </p>
+            <div class="tour-step-counter">03 / 04</div>
+          </div>
+          <div class="tour-right-col">
+            <div class="bar-list-visual">
+              <div class="metric-bar-row">
+                <span class="metric-name">Doc #48102</span>
+                <div class="metric-track"><div class="metric-fill" style="width: 92%; background: #05ffa1;"></div></div>
+                <span class="metric-pct">92%</span>
+              </div>
+              <div class="metric-bar-row">
+                <span class="metric-name">Doc #19382</span>
+                <div class="metric-track"><div class="metric-fill" style="width: 86%; background: #00f0ff;"></div></div>
+                <span class="metric-pct">86%</span>
+              </div>
+              <div class="metric-bar-row">
+                <span class="metric-name">Doc #88391</span>
+                <div class="metric-track"><div class="metric-fill" style="width: 79%; background: #5b6df5;"></div></div>
+                <span class="metric-pct">79%</span>
+              </div>
+              <div class="metric-bar-row">
+                <span class="metric-name">Doc #30291</span>
+                <div class="metric-track"><div class="metric-fill" style="width: 68%; background: #ff8c28;"></div></div>
+                <span class="metric-pct">68%</span>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <!-- Pocket 4 -->
-        <div class="pocket-slide" data-step="3">
-          <div class="pocket-icon-badge">⏱</div>
-          <h2 class="pocket-heading">Sub-200ms Telemetry</h2>
-          <p class="pocket-desc">
-            Inspect real-time per-stage latency telemetry. Tap <code>⚙ SYS</code> in the top header to enable <strong>Demo Mode</strong> for full offline demonstrations anytime.
-          </p>
+        <!-- Slide 3: Grounded Answers & Citations -->
+        <div class="tour-body-grid" data-step="3" style="display: none;">
+          <div class="tour-left-col">
+            <span class="tour-tag-pill">&bull; HARDWARE LLM</span>
+            <h2 class="tour-heading">Grounded <span class="text-orange">Citations</span></h2>
+            <div class="tour-subheading green">Groq LPU Generation &bull; Target &lt;200ms</div>
+            <p class="tour-desc">
+              Groq LPU runs <code>llama-3.1-8b-instant</code> with strict citation guardrails in ~75ms. Output answers are strictly verified against retrieved chunks before display.
+            </p>
+            <div class="tour-step-counter">04 / 04</div>
+          </div>
+          <div class="tour-right-col">
+            <div style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
+              <div style="background: rgba(5,255,161,0.12); border: 1px solid rgba(5,255,161,0.3); border-radius: 10px; padding: 10px 14px; font-size: 0.78rem; color: #05ffa1; font-weight: 700;">
+                &check; Citation Grounding Verified
+              </div>
+              <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 10px 14px; font-size: 0.75rem; color: rgba(255,255,255,0.7);">
+                Total Latency: <strong style="color: #ffffff;">149 ms</strong> (&lt; 200 ms budget)
+              </div>
+            </div>
+          </div>
         </div>
 
       </div>
 
-      <!-- Island Footer (White Dots & Arrow Controls) -->
-      <div class="island-footer">
-
-        <!-- White Dots Indicator -->
-        <div class="dots-container" role="tablist" aria-label="Tutorial step dots">
-          <button class="step-dot active" data-index="0" aria-label="Step 1"></button>
-          <button class="step-dot" data-index="1" aria-label="Step 2"></button>
-          <button class="step-dot" data-index="2" aria-label="Step 3"></button>
-          <button class="step-dot" data-index="3" aria-label="Step 4"></button>
+      <!-- Bottom Navigation Footer -->
+      <div class="tour-bottom-bar">
+        <div class="bottom-dots" id="bottom-dots">
+          <button class="b-dot active" data-index="0" aria-label="Step 1"></button>
+          <button class="b-dot" data-index="1" aria-label="Step 2"></button>
+          <button class="b-dot" data-index="2" aria-label="Step 3"></button>
+          <button class="b-dot" data-index="3" aria-label="Step 4"></button>
         </div>
 
-        <!-- Arrow Navigation Buttons -->
-        <div class="nav-arrow-group">
-          <button id="btn-prev-pocket" class="arrow-btn" type="button" aria-label="Previous step" disabled>&larr;</button>
-          <button id="btn-next-pocket" class="arrow-btn" type="button" aria-label="Next step">&rarr;</button>
-          <a href="/app" class="launch-btn-small" id="btn-launch-final" style="display:none;">LAUNCH APP &rarr;</a>
+        <div class="tour-btn-group">
+          <button id="btn-tour-prev" class="tour-btn-prev" type="button" disabled>&larr; Prev</button>
+          <button id="btn-tour-next" class="tour-btn-next" type="button">Next &rarr;</button>
+          <a href="/app" id="btn-tour-launch" class="tour-btn-launch">Launch App &rarr;</a>
         </div>
-
       </div>
 
     </div>
   </div>
 
   <script>
-    // Dynamic Island Tutorial Logic
-    const modal       = document.getElementById('tutorial-modal');
+    const modal       = document.getElementById('tour-modal');
     const openBtn1    = document.getElementById('island-trigger');
     const openBtn2    = document.getElementById('btn-open-tutorial');
-    const closeBtn    = document.getElementById('btn-close-island');
-    const prevBtn     = document.getElementById('btn-prev-pocket');
-    const nextBtn     = document.getElementById('btn-next-pocket');
-    const finalLaunch = document.getElementById('btn-launch-final');
-    const stepText    = document.getElementById('step-num-text');
-    const slides      = document.querySelectorAll('.pocket-slide');
-    const dots        = document.querySelectorAll('.step-dot');
+    const closeBtn    = document.getElementById('btn-close-tour');
+    const prevBtn     = document.getElementById('btn-tour-prev');
+    const nextBtn     = document.getElementById('btn-tour-next');
+    const launchBtn   = document.getElementById('btn-tour-launch');
+    const slides      = document.querySelectorAll('.tour-body-grid');
+    const topDots     = document.querySelectorAll('.top-mini-dot');
+    const bottomDots  = document.querySelectorAll('.b-dot');
 
     let currentStep = 0;
     const totalSteps = slides.length;
@@ -651,29 +916,26 @@
       if (idx < 0 || idx >= totalSteps) return;
 
       slides.forEach((slide, i) => {
-        slide.classList.remove('active', 'passed');
-        if (i < idx) {
-          slide.classList.add('passed');
-        } else if (i === idx) {
-          slide.classList.add('active');
-        }
+        slide.style.display = (i === idx) ? 'grid' : 'none';
       });
 
-      dots.forEach((dot, i) => {
+      topDots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === idx);
+      });
+
+      bottomDots.forEach((dot, i) => {
         dot.classList.toggle('active', i === idx);
       });
 
       currentStep = idx;
-      stepText.textContent = `0${idx + 1} / 0${totalSteps}`;
-
       prevBtn.disabled = idx === 0;
 
       if (idx === totalSteps - 1) {
         nextBtn.style.display = 'none';
-        finalLaunch.style.display = 'inline-flex';
+        launchBtn.style.display = 'inline-flex';
       } else {
-        nextBtn.style.display = 'flex';
-        finalLaunch.style.display = 'none';
+        nextBtn.style.display = 'inline-flex';
+        launchBtn.style.display = 'none';
       }
     }
 
@@ -695,7 +957,7 @@
     nextBtn.addEventListener('click', () => goToStep(currentStep + 1));
     prevBtn.addEventListener('click', () => goToStep(currentStep - 1));
 
-    dots.forEach((dot) => {
+    bottomDots.forEach((dot) => {
       dot.addEventListener('click', () => {
         const i = parseInt(dot.getAttribute('data-index'), 10);
         goToStep(i);
