@@ -1,39 +1,33 @@
 """
-app/main.py — FastAPI application entry point
-
-Role 2 created this skeleton. Role 3 expands it with full RAG orchestration.
-Currently wired with MOCK routes that return realistic fake responses
-so the frontend can be tested end-to-end before the real pipeline is ready.
+app/main.py — FastAPI application entry point (SONAR)
 """
 
 from __future__ import annotations
 
-import os
 from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import JSONResponse
 
 from app.stt.sarvam_client import close_client
 from app.api.routes import router as api_router
 
+# Resolve frontend directory once at module load
+_frontend_dir = Path(__file__).parent.parent / "frontend"
+
 
 # ---------------------------------------------------------------------------
-# Lifespan — startup / shutdown
+# Lifespan
 # ---------------------------------------------------------------------------
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # ── STARTUP ──────────────────────────────────────────────────────────────
-    # TODO (Role 1): load FAISS index + metadata here
-    # TODO (Role 3): warm FastEmbed embedding model here
-    print("✓ App startup complete (skeleton mode — mock responses active)")
+    print("✓ SONAR startup complete (skeleton mode)")
     yield
-    # ── SHUTDOWN ─────────────────────────────────────────────────────────────
-    await close_client()   # close Sarvam httpx client
+    await close_client()
 
 
 # ---------------------------------------------------------------------------
@@ -41,16 +35,11 @@ async def lifespan(app: FastAPI):
 # ---------------------------------------------------------------------------
 
 app = FastAPI(
-    title="HH Goa 2026 — Voice RAG",
-    description=(
-        "Voice-Enabled Retrieval-Augmented Generation system for HH Goa 2026 Task 2. "
-        "Currently running in skeleton mode with mock responses."
-    ),
+    title="SONAR — SOund Neural Answer Retrieval",
     version="0.1.0-skeleton",
     lifespan=lifespan,
 )
 
-# CORS — allow all origins in dev; tighten before final submission
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -59,48 +48,40 @@ app.add_middleware(
 )
 
 # ---------------------------------------------------------------------------
-# API routes (mock skeleton)
+# API routes
 # ---------------------------------------------------------------------------
 
 app.include_router(api_router)
 
-
 # ---------------------------------------------------------------------------
-# Health endpoint
+# Health
 # ---------------------------------------------------------------------------
 
 @app.get("/health", tags=["meta"])
 async def health():
-    return JSONResponse({
-        "status": "ok",
-        "mode": "skeleton",
-        "endpoints": ["/api/query", "/api/voice"],
-    })
+    return JSONResponse({"status": "ok", "mode": "skeleton"})
 
+# ---------------------------------------------------------------------------
+# Page routes  (must come BEFORE StaticFiles mount)
+# ---------------------------------------------------------------------------
 
-# Explicit root → landing page
 @app.get("/", include_in_schema=False)
-async def root():
-    from fastapi.responses import FileResponse
+async def landing():
+    """Serve SONAR landing page."""
     return FileResponse(str(_frontend_dir / "landing.html"))
 
-
-# /app → main voice RAG UI
 @app.get("/app", include_in_schema=False)
 async def app_page():
-    from fastapi.responses import FileResponse
+    """Serve SONAR voice RAG app."""
     return FileResponse(str(_frontend_dir / "index.html"))
 
-
 # ---------------------------------------------------------------------------
-# Serve all other static assets (js, css, icons, sw.js, manifest.json…)
+# Static assets — mounted at /static so it doesn't shadow page routes
 # ---------------------------------------------------------------------------
-
-_frontend_dir = Path(__file__).parent.parent / "frontend"
 
 if _frontend_dir.exists():
     app.mount(
-        "/",
-        StaticFiles(directory=str(_frontend_dir), html=True),
-        name="frontend",
+        "/static",
+        StaticFiles(directory=str(_frontend_dir)),
+        name="static",
     )
