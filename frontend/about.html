@@ -20,7 +20,7 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Ambient Prism Aurora Lighting */
+    /* Ambient Orange-Prism Aurora Lighting */
     .prism-background {
       position: fixed;
       inset: 0;
@@ -39,9 +39,9 @@
       height: 65vh;
       background: radial-gradient(
         ellipse at 50% 30%,
-        rgba(0, 240, 255, 0.08) 0%,
-        rgba(0, 130, 255, 0.06) 35%,
-        rgba(255, 120, 30, 0.03) 60%,
+        rgba(255, 140, 40, 0.09) 0%,
+        rgba(255, 90, 20, 0.05) 35%,
+        rgba(252, 238, 10, 0.02) 60%,
         transparent 80%
       );
       filter: blur(65px);
@@ -56,9 +56,9 @@
       height: 35vh;
       background: radial-gradient(
         ellipse 70% 80% at 50% 100%,
-        rgba(0, 240, 255, 0.25) 0%,
-        rgba(0, 100, 255, 0.15) 35%,
-        rgba(255, 120, 30, 0.06) 65%,
+        rgba(255, 140, 40, 0.22) 0%,
+        rgba(255, 100, 20, 0.12) 35%,
+        rgba(255, 255, 255, 0.04) 65%,
         transparent 85%
       );
       filter: blur(50px);
@@ -103,7 +103,7 @@
       letter-spacing: 0.14em;
       color: #ffffff;
       background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.22);
+      border: 1px solid rgba(255, 140, 40, 0.3);
       border-radius: 999px;
       padding: 8px 22px;
       text-decoration: none;
@@ -115,10 +115,10 @@
       gap: 6px;
     }
     .back-btn:hover {
-      background: #ffffff;
+      background: #ff8c28;
       color: #000000;
-      border-color: #ffffff;
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.35);
+      border-color: #ff8c28;
+      box-shadow: 0 0 25px rgba(255, 140, 40, 0.5);
       transform: translateY(-1px);
     }
 
@@ -138,9 +138,9 @@
       font-size: 0.72rem;
       font-weight: 700;
       letter-spacing: 0.18em;
-      color: rgba(255, 255, 255, 0.8);
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: #ff8c28;
+      background: rgba(255, 140, 40, 0.08);
+      border: 1px solid rgba(255, 140, 40, 0.3);
       border-radius: 999px;
       padding: 6px 18px;
       text-transform: uppercase;
@@ -153,6 +153,9 @@
       letter-spacing: -0.02em;
       line-height: 1.1;
       color: #ffffff;
+    }
+    .accent-orange {
+      color: #ff8c28;
     }
 
     .main-desc {
@@ -179,11 +182,16 @@
       font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 0.82rem;
       font-weight: 600;
-      color: rgba(255, 255, 255, 0.8);
+      color: rgba(255, 255, 255, 0.85);
       background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 140, 40, 0.2);
       border-radius: 999px;
       padding: 7px 18px;
+      transition: all 0.2s;
+    }
+    .chip-pill:hover {
+      border-color: rgba(255, 140, 40, 0.5);
+      color: #ff8c28;
     }
 
     /* ── Numbered Pipeline List Section ── */
@@ -208,9 +216,9 @@
 
     .step-number {
       font-family: 'Space Mono', monospace;
-      font-size: 0.85rem;
+      font-size: 0.88rem;
       font-weight: 700;
-      color: #5b6df5;
+      color: #ff8c28;
       letter-spacing: 0.05em;
       padding-top: 2px;
     }
@@ -223,7 +231,7 @@
 
     .step-title {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.2rem;
+      font-size: 1.22rem;
       font-weight: 700;
       color: #ffffff;
       letter-spacing: -0.01em;
@@ -237,8 +245,8 @@
     .step-desc code {
       font-family: 'Space Mono', monospace;
       font-size: 0.82rem;
-      color: #00f0ff;
-      background: rgba(0, 240, 255, 0.1);
+      color: #ff8c28;
+      background: rgba(255, 140, 40, 0.1);
       padding: 2px 6px;
       border-radius: 4px;
     }
@@ -246,13 +254,14 @@
     /* ── Performance & Benchmark Metrics ── */
     .metrics-section {
       background: rgba(18, 18, 26, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 140, 40, 0.25);
       border-radius: 24px;
       padding: 36px 32px;
       display: flex;
       flex-direction: column;
       gap: 24px;
       backdrop-filter: blur(16px);
+      box-shadow: 0 0 35px rgba(255, 140, 40, 0.08);
     }
 
     .metrics-header {
@@ -274,9 +283,9 @@
       font-family: 'Space Mono', monospace;
       font-size: 0.75rem;
       font-weight: 700;
-      color: #05ffa1;
-      background: rgba(5, 255, 161, 0.12);
-      border: 1px solid rgba(5, 255, 161, 0.35);
+      color: #ff8c28;
+      background: rgba(255, 140, 40, 0.12);
+      border: 1px solid rgba(255, 140, 40, 0.4);
       border-radius: 999px;
       padding: 5px 14px;
     }
@@ -295,21 +304,25 @@
       display: flex;
       flex-direction: column;
       gap: 6px;
+      transition: all 0.2s;
+    }
+    .metric-card:hover {
+      border-color: rgba(255, 140, 40, 0.35);
+      background: rgba(255, 140, 40, 0.04);
     }
 
     .metric-val {
       font-family: 'Space Grotesk', sans-serif;
       font-size: 1.8rem;
       font-weight: 800;
-      color: #00f0ff;
+      color: #ffffff;
     }
-    .metric-val.green { color: #05ffa1; }
     .metric-val.orange { color: #ff8c28; }
 
     .metric-label {
       font-size: 0.78rem;
       font-weight: 600;
-      color: rgba(255, 255, 255, 0.7);
+      color: rgba(255, 255, 255, 0.85);
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
@@ -340,31 +353,31 @@
 
     .inferentia-card {
       width: 100%;
-      max-width: 240px;
-      background: rgba(30, 32, 44, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.14);
+      max-width: 250px;
+      background: rgba(26, 28, 40, 0.75);
+      border: 1.5px solid rgba(255, 140, 40, 0.4);
       border-radius: 16px;
-      padding: 20px 24px;
+      padding: 22px 26px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       gap: 6px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), 0 0 25px rgba(255, 140, 40, 0.15);
       backdrop-filter: blur(14px);
       transition: all 0.25s;
     }
     .inferentia-card:hover {
-      border-color: rgba(255, 255, 255, 0.3);
-      transform: translateY(-2px);
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8);
+      border-color: #ff8c28;
+      transform: translateY(-3px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.85), 0 0 35px rgba(255, 140, 40, 0.4);
     }
 
     .inferentia-name {
       font-family: 'Space Grotesk', sans-serif;
       font-weight: 900;
-      font-size: 1.15rem;
-      letter-spacing: 0.12em;
+      font-size: 1.2rem;
+      letter-spacing: 0.14em;
       color: #ffffff;
       text-transform: uppercase;
     }
@@ -373,14 +386,14 @@
       font-family: 'Space Mono', monospace;
       font-size: 0.65rem;
       letter-spacing: 0.18em;
-      color: rgba(255, 255, 255, 0.45);
+      color: #ff8c28;
       text-transform: uppercase;
     }
 
     /* ── Bottom CTA ── */
     .cta-banner {
-      background: linear-gradient(135deg, rgba(20, 20, 32, 0.8), rgba(10, 10, 18, 0.9));
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: linear-gradient(135deg, rgba(26, 22, 32, 0.85), rgba(14, 12, 20, 0.95));
+      border: 1px solid rgba(255, 140, 40, 0.25);
       border-radius: 24px;
       padding: 40px;
       text-align: center;
@@ -388,6 +401,7 @@
       flex-direction: column;
       align-items: center;
       gap: 18px;
+      box-shadow: 0 0 30px rgba(255, 140, 40, 0.1);
     }
 
     .cta-btn {
@@ -406,8 +420,8 @@
       transition: all 0.25s;
     }
     .cta-btn:hover {
-      background: #00f0ff;
-      box-shadow: 0 0 35px rgba(0, 240, 255, 0.6);
+      background: #ff8c28;
+      box-shadow: 0 0 35px rgba(255, 140, 40, 0.7);
       transform: translateY(-2px);
     }
 
@@ -426,7 +440,7 @@
 </head>
 <body>
 
-  <!-- Ambient Prism Lighting -->
+  <!-- Ambient Orange-Prism Lighting -->
   <div class="prism-background" aria-hidden="true">
     <div class="prism-ambient"></div>
     <div class="prism-bottom-glow"></div>
@@ -443,9 +457,9 @@
     <!-- Header Section -->
     <section class="about-header">
       <div class="tag-badge">ABOUT THE PLATFORM</div>
-      <h1 class="main-heading">What is SONAR?</h1>
+      <h1 class="main-heading">What is <span class="accent-orange">SONAR</span>?</h1>
       <p class="main-desc">
-        SONAR &mdash; <strong>SOund Neural Answer Retrieval</strong> &mdash; is an ultra-low latency, voice-first Retrieval-Augmented Generation system built for <strong>HH Goa 2026 Task 2</strong>. It bridges multilingual Indian-accent speech transcription with in-memory dense vector search and Groq LPU hardware inference to answer queries in under <strong>200ms</strong>.
+        SONAR &mdash; <strong>SOund Neural Answer Retrieval</strong> &mdash; is an ultra-low latency, voice-first Retrieval-Augmented Generation system built for <strong>HH Goa 2026 Task 2</strong>. It bridges multilingual Indian-accent speech transcription with in-memory dense vector search and Groq LPU hardware inference to answer queries in under <strong class="accent-orange">200ms</strong>.
       </p>
 
       <div class="chips-row">
@@ -457,7 +471,7 @@
       </div>
     </section>
 
-    <!-- Detailed Numbered Architecture Steps -->
+    <!-- Detailed Numbered Architecture Steps (01-06) -->
     <section class="pipeline-section">
 
       <div class="pipeline-row">
@@ -531,17 +545,17 @@
 
       <div class="metrics-grid">
         <div class="metric-card">
-          <span class="metric-val">~60ms</span>
+          <span class="metric-val orange">~60ms</span>
           <span class="metric-label">Sarvam STT</span>
           <span class="metric-sub">saarika:v2.5 endpoint</span>
         </div>
         <div class="metric-card">
-          <span class="metric-val">~9ms</span>
+          <span class="metric-val orange">~9ms</span>
           <span class="metric-label">FastEmbed</span>
           <span class="metric-sub">BGE-small ONNX</span>
         </div>
         <div class="metric-card">
-          <span class="metric-val green">&lt;5ms</span>
+          <span class="metric-val orange">&lt;5ms</span>
           <span class="metric-label">FAISS Search</span>
           <span class="metric-sub">In-Memory IndexFlatIP</span>
         </div>
