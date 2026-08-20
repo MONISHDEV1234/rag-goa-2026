@@ -30,7 +30,6 @@
       overflow: hidden;
     }
 
-    /* Upward light cone */
     .prism-cone {
       position: absolute;
       top: 15%;
@@ -54,7 +53,6 @@
       animation: cone-pulse 8s ease-in-out infinite alternate;
     }
 
-    /* Horizon floor light flare */
     .prism-horizon {
       position: absolute;
       bottom: 0;
@@ -74,7 +72,6 @@
       opacity: 0.95;
     }
 
-    /* Ambient top glow */
     .prism-ambient {
       position: absolute;
       top: -20%;
@@ -139,10 +136,12 @@
       text-decoration: none;
       text-transform: uppercase;
       transition: all 0.2s;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
     }
-    .nav-link:hover {
-      color: #ffffff;
-    }
+    .nav-link:hover { color: #ffffff; }
 
     .nav-pill-btn {
       font-family: 'Plus Jakarta Sans', sans-serif;
@@ -190,7 +189,7 @@
         0 0 20px rgba(255, 255, 255, 0.7),
         0 0 50px rgba(255, 255, 255, 0.4),
         0 0 90px rgba(0, 240, 255, 0.35);
-      margin-left: 0.18em; /* optical alignment for letter spacing */
+      margin-left: 0.18em;
     }
 
     .hero-subtitle {
@@ -202,6 +201,44 @@
       text-transform: uppercase;
       margin-top: 18px;
     }
+
+    /* ── Floating Island Button ── */
+    .island-trigger-wrap {
+      margin-top: 28px;
+    }
+
+    .floating-island-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 22px;
+      background: rgba(20, 20, 30, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 999px;
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 240, 255, 0.15);
+      transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+    }
+    .floating-island-btn:hover {
+      background: rgba(30, 30, 45, 0.9);
+      border-color: rgba(0, 240, 255, 0.5);
+      color: #ffffff;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7), 0 0 30px rgba(0, 240, 255, 0.35);
+      transform: translateY(-2px);
+    }
+    .island-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #00f0ff;
+      box-shadow: 0 0 8px #00f0ff;
+      animation: blink 2s infinite;
+    }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
     /* ── Footer ── */
     .footer {
@@ -218,11 +255,246 @@
       letter-spacing: 0.05em;
     }
 
+    /* ══════════════════════════════════════════
+       INTERACTIVE DYNAMIC ISLAND TUTORIAL MODAL
+    ══════════════════════════════════════════ */
+    .island-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(14px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s cubic-bezier(0.2, 0, 0, 1);
+    }
+    .island-modal-backdrop.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .island-card {
+      width: 100%;
+      max-width: 520px;
+      background: rgba(14, 14, 22, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 28px;
+      padding: 32px 32px 28px;
+      box-shadow:
+        0 25px 60px rgba(0, 0, 0, 0.85),
+        0 0 40px rgba(0, 240, 255, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(24px);
+      transform: scale(0.92) translateY(12px);
+      transition: all 0.35s cubic-bezier(0.2, 0, 0, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .island-modal-backdrop.active .island-card {
+      transform: scale(1) translateY(0);
+    }
+
+    /* Top bar of island */
+    .island-top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .island-step-pill {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: #00f0ff;
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      border-radius: 999px;
+      padding: 4px 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .island-close-btn {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: rgba(255, 255, 255, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .island-close-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      transform: scale(1.05);
+    }
+
+    /* Pockets / Slide Track */
+    .pockets-viewport {
+      position: relative;
+      min-height: 180px;
+      overflow: hidden;
+    }
+
+    .pocket-slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      opacity: 0;
+      transform: translateX(40px);
+      pointer-events: none;
+      transition: all 0.35s cubic-bezier(0.2, 0, 0, 1);
+    }
+    .pocket-slide.active {
+      position: relative;
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: auto;
+    }
+    .pocket-slide.passed {
+      transform: translateX(-40px);
+      opacity: 0;
+    }
+
+    .pocket-icon-badge {
+      width: 44px; height: 44px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      margin-bottom: 4px;
+    }
+
+    .pocket-heading {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 800;
+      font-size: 1.45rem;
+      color: #ffffff;
+      letter-spacing: -0.01em;
+    }
+
+    .pocket-desc {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: rgba(255, 255, 255, 0.68);
+    }
+    .pocket-desc code {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.85rem;
+      color: #00f0ff;
+      background: rgba(0, 240, 255, 0.1);
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+
+    /* Island Footer (Arrows + White Dots) */
+    .island-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* White Dots pagination */
+    .dots-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .step-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.25);
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+    }
+    .step-dot.active {
+      width: 24px;
+      border-radius: 999px;
+      background: #ffffff;
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.8);
+    }
+    .step-dot:hover:not(.active) {
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    /* Navigation Arrow Buttons */
+    .nav-arrow-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .arrow-btn {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+    }
+    .arrow-btn:hover:not(:disabled) {
+      background: #ffffff;
+      color: #000000;
+      box-shadow: 0 0 18px rgba(255, 255, 255, 0.4);
+      transform: scale(1.05);
+    }
+    .arrow-btn:disabled {
+      opacity: 0.25;
+      cursor: not-allowed;
+    }
+
+    .launch-btn-small {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: #000000;
+      background: #00f0ff;
+      border: none;
+      border-radius: 999px;
+      padding: 9px 20px;
+      text-decoration: none;
+      text-transform: uppercase;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+      transition: all 0.2s;
+    }
+    .launch-btn-small:hover {
+      background: #33f5ff;
+      box-shadow: 0 0 28px rgba(0, 240, 255, 0.7);
+      transform: scale(1.03);
+    }
+
     /* ── Responsive ── */
     @media (max-width: 768px) {
       .page-container { padding: 20px 24px; }
       .nav-actions { gap: 18px; }
       .hero-subtitle { letter-spacing: 0.2em; }
+      .island-card { padding: 24px; border-radius: 22px; }
     }
   </style>
 </head>
@@ -242,7 +514,7 @@
       <a href="/" class="brand-logo">SONAR</a>
       <nav class="nav-actions">
         <a href="/about" class="nav-link">ABOUT</a>
-        <a href="/tutorial" class="nav-link">TUTORIAL</a>
+        <button id="btn-open-tutorial" class="nav-link" type="button">TUTORIAL</button>
         <a href="/app" class="nav-pill-btn">LAUNCH APP</a>
       </nav>
     </header>
@@ -251,6 +523,15 @@
     <main class="hero-center">
       <h1 class="hero-title">SONAR</h1>
       <p class="hero-subtitle">SOund Neural Answer Retrieval</p>
+
+      <!-- Dynamic Island Quick Guide Trigger -->
+      <div class="island-trigger-wrap">
+        <button id="island-trigger" class="floating-island-btn" type="button" aria-label="Open Interactive Tutorial Island">
+          <span class="island-dot"></span>
+          <span>HOW IT WORKS &bull; 4 STEPS</span>
+          <span style="opacity: 0.5; font-size: 0.75rem;">&rarr;</span>
+        </button>
+      </div>
     </main>
 
     <!-- Bottom Footer -->
@@ -259,6 +540,168 @@
     </footer>
 
   </div>
+
+  <!-- ══════════════════════════════════════════
+       INTERACTIVE DYNAMIC ISLAND TUTORIAL MODAL
+  ══════════════════════════════════════════ -->
+  <div id="tutorial-modal" class="island-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="pocket-title">
+    <div class="island-card">
+
+      <!-- Top Island Bar -->
+      <div class="island-top-bar">
+        <span class="island-step-pill" id="step-indicator">
+          <span>STEP</span>
+          <strong id="step-num-text">01 / 04</strong>
+        </span>
+        <button id="btn-close-island" class="island-close-btn" aria-label="Close tutorial">&times;</button>
+      </div>
+
+      <!-- Step Pockets Viewport -->
+      <div class="pockets-viewport">
+
+        <!-- Pocket 1 -->
+        <div class="pocket-slide active" data-step="0">
+          <div class="pocket-icon-badge">🎙</div>
+          <h2 class="pocket-heading" id="pocket-title">Speak or Type Query</h2>
+          <p class="pocket-desc">
+            Tap the central microphone button to record voice input in English or Indian languages with <code>Sarvam AI</code> speech transcription, or type directly in the search terminal.
+          </p>
+        </div>
+
+        <!-- Pocket 2 -->
+        <div class="pocket-slide" data-step="1">
+          <div class="pocket-icon-badge">⚡</div>
+          <h2 class="pocket-heading">Live Neural Pipeline</h2>
+          <p class="pocket-desc">
+            Watch the live status ticker transition across stages:
+            <br/>
+            <code>STT Transcribing (~60ms)</code> &rarr; <code>FAISS Search (~5ms)</code> &rarr; <code>Groq LLM Generation (~75ms)</code>.
+          </p>
+        </div>
+
+        <!-- Pocket 3 -->
+        <div class="pocket-slide" data-step="2">
+          <div class="pocket-icon-badge">📚</div>
+          <h2 class="pocket-heading">Grounded Citations</h2>
+          <p class="pocket-desc">
+            Every response carries a <strong>✓ Grounded</strong> verification badge. Review retrieved source passages, chunking strategies, and vector cosine similarity scores.
+          </p>
+        </div>
+
+        <!-- Pocket 4 -->
+        <div class="pocket-slide" data-step="3">
+          <div class="pocket-icon-badge">⏱</div>
+          <h2 class="pocket-heading">Sub-200ms Telemetry</h2>
+          <p class="pocket-desc">
+            Inspect real-time per-stage latency telemetry. Tap <code>⚙ SYS</code> in the top header to enable <strong>Demo Mode</strong> for full offline demonstrations anytime.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Island Footer (White Dots & Arrow Controls) -->
+      <div class="island-footer">
+
+        <!-- White Dots Indicator -->
+        <div class="dots-container" role="tablist" aria-label="Tutorial step dots">
+          <button class="step-dot active" data-index="0" aria-label="Step 1"></button>
+          <button class="step-dot" data-index="1" aria-label="Step 2"></button>
+          <button class="step-dot" data-index="2" aria-label="Step 3"></button>
+          <button class="step-dot" data-index="3" aria-label="Step 4"></button>
+        </div>
+
+        <!-- Arrow Navigation Buttons -->
+        <div class="nav-arrow-group">
+          <button id="btn-prev-pocket" class="arrow-btn" type="button" aria-label="Previous step" disabled>&larr;</button>
+          <button id="btn-next-pocket" class="arrow-btn" type="button" aria-label="Next step">&rarr;</button>
+          <a href="/app" class="launch-btn-small" id="btn-launch-final" style="display:none;">LAUNCH APP &rarr;</a>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Dynamic Island Tutorial Logic
+    const modal       = document.getElementById('tutorial-modal');
+    const openBtn1    = document.getElementById('island-trigger');
+    const openBtn2    = document.getElementById('btn-open-tutorial');
+    const closeBtn    = document.getElementById('btn-close-island');
+    const prevBtn     = document.getElementById('btn-prev-pocket');
+    const nextBtn     = document.getElementById('btn-next-pocket');
+    const finalLaunch = document.getElementById('btn-launch-final');
+    const stepText    = document.getElementById('step-num-text');
+    const slides      = document.querySelectorAll('.pocket-slide');
+    const dots        = document.querySelectorAll('.step-dot');
+
+    let currentStep = 0;
+    const totalSteps = slides.length;
+
+    function openModal() {
+      modal.classList.add('active');
+      goToStep(0);
+    }
+
+    function closeModal() {
+      modal.classList.remove('active');
+    }
+
+    function goToStep(idx) {
+      if (idx < 0 || idx >= totalSteps) return;
+
+      slides.forEach((slide, i) => {
+        slide.classList.remove('active', 'passed');
+        if (i < idx) {
+          slide.classList.add('passed');
+        } else if (i === idx) {
+          slide.classList.add('active');
+        }
+      });
+
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === idx);
+      });
+
+      currentStep = idx;
+      stepText.textContent = `0${idx + 1} / 0${totalSteps}`;
+
+      prevBtn.disabled = idx === 0;
+
+      if (idx === totalSteps - 1) {
+        nextBtn.style.display = 'none';
+        finalLaunch.style.display = 'inline-flex';
+      } else {
+        nextBtn.style.display = 'flex';
+        finalLaunch.style.display = 'none';
+      }
+    }
+
+    openBtn1.addEventListener('click', openModal);
+    openBtn2.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', closeModal);
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (!modal.classList.contains('active')) return;
+      if (e.key === 'Escape') closeModal();
+      if (e.key === 'ArrowRight') goToStep(currentStep + 1);
+      if (e.key === 'ArrowLeft')  goToStep(currentStep - 1);
+    });
+
+    nextBtn.addEventListener('click', () => goToStep(currentStep + 1));
+    prevBtn.addEventListener('click', () => goToStep(currentStep - 1));
+
+    dots.forEach((dot) => {
+      dot.addEventListener('click', () => {
+        const i = parseInt(dot.getAttribute('data-index'), 10);
+        goToStep(i);
+      });
+    });
+  </script>
 
 </body>
 </html>
