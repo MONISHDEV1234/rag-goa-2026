@@ -56,17 +56,6 @@
       color: #00f0ff;
       text-transform: uppercase;
       display: block;
-      /* Cyberpunk sliced cut: top & bottom separated with razor gap */
-      clip-path: polygon(
-        0% 0%,
-        100% 0%,
-        100% 43%,
-        0% 48%,
-        0% 52%,
-        100% 47%,
-        100% 100%,
-        0% 100%
-      );
       text-shadow:
         0 0 10px #00f0ff,
         0 0 25px #00f0ff,
@@ -84,21 +73,6 @@
       background: #00f0ff;
       box-shadow: 0 0 12px #00f0ff, 0 0 25px rgba(0,240,255,0.8);
       clip-path: polygon(0 0, 100% 0, 92% 100%, 8% 100%);
-    }
-
-    /* Razor slash cut streak across middle */
-    .cyber-logo-wrap::before {
-      content: '';
-      position: absolute;
-      top: 48%;
-      left: -8%;
-      width: 116%;
-      height: 2px;
-      background: rgba(0, 240, 255, 0.8);
-      box-shadow: 0 0 8px #00f0ff;
-      transform: skewY(1.2deg);
-      pointer-events: none;
-      z-index: 5;
     }
 
     /* Chromatic glitch layers (Red/Magenta & Green) */
