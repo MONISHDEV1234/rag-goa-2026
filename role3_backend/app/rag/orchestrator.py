@@ -26,7 +26,7 @@ import time
 from typing import Callable
 
 from app.config import settings
-from app.schemas import DocumentChunk, RAGResponse
+from app.schemas import DocumentChunk, RAGResponse, RetrievalError
 from app.guardrails.input_guard import InputGuard, InputGuardException
 from app.guardrails.context_guard import ContextGuard, InsufficientContextException
 from app.guardrails.grounding import GroundingChecker
@@ -37,11 +37,10 @@ from app.llm.groq_client import GroqClient
 # Integration stubs — replaced when Role 1 and Role 2 code lands
 # ---------------------------------------------------------------------------
 
-# ROLE 1 INTEGRATION POINT:
-# When Role 1's retrieve_context() is ready, replace this import:
-#   from app.retrieval.retriever import retrieve_context
-# with the real implementation. Interface is identical.
-from app.retrieval.mock_retriever import retrieve_context  # noqa: E402
+# ROLE 1 INTEGRATION — COMPLETE:
+# Using Role 1's real FAISS-backed retrieve_context().
+# init_retrieval() is called once at app startup in app/main.py (lifespan handler).
+from app.retrieval.retriever import retrieve_context  # noqa: E402
 
 # ROLE 2 (STT) INTEGRATION POINT:
 # When Role 2's Sarvam client is ready, replace:
@@ -114,12 +113,26 @@ class RAGService:
             )
         latency["input_guard"] = _ms(t)
 
-        # ---- 2. Retrieval (Role 1 interface) ----
+        # ---- 2. Retrieval (Role 1 FAISS) ----
         t = time.perf_counter()
-        chunks: list[DocumentChunk] = await retrieve_context(
-            query=transcript,
-            top_k=settings.retrieval_top_k,
-        )
+        try:
+            chunks: list[DocumentChunk] = await retrieve_context(
+                query=transcript,
+                top_k=settings.retrieval_top_k,
+                min_score=settings.retrieval_min_score,
+            )
+        except RetrievalError as exc:
+            latency["retrieval"] = _ms(t)
+            latency["total"] = _ms(total_start)
+            return RAGResponse(
+                transcript=transcript,
+                answer="The retrieval system encountered an error. Please try again.",
+                is_grounded=False,
+                retrieved_sources=[],
+                latency_breakdown=latency,
+                refusal=True,
+                refusal_reason="retrieval_error",
+            )
         latency["retrieval"] = _ms(t)
 
         # ---- 3. Context Sufficiency Guard ----

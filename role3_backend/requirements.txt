@@ -1,3 +1,4 @@
+# Role 3 — FastAPI backend
 fastapi>=0.111.0
 uvicorn[standard]>=0.29.0
 pydantic>=2.7.0
@@ -6,6 +7,13 @@ groq>=0.9.0
 tenacity>=8.3.0
 httpx>=0.27.0
 python-multipart>=0.0.9
+
+# Role 1 — FAISS retrieval (integrated)
+fastembed>=0.3.0
+faiss-cpu>=1.8.0
+numpy>=1.26.0
+rank-bm25>=0.2.2
+
+# Testing
 pytest>=8.2.0
 pytest-asyncio>=0.23.7
-httpx>=0.27.0

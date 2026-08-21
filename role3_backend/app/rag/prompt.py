@@ -40,7 +40,7 @@ def build_prompt(query: str, chunks: list[DocumentChunk]) -> str:
     Returns a single string to be sent as the user message to Groq.
     """
     context_block = "\n\n".join(
-        f"[Context {i + 1}] (doc_id={chunk.doc_id}, similarity={chunk.similarity_score:.2f})\n{chunk.text}"
+        f"[Context {i + 1}] (doc_id={chunk.doc_id}, similarity={chunk.effective_score:.2f})\n{chunk.text}"
         for i, chunk in enumerate(chunks)
     )
 

@@ -48,7 +48,7 @@ class ContextGuard:
                 "to answer your question."
             )
 
-        best_score = max(c.similarity_score for c in chunks)
+        best_score = max(c.effective_score for c in chunks)
         if best_score < self._threshold:
             raise InsufficientContextException(
                 "I couldn't find enough relevant information in the knowledge base "

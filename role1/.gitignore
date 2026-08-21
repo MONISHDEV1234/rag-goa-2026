@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+
+# Local data & model artifacts
+data/models/
+data/index/
+data/chunks/
+data/*.jsonl
+data/*.parquet
+*.index
+
+# Logs & temp files
+*.log
+.system_generated/
+.DS_Store

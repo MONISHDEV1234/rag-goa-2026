@@ -20,11 +20,19 @@ class Settings(BaseSettings):
     # --- Sarvam STT ---
     sarvam_api_key: str = ""
 
-    # --- Retrieval ---
+    # --- Retrieval (Role 1 FAISS) ---
     retrieval_top_k: int = 3
+    # Path to the pre-built FAISS index directory (output of embed_index.py).
+    # Override in .env when the index lives at a non-default location.
+    faiss_index_dir: str = "data/index"
     # Similarity threshold below which we issue a missing-context refusal.
-    # Tune this value experimentally once the real FAISS index is loaded.
-    context_similarity_threshold: float = 0.50
+    # 0.35 is a reasonable default for intfloat/multilingual-e5-large on MSMARCO-XI
+    # (inner-product scores post L2-normalize). Tune experimentally with evaluate.py.
+    # Must be > 0.20 so the test suite's score=0.20 "low context" fixtures work correctly.
+    context_similarity_threshold: float = 0.35
+    # Anti-hallucination pre-filter: chunks with score below this are dropped
+    # before the LLM sees them. 0.0 = disabled (threshold guard handles it instead).
+    retrieval_min_score: float = 0.0
 
     # --- Reliability ---
     max_retries: int = 3  # Tenacity max attempts on transient Groq errors

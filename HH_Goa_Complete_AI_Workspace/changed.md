@@ -20,4 +20,12 @@ The full line-by-line breakdown of the architecture we will implement can be fou
 - `app/llm/groq_client.py`: Groq client with Tenacity retries.
 - `app/guardrails/`: Containing `input_guard.py` (includes the NSFW filter), `context_guard.py`, and `grounding.py`.
 
-*Status: Planning Phase. No implementation started yet.*
+## 3. Implementation Status (Role 1 Integration)
+
+The integration of Role 1's FAISS retrieval system into Role 3's backend is now **Complete and Verified**:
+- **Unified Schema:** `app/schemas.py` now serves as the single source of truth for `DocumentChunk` with properties `effective_score` and `effective_strategy` bridging the gap between Role 1 and Role 3 field naming styles.
+- **Real Retriever Wire-up:** `app/retrieval/retriever.py` imported from Role 1 is fully active. `init_retrieval` runs on FastAPI startup, and `retrieve_context` handles RAG queries dynamically.
+- **Latency & Reliability Constraints Met:** Guardrails updated to use `effective_score`. All 45 pipeline tests pass (including lazy FAISS imports to enable purely mocked backend unit testing).
+- **Role 2 Readiness:** The orchestrator and health endpoints are perfectly poised to receive Role 2's STT integration (currently stubbed).
+
+*Status: Role 1 Integration Complete. Awaiting Role 2 STT integration.*
