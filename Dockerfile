@@ -8,8 +8,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
+# Cache-bust: update this value to force a full rebuild when code changes don't invalidate Docker cache
+ARG CACHE_BUST=2
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt && \
+    HF_HUB_DISABLE_SYMLINKS=1 HF_HUB_DISABLE_SYMLINKS_WARNING=1 \
     python -c "from fastembed import TextEmbedding; TextEmbedding('sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2')"
 
 # Copy application code, frontend assets, and indexed FAISS knowledge vectors
