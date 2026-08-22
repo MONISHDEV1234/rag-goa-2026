@@ -92,7 +92,7 @@ class TestRAGOrchestrator:
             patch("app.rag.orchestrator.retrieve_context", new_callable=AsyncMock) as mock_retrieve,
             patch.object(service._groq, "generate", new_callable=AsyncMock) as mock_groq,
         ):
-            mock_retrieve.return_value = [make_chunk(score=0.20)]  # below threshold
+            mock_retrieve.return_value = [make_chunk(score=0.10)]  # below threshold
             result = await service.run(transcript="What is MSMARCO-XI?")
 
         mock_groq.assert_not_called()

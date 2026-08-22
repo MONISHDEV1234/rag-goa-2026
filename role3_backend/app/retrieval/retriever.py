@@ -115,6 +115,8 @@ class RetrievalIndex:
 
         # Set HF_HUB_OFFLINE=1 when we have a local cache to avoid
         # slow network calls just to check for model updates at startup
+        os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
+        os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS", "1")
         if effective_cache_dir and effective_cache_dir.exists():
             os.environ.setdefault("HF_HUB_OFFLINE", "1")
 
@@ -124,17 +126,26 @@ class RetrievalIndex:
         self._embedder = None
         # In cloud environments with low RAM, check if ONNX embedder can be safely loaded
         if os.environ.get("DISABLE_ONNX_EMBEDDER", "0") != "1":
+            kwargs: dict = {"model_name": self._model_info.get("model_name", "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"), "threads": threads}
+            if effective_cache_dir and effective_cache_dir.exists():
+                kwargs["cache_dir"] = str(effective_cache_dir)
             try:
                 self._embedder = TextEmbedding(**kwargs)
                 # Warm up ONNX runtime
                 self.embed_query("warmup query")
             except Exception as e:
-                import logging
-                logging.getLogger("retriever").warning(
-                    f"Dense ONNX embedder could not be loaded ({e}). "
-                    "Running in ultra-fast lightweight BM25 mode (~60MB RAM)."
-                )
-                self._embedder = None
+                try:
+                    os.environ.pop("HF_HUB_OFFLINE", None)
+                    model_name = self._model_info.get("model_name", "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+                    self._embedder = TextEmbedding(model_name=model_name, threads=threads)
+                    self.embed_query("warmup query")
+                except Exception as err:
+                    import logging
+                    logging.getLogger("retriever").warning(
+                        f"Dense ONNX embedder could not be loaded ({err}). "
+                        "Running in ultra-fast lightweight BM25 mode (~60MB RAM)."
+                    )
+                    self._embedder = None
 
         self._loaded = True
 
