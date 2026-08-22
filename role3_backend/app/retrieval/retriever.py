@@ -101,17 +101,22 @@ class RetrievalIndex:
         threads = self.threads if self.threads is not None else 1
 
         # Resolve offline model cache dir
-        # Priority: explicit cache_dir > fastembed temp cache > index_dir.parent/models > data/models
+        # Priority: FASTEMBED_CACHE_PATH env (Docker baked) > explicit cache_dir > index_dir.parent/models > temp
+        FASTEMBED_CACHE_PATH = os.environ.get("FASTEMBED_CACHE_PATH")
         FASTEMBED_TEMP_CACHE = Path(os.environ.get("TEMP", "/tmp")) / "fastembed_cache"
         effective_cache_dir = self.cache_dir
         if effective_cache_dir is None:
-            candidate = self.index_dir.parent / "models"
-            if candidate.exists():
-                effective_cache_dir = candidate
-            elif FASTEMBED_TEMP_CACHE.exists():
-                effective_cache_dir = FASTEMBED_TEMP_CACHE
-            elif Path("data/models").exists():
-                effective_cache_dir = Path("data/models")
+            if FASTEMBED_CACHE_PATH and Path(FASTEMBED_CACHE_PATH).exists():
+                # Use the model baked into the Docker image at build time
+                effective_cache_dir = Path(FASTEMBED_CACHE_PATH)
+            else:
+                candidate = self.index_dir.parent / "models"
+                if candidate.exists():
+                    effective_cache_dir = candidate
+                elif FASTEMBED_TEMP_CACHE.exists():
+                    effective_cache_dir = FASTEMBED_TEMP_CACHE
+                elif Path("data/models").exists():
+                    effective_cache_dir = Path("data/models")
 
         # Set HF_HUB_OFFLINE=1 when we have a local cache to avoid
         # slow network calls just to check for model updates at startup

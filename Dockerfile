@@ -17,8 +17,11 @@ COPY role3_backend/ ./role3_backend/
 COPY role1/data/ ./role1/data/
 COPY frontend/ ./frontend/
 
-# Pre-download the ONNX embedding model into the image at build time
-# This runs AFTER code is copied so a code change triggers a fresh model download too
+# Pre-download ONNX model into a fixed, known path inside the image.
+# We set FASTEMBED_CACHE_PATH so the model lands at /app/fastembed_cache
+# and the same env var at runtime tells fastembed to use the baked copy
+# instead of re-downloading (which would OOM on 512 MB free tiers).
+ENV FASTEMBED_CACHE_PATH=/app/fastembed_cache
 RUN HF_HUB_DISABLE_SYMLINKS=1 \
     HF_HUB_DISABLE_SYMLINKS_WARNING=1 \
     python -c "from fastembed import TextEmbedding; TextEmbedding('sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2')"
@@ -30,6 +33,8 @@ ENV OMP_NUM_THREADS=1
 ENV MKL_NUM_THREADS=1
 ENV HF_HUB_DISABLE_SYMLINKS=1
 ENV HF_HUB_DISABLE_SYMLINKS_WARNING=1
+# Keep FASTEMBED_CACHE_PATH set at runtime so the baked model is found instantly
+ENV FASTEMBED_CACHE_PATH=/app/fastembed_cache
 
 EXPOSE 8000
 
