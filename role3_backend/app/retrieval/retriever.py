@@ -37,6 +37,37 @@ E5_QUERY_PREFIX = "query: "
 _CACHE_MAX_SIZE = 2048
 
 
+class HFInferenceEmbedder:
+    """
+    Zero-RAM embedding backend: calls HuggingFace Inference API instead of
+    loading a local ONNX model. Uses the same model as the FAISS index was
+    built with, so all 384-dim vectors remain compatible.
+
+    Set HF_INFERENCE_TOKEN env var to enable. Free tier is rate-limited but
+    sufficient for hackathon demos. Eliminates the ~300MB ONNX runtime RAM cost.
+    """
+
+    def __init__(self, model_name: str, token: str):
+        self.model_name = model_name
+        self.token = token
+        self._api_url = f"https://api-inference.huggingface.co/pipeline/feature-extraction/{model_name}"
+
+    def embed(self, texts: list[str]):
+        """Call HF API and yield embedding vectors (compatible with fastembed interface)."""
+        import httpx
+        import numpy as np
+        headers = {"Authorization": f"Bearer {self.token}"}
+        payload = {"inputs": texts, "options": {"wait_for_model": True}}
+        resp = httpx.post(self._api_url, json=payload, headers=headers, timeout=30.0)
+        resp.raise_for_status()
+        data = resp.json()
+        # HF returns list[list[float]] for batch or list[float] for single
+        if isinstance(data[0], float):
+            data = [data]
+        for vec in data:
+            yield np.array(vec, dtype=np.float32)
+
+
 class RetrievalIndex:
     """
     Holds a loaded FAISS index + chunk metadata + embedding model.
@@ -129,28 +160,54 @@ class RetrievalIndex:
         self._bm25.build_index(self._chunk_meta)
 
         self._embedder = None
-        # In cloud environments with low RAM, check if ONNX embedder can be safely loaded
-        if os.environ.get("DISABLE_ONNX_EMBEDDER", "0") != "1":
-            kwargs: dict = {"model_name": self._model_info.get("model_name", "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"), "threads": threads}
+        model_name = self._model_info.get("model_name", "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+
+        # ── Embedder selection (in priority order) ───────────────────────────────
+        # 1. HF Inference API — zero local RAM, free, same model/dimensions
+        hf_token = os.environ.get("HF_INFERENCE_TOKEN", "")
+        if hf_token and os.environ.get("DISABLE_ONNX_EMBEDDER", "0") != "1":
+            try:
+                import logging
+                _hf_embedder = HFInferenceEmbedder(model_name=model_name, token=hf_token)
+                # Smoke-test: embed a short string to verify connectivity
+                list(_hf_embedder.embed(["test"]))
+                self._embedder = _hf_embedder
+                logging.getLogger("retriever").info(
+                    "[Embedder] Using HF Inference API (%s) — zero local RAM.", model_name
+                )
+                print(f"[Role 3] Embedder: HF Inference API ({model_name})")
+            except Exception as hf_err:
+                import logging
+                logging.getLogger("retriever").warning(
+                    "HF Inference API unavailable (%s), falling back to local ONNX.", hf_err
+                )
+
+        # 2. Local ONNX via fastembed — ~300MB RAM, loads from baked Docker cache
+        if self._embedder is None and os.environ.get("DISABLE_ONNX_EMBEDDER", "0") != "1":
+            kwargs: dict = {"model_name": model_name, "threads": threads}
             if effective_cache_dir and effective_cache_dir.exists():
                 kwargs["cache_dir"] = str(effective_cache_dir)
             try:
                 self._embedder = TextEmbedding(**kwargs)
                 # Warm up ONNX runtime
                 self.embed_query("warmup query")
+                print(f"[Role 3] Embedder: local ONNX ({model_name})")
             except Exception as e:
                 try:
                     os.environ.pop("HF_HUB_OFFLINE", None)
-                    model_name = self._model_info.get("model_name", "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
                     self._embedder = TextEmbedding(model_name=model_name, threads=threads)
                     self.embed_query("warmup query")
                 except Exception as err:
                     import logging
                     logging.getLogger("retriever").warning(
                         f"Dense ONNX embedder could not be loaded ({err}). "
-                        "Running in ultra-fast lightweight BM25 mode (~60MB RAM)."
+                        "Running in BM25-only mode (~60MB RAM)."
                     )
                     self._embedder = None
+
+        # 3. BM25 only — keyword search fallback, minimal RAM
+        if self._embedder is None:
+            print("[Role 3] Embedder: BM25 keyword-only mode (no dense embedder available)")
 
         self._loaded = True
 
