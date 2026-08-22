@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SONAR — Mic Diagnostic</title>
+<style>
+  body { font-family: monospace; background:#0a0a0a; color:#00ff88; padding:2rem; font-size:13px; }
+  h2 { color:#ffd966; font-size:1.4rem; margin-bottom:1rem; }
+  select { background:#001a0d; color:#00ff88; border:1px solid #00ff88; padding:6px 12px; font-size:13px; border-radius:4px; margin:4px; width:100%; max-width:600px; }
+  button { padding:0.6rem 1.4rem; font-size:14px; cursor:pointer; margin:6px 4px; border:1px solid #00ff88; background:#001; color:#00ff88; border-radius:6px; }
+  button:hover { background:#00ff88; color:#000; }
+  button.danger { border-color:#f97316; color:#f97316; }
+  button.danger:hover { background:#f97316; color:#000; }
+  #meter { width:100%; max-width:600px; height:28px; background:#111; border:1px solid #333; border-radius:4px; overflow:hidden; margin:1rem 0 4px; }
+  #meter-fill { height:100%; width:0%; background: linear-gradient(90deg,#00ff88,#ffd966,#f97316); transition:width 0.05s; border-radius:4px; }
+  #meter-label { font-size:12px; color:#888; margin-bottom:1rem; }
+  #log { white-space:pre-wrap; margin-top:1rem; border:1px solid #1a3a2a; padding:1rem; max-height:50vh; overflow-y:auto; line-height:1.7; background:#050f0a; border-radius:6px; }
+  audio { display:block; margin-top:1rem; width:100%; max-width:600px; }
+  .ok   { color:#00ff88; }
+  .err  { color:#f97316; }
+  .info { color:#38bdf8; }
+</style>
+</head>
+<body>
+<h2>🎙 SONAR — Microphone Diagnostic</h2>
+
+<label><b>Select Microphone:</b></label><br>
+<select id="device-select"><option value="">— loading… —</option></select>
+<br><br>
+
+<button id="btn-level">📊 TEST VOLUME LEVEL (no recording)</button>
+<button id="btn-start">▶ RECORD 5 SECONDS</button>
+<button id="btn-stop" class="danger">⏹ STOP</button>
+<br>
+<button id="btn-sr">🗣 TEST BROWSER SPEECH RECOGNITION</button>
+
+<div id="meter"><div id="meter-fill"></div></div>
+<div id="meter-label">Volume meter — not started</div>
+
+<audio id="playback" controls style="display:none;"></audio>
+<div id="log"></div>
+
+<script>
+const logEl   = document.getElementById('log');
+const mFill   = document.getElementById('meter-fill');
+const mLabel  = document.getElementById('meter-label');
+const playback= document.getElementById('playback');
+const devSel  = document.getElementById('device-select');
+
+let levelAnimId=null, levelStream=null;
+let recStream=null, mr=null, chunks=[];
+
+function L(msg, cls='') {
+  const ts = new Date().toLocaleTimeString('en-GB');
+  const span = document.createElement('span');
+  span.className = cls;
+  span.textContent = `[${ts}] ${msg}\n`;
+  logEl.appendChild(span);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+// Enumerate devices
+async function loadDevices() {
+  try {
+    const s = await navigator.mediaDevices.getUserMedia({ audio: true });
+    s.getTracks().forEach(t => t.stop());
+  } catch(_) {}
+  const devices = await navigator.mediaDevices.enumerateDevices();
+  const mics = devices.filter(d => d.kind === 'audioinput');
+  devSel.innerHTML = '';
+  if (!mics.length) {
+    devSel.innerHTML = '<option>No audio input devices found</option>';
+    L('No audio input devices found!', 'err');
+    return;
+  }
+  mics.forEach((d, i) => {
+    const opt = document.createElement('option');
+    opt.value = d.deviceId;
+    opt.textContent = `${i+1}. ${d.label || '(unlabeled)'}`;
+    devSel.appendChild(opt);
+  });
+  L(`Found ${mics.length} microphone(s):`,'info');
+  mics.forEach((d,i) => L(`  [${i+1}] ${d.label || 'unknown'}`,'info'));
+}
+loadDevices();
+
+// Volume level test
+document.getElementById('btn-level').onclick = async () => {
+  if (levelStream) {
+    levelStream.getTracks().forEach(t=>t.stop()); levelStream=null;
+    cancelAnimationFrame(levelAnimId);
+    mFill.style.width='0%'; mLabel.textContent='Stopped.'; return;
+  }
+  const deviceId = devSel.value;
+  const constraints = { audio: deviceId ? {deviceId:{exact:deviceId}} : true };
+  L('Starting volume meter...','info');
+  try {
+    levelStream = await navigator.mediaDevices.getUserMedia(constraints);
+    L('Stream: ' + levelStream.getAudioTracks().map(t=>t.label).join(', '),'ok');
+  } catch(e) { L('getUserMedia failed: '+e.message,'err'); return; }
+
+  const AC = window.AudioContext||window.webkitAudioContext;
+  const ctx = new AC();
+  const src = ctx.createMediaStreamSource(levelStream);
+  const analyser = ctx.createAnalyser();
+  analyser.fftSize=256;
+  src.connect(analyser);
+  const data=new Uint8Array(analyser.frequencyBinCount);
+
+  let frames=0, maxLevel=0;
+  function tick() {
+    levelAnimId = requestAnimationFrame(tick);
+    analyser.getByteFrequencyData(data);
+    const avg = data.reduce((a,b)=>a+b,0)/data.length;
+    const pct = Math.min(100,avg*3);
+    mFill.style.width=pct+'%';
+    maxLevel=Math.max(maxLevel,avg);
+    frames++;
+    if(frames%10===0) {
+      if(avg<1 && frames>60) {
+        mLabel.style.color='#f97316';
+        mLabel.textContent=`Level: ${avg.toFixed(1)} — SILENT! Mic not picking up sound. Try another device.`;
+      } else {
+        mLabel.style.color= avg>5?'#00ff88':'#ffd966';
+        mLabel.textContent=`Level: ${avg.toFixed(1)}/85  max:${maxLevel.toFixed(1)} — ${avg>5?'GOOD! Mic is working':'Speak louder or try another device'}`;
+      }
+    }
+  }
+  tick();
+  L('Meter running — SPEAK and watch the bar move! Click button again to stop.','ok');
+};
+
+// 5-second recording test
+document.getElementById('btn-start').onclick = async () => {
+  chunks=[];
+  const deviceId=devSel.value;
+  const constraints={audio:deviceId?{deviceId:{exact:deviceId}}:true};
+  L('\n--- 5-second recording test ---','info');
+  try {
+    recStream=await navigator.mediaDevices.getUserMedia(constraints);
+    L('Stream: '+recStream.getAudioTracks().map(t=>t.label).join(', '),'ok');
+  } catch(e){ L('Error: '+e.message,'err'); return; }
+
+  const types=['audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus','audio/mp4','audio/wav'];
+  const mime=types.find(t=>MediaRecorder.isTypeSupported(t))||'';
+  L('MIME: '+(mime||'default'));
+
+  try { mr=mime?new MediaRecorder(recStream,{mimeType:mime}):new MediaRecorder(recStream); }
+  catch(e){ L('MediaRecorder error: '+e.message,'err'); return; }
+
+  mr.ondataavailable=e=>{
+    L(`  chunk: ${e.data.size} bytes`);
+    if(e.data.size>0) chunks.push(e.data);
+  };
+  mr.onstop=()=>{
+    const blob=new Blob(chunks,{type:mime||'audio/webm'});
+    L(`\nTotal: ${chunks.length} chunks, ${blob.size} bytes`,blob.size>5000?'ok':'err');
+    if(blob.size>5000){
+      L('Recording healthy! Playing back...','ok');
+      playback.src=URL.createObjectURL(blob);
+      playback.style.display='block';
+    } else {
+      L('PROBLEM: Blob too small. Mic is not capturing audio!','err');
+      L('  -> Try a DIFFERENT device from the dropdown above.','info');
+    }
+    recStream.getTracks().forEach(t=>t.stop());
+  };
+
+  mr.start(500);
+  L('Recording... (auto-stop in 5 sec)','info');
+  setTimeout(()=>{ if(mr?.state!=='inactive'){ mr.requestData(); mr.stop(); } },5000);
+};
+
+document.getElementById('btn-stop').onclick=()=>{
+  if(mr?.state!=='inactive'){ mr.requestData(); mr.stop(); }
+};
+
+// Browser SpeechRecognition test
+document.getElementById('btn-sr').onclick=()=>{
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){ L('SpeechRecognition not available in this browser','err'); return; }
+  L('\n--- SpeechRecognition test ---','info');
+  const sr=new SR();
+  sr.lang='en-IN'; sr.continuous=false; sr.interimResults=true;
+  sr.onstart=()=>L('Started — speak now!','ok');
+  sr.onspeechstart=()=>L('Speech detected!','ok');
+  sr.onresult=e=>{
+    for(let i=e.resultIndex;i<e.results.length;i++)
+      L(`"${e.results[i][0].transcript}" (final:${e.results[i].isFinal})`,'ok');
+  };
+  sr.onerror=e=>L('SpeechRecognition error: '+e.error,'err');
+  sr.onend=()=>L('SpeechRecognition ended.','info');
+  try{ sr.start(); } catch(e){ L('sr.start() failed: '+e.message,'err'); }
+};
+
+// Initial capability report
+L('=== Browser Capabilities ===','info');
+L('UserAgent: '+navigator.userAgent.substring(0,90));
+L('SpeechRecognition: '+!!(window.SpeechRecognition||window.webkitSpeechRecognition));
+L('MediaRecorder: '+!!window.MediaRecorder);
+L('AudioWorklet: '+!!(window.AudioWorkletNode));
+L('');
+L('Supported formats:');
+['audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus','audio/mp4','audio/wav']
+  .forEach(t=>L('  '+(MediaRecorder.isTypeSupported(t)?'YES':'NO')+' '+t));
+L('\n>> FIRST: Click "TEST VOLUME LEVEL" and speak — watch the green bar!','info');
+</script>
+</body>
+</html>

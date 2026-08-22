@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#000000" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;900&family=Space+Mono:wght@400;700&family=Unbounded:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -85,10 +85,10 @@
     }
 
     .brand-logo {
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 900;
-      font-size: 1.15rem;
-      letter-spacing: 0.28em;
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: 0.22em;
       color: #ffffff;
       text-decoration: none;
       text-transform: uppercase;
@@ -450,8 +450,8 @@
 
     <!-- Navbar -->
     <header class="navbar">
-      <a href="/" class="brand-logo">SONAR</a>
-      <a href="/" class="back-btn">&larr; BACK</a>
+      <a href="landing.html" class="brand-logo">SONAR</a>
+      <a href="landing.html" class="back-btn">&larr; BACK</a>
     </header>
 
     <!-- Header Section -->
@@ -463,11 +463,11 @@
       </p>
 
       <div class="chips-row">
-        <span class="chip-pill">Sarvam AI STT</span>
-        <span class="chip-pill">FastEmbed</span>
-        <span class="chip-pill">FAISS IndexFlatIP</span>
-        <span class="chip-pill">Groq LPU</span>
-        <span class="chip-pill">MSMARCO-XI</span>
+        <span class="chip-pill">Sarvam AI Saarika v2.5</span>
+        <span class="chip-pill">FastEmbed MiniLM-L12</span>
+        <span class="chip-pill">Hybrid BM25 + FAISS RRF</span>
+        <span class="chip-pill">Groq LPU Inference</span>
+        <span class="chip-pill">Multilingual Grounding Guard</span>
       </div>
     </section>
 
@@ -477,9 +477,9 @@
       <div class="pipeline-row">
         <div class="step-number">01</div>
         <div class="step-body">
-          <h3 class="step-title">Audio Stream Ingestion &amp; Preprocessing</h3>
+          <h3 class="step-title">AudioWorklet PCM Capture &amp; Multi-Device Toggle</h3>
           <p class="step-desc">
-            Raw browser microphone input is captured via <code>MediaRecorder API</code> using WebM/Opus encoding at 16kHz mono. Audio chunks are dispatched asynchronously with minimal protocol overhead.
+            Raw microphone audio is captured in real-time using high-precision <code>AudioWorklet PCM processing</code> with a 16-bit 48kHz WAV encoder and browser Web Speech APIs. Users can seamlessly toggle between Earphone, Headset, and Array microphones with instant live sample telemetry.
           </p>
         </div>
       </div>
@@ -487,9 +487,9 @@
       <div class="pipeline-row">
         <div class="step-number">02</div>
         <div class="step-body">
-          <h3 class="step-title">Multilingual Neural Speech-to-Text</h3>
+          <h3 class="step-title">Multilingual Neural Speech-to-Text (ASR)</h3>
           <p class="step-desc">
-            Audio streams directly to Sarvam AI <code>saarika:v2.5</code> endpoint via persistent async httpx connections and Tenacity retry handlers. Completes in ~60ms with automatic language identification for Indian accents.
+            Audio streams directly to Sarvam AI's <code>saarika:v2.5</code> endpoint via persistent async httpx connections and Tenacity retries, supporting automatic language identification and Indian-accent English, Hindi, and regional Indic languages.
           </p>
         </div>
       </div>
@@ -497,9 +497,9 @@
       <div class="pipeline-row">
         <div class="step-number">03</div>
         <div class="step-body">
-          <h3 class="step-title">Dense In-Process Vector Embedding</h3>
+          <h3 class="step-title">Multilingual Dense Vector Embedding</h3>
           <p class="step-desc">
-            Incoming queries are encoded into 384-dimensional dense vector embeddings using <code>BAAI/bge-small-en-v1.5</code> via ONNX runtime in-process (~9ms), avoiding external network round-trips.
+            Incoming queries are encoded into 384-dimensional normalized dense vectors using <code>sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2</code> via in-process ONNX Runtime (~15ms), enabling cross-lingual semantic alignment across Indic languages and English.
           </p>
         </div>
       </div>
@@ -507,9 +507,9 @@
       <div class="pipeline-row">
         <div class="step-number">04</div>
         <div class="step-body">
-          <h3 class="step-title">In-Memory FAISS Vector Retrieval</h3>
+          <h3 class="step-title">Hybrid Sparse (BM25) + Dense (FAISS) Reciprocal Rank Fusion</h3>
           <p class="step-desc">
-            Queries are searched against millions of pre-indexed AI4Bharat MSMARCO-XI chunks held in RAM using <code>FAISS IndexFlatIP</code>. Candidate passages are cosine-ranked in ~5ms across 3 chunking strategies.
+            Queries search across 7,650+ indexed multilingual chunks using <code>FAISS IndexFlatIP</code> dense search combined with BM25 sparse keyword matching. Reciprocal Rank Fusion (RRF) merges top candidates in &lt; 1ms with high keyword and semantic precision.
           </p>
         </div>
       </div>
@@ -519,7 +519,7 @@
         <div class="step-body">
           <h3 class="step-title">Groq LPU Hardware Generation</h3>
           <p class="step-desc">
-            Retrieved passages and user queries are passed to Groq LPU running <code>llama-3.1-8b-instant</code> with strict prompt grounding constraints. Answers are synthesized in ~75ms.
+            Retrieved context and user queries are passed to Groq LPUs running <code>openai/gpt-oss-20b</code> in strict structured JSON mode at over 700 tokens per second, ensuring verifiable fact synthesis.
           </p>
         </div>
       </div>
@@ -527,9 +527,9 @@
       <div class="pipeline-row">
         <div class="step-number">06</div>
         <div class="step-body">
-          <h3 class="step-title">Hallucination Guard &amp; Citation Verification</h3>
+          <h3 class="step-title">Cross-Lingual Grounding &amp; Citation Verification</h3>
           <p class="step-desc">
-            The safety verification engine cross-references synthesized answer claims against retrieved source chunk tokens, stamping verified responses with a <strong>✓ Grounded</strong> badge and document citation tags.
+            Deterministic grounding filters verify that every generated response fact is grounded in the retrieved sources, supporting cross-lingual reasoning from Indic passages to English answers with source citation chips and TTS speech playback.
           </p>
         </div>
       </div>
@@ -539,30 +539,30 @@
     <!-- Latency Budget & Benchmarks -->
     <section class="metrics-section">
       <div class="metrics-header">
-        <h2 class="metrics-title">Sub-200ms Latency Budget</h2>
-        <span class="target-badge">&lt; 200MS END-TO-END</span>
+        <h2 class="metrics-title">Sub-200ms FAISS Retrieval Benchmark</h2>
+        <span class="target-badge">&lt; 200MS VECTOR RETRIEVAL</span>
       </div>
 
       <div class="metrics-grid">
         <div class="metric-card">
-          <span class="metric-val orange">~60ms</span>
-          <span class="metric-label">Sarvam STT</span>
-          <span class="metric-sub">saarika:v2.5 endpoint</span>
-        </div>
-        <div class="metric-card">
-          <span class="metric-val orange">~9ms</span>
-          <span class="metric-label">FastEmbed</span>
-          <span class="metric-sub">BGE-small ONNX</span>
-        </div>
-        <div class="metric-card">
-          <span class="metric-val orange">&lt;5ms</span>
+          <span class="metric-val orange">&lt; 1ms</span>
           <span class="metric-label">FAISS Search</span>
           <span class="metric-sub">In-Memory IndexFlatIP</span>
         </div>
         <div class="metric-card">
-          <span class="metric-val orange">~75ms</span>
+          <span class="metric-val orange">~15ms</span>
+          <span class="metric-label">FastEmbed</span>
+          <span class="metric-sub">MiniLM-L12 ONNX</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-val orange">&lt; 1ms</span>
+          <span class="metric-label">Grounding Guard</span>
+          <span class="metric-sub">Deterministic check</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-val orange">700+ t/s</span>
           <span class="metric-label">Groq LPU</span>
-          <span class="metric-sub">llama-3.1-8b-instant</span>
+          <span class="metric-sub">Ultra-fast inference</span>
         </div>
       </div>
     </section>

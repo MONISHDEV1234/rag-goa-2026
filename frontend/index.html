@@ -8,15 +8,15 @@
   <meta name="theme-color" content="#000000" />
 
   <!-- PWA -->
-  <link rel="manifest" href="/static/manifest.json" />
-  <link rel="apple-touch-icon" href="/static/icon.svg" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icon.svg" />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;900&family=Space+Mono:wght@400;700&family=Unbounded:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
@@ -30,52 +30,197 @@
   <div class="app-wrapper">
 
     <!-- ══════════════════════════════════════
-         TOP NAVIGATION BAR
+         TOP NAVIGATION BAR (ENTERPRISE COCKPIT HEADER)
     ══════════════════════════════════════ -->
     <header class="navbar" role="banner">
-      <div class="nav-left">
-        <a href="/" class="brand-logo">SONAR</a>
-        <span class="nav-pipe">|</span>
-        <span class="nav-sub">NEURAL RETRIEVAL SYSTEM</span>
-      </div>
-
-      <div class="nav-right">
-        <!-- Demo Mode Badge -->
-        <span id="demo-badge" class="demo-badge" style="display:none;">◈ DEMO</span>
-
-        <!-- System status -->
-        <div class="sys-status" id="system-status">
-          <span class="status-dot" id="status-dot"></span>
-          <span class="status-text" id="system-status-text">INITIALIZING…</span>
+      <div class="navbar-inner">
+        <!-- Left: Brand lockup -->
+        <div class="nav-left">
+          <a href="landing.html" class="brand-lockup nav-mag" aria-label="SONAR home">
+            <span class="brand-sonar" aria-hidden="true">
+              <span class="brand-sonar-ring"></span>
+              <span class="brand-sonar-core"></span>
+            </span>
+            <span class="brand-logo">SONAR</span>
+            <span class="brand-badge-wrap">
+              <span class="nav-sub">NEURAL ENGINE</span>
+              <span class="nav-version">v2.5</span>
+            </span>
+          </a>
         </div>
 
-        <a href="/" class="nav-link">HOME</a>
-        <a href="/about" class="nav-link">ABOUT</a>
-        <a href="/tutorial" class="nav-link">TUTORIAL</a>
+        <!-- Right: Status + links + controls -->
+        <div class="nav-right">
+          <div class="sys-status nav-mag" id="system-status" title="System Connectivity Status">
+            <span class="status-pulse" aria-hidden="true"></span>
+            <span class="status-dot" id="status-dot"></span>
+            <span class="status-text" id="system-status-text">INITIALIZING…</span>
+          </div>
 
-        <!-- Install -->
-        <button id="btn-install" class="nav-pill-btn small" style="display:none;" aria-label="Install App">
-          INSTALL
-        </button>
 
-        <!-- Settings -->
-        <button id="btn-settings" class="nav-pill-btn settings" aria-label="System settings">
-          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-          SYS
-        </button>
+          <div class="nav-divider" aria-hidden="true"></div>
+
+          <nav class="nav-links-group" aria-label="Main Navigation">
+            <a href="landing.html" class="nav-link nav-mag"><span>HOME</span></a>
+            <a href="about.html" class="nav-link nav-mag"><span>ABOUT</span></a>
+            <a href="tutorial.html" class="nav-link nav-mag"><span>TUTORIAL</span></a>
+          </nav>
+
+          <div class="nav-divider" aria-hidden="true"></div>
+
+          <div class="nav-controls-group">
+            <button id="btn-for-nerds" class="nav-pill-btn nerds-btn nav-mag" aria-expanded="false" aria-controls="nerds-hud-drawer" title="Toggle Neural Engine Specs & Real-time Telemetry">
+              <span class="btn-shine" aria-hidden="true"></span>
+              <span class="nerds-glyph">◈</span>
+              <span>FOR NERDS</span>
+            </button>
+
+            <button id="btn-install" class="nav-pill-btn small nav-mag" style="display:none;" aria-label="Install App">
+              <span class="btn-shine" aria-hidden="true"></span>
+              INSTALL
+            </button>
+
+            <button id="btn-settings" class="nav-pill-btn settings-btn nav-mag" aria-label="System settings" title="System Settings">
+              <span class="btn-shine" aria-hidden="true"></span>
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              <span>SYS</span>
+            </button>
+          </div>
+        </div>
       </div>
     </header>
 
     <!-- ══════════════════════════════════════
-         STATUS TICKER BAR
+         STATUS TICKER BAR (HIGH-TECH RAIL)
     ══════════════════════════════════════ -->
-    <div class="status-ticker" id="status-bar" role="status" aria-live="polite">
-      <span class="ticker-dot"></span>
-      <span class="ticker-text" id="status-text">SYSTEM READY</span>
-      <span class="ticker-dots">
-        <span></span><span></span><span></span>
-      </span>
+    <div class="status-ticker-wrapper">
+      <div class="status-ticker" id="status-bar" role="status" aria-live="polite">
+        <span class="ticker-dot"></span>
+        <span class="ticker-text" id="status-text">SYSTEM READY</span>
+        <span class="ticker-dots" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </span>
+      </div>
     </div>
+
+    <!-- ══════════════════════════════════════
+         FOR NERDS: NEURAL ENGINE TELEMETRY COCKPIT HUD
+    ══════════════════════════════════════ -->
+    <section id="nerds-hud-drawer" class="nerds-hud-drawer" style="display:none;" aria-label="Engine Technical Specs and Real-time Telemetry">
+      <div class="nerds-hud-container">
+        <div class="nerds-hud-header">
+          <div class="nerds-title-group">
+            <span class="nerds-badge">COCKPIT v2.5</span>
+            <h3 class="nerds-heading">SYSTEM INTERNALS &amp; TELEMETRY MATRIX</h3>
+          </div>
+          <div class="nerds-hud-actions">
+            <span class="live-pulse-indicator"><span class="pulse-ring"></span> LIVE BUS</span>
+            <button id="btn-close-nerds" class="nerds-close-btn" aria-label="Close nerd stats">&times;</button>
+          </div>
+        </div>
+
+        <div class="nerds-grid">
+          <!-- Card 1: Vector Database -->
+          <div class="nerd-card">
+            <div class="nerd-card-top">
+              <span class="nerd-card-icon">⚡</span>
+              <span class="nerd-card-title">VECTOR RETRIEVAL (FAISS)</span>
+              <span class="nerd-metric-badge">0-IO RAM</span>
+            </div>
+            <div class="nerd-spec-list">
+              <div class="nerd-spec-row"><span class="spec-k">INDEX TYPE</span><span class="spec-v font-mono">IndexFlatIP (Exact Cosine)</span></div>
+              <div class="nerd-spec-row"><span class="spec-k">EMBEDDING DIM</span><span class="spec-v font-mono">768-D Dense Vectors</span></div>
+              <div class="nerd-spec-row"><span class="spec-k">CORPUS</span><span class="spec-v font-mono">MSMARCO-XI Ground Truth</span></div>
+              <div class="nerd-spec-row"><span class="spec-k">INDEX SEARCH TIME</span><span class="spec-v font-mono text-cyan" id="nerd-faiss-time">&le; 5.2 ms</span></div>
+            </div>
+          </div>
+
+          <!-- Card 2: Inference LPU -->
+          <div class="nerd-card">
+            <div class="nerd-card-top">
+              <span class="nerd-card-icon">🧠</span>
+              <span class="nerd-card-title">LLM INFERENCE (GROQ LPU)</span>
+              <span class="nerd-metric-badge accent">750 T/s</span>
+            </div>
+            <div class="nerd-spec-list">
+              <div class="nerd-spec-row"><span class="spec-k">FOUNDATION MODEL</span><span class="spec-v font-mono">Meta Llama-3.1-8B-Instant</span></div>
+              <div class="nerd-spec-row"><span class="spec-k">ACCELERATOR</span><span class="spec-v font-mono">Groq Tensor Streaming LPU</span></div>
+              <div class="nerd-spec-row"><span class="spec-k">CONTEXT LIMIT</span><span class="spec-v font-mono">512 in / 256 out capped</span></div>
+              <div class="nerd-spec-row"><span class="spec-k">AVG TTFT</span><span class="spec-v font-mono text-orange" id="nerd-groq-time">~68 ms</span></div>
+            </div>
+          </div>
+
+          <!-- Card 3: Neural ASR -->
+          <div class="nerd-card">
+            <div class="nerd-card-top">
+              <span class="nerd-card-icon">🎙️</span>
+              <span class="nerd-card-title">SPEECH PIPELINE (SARVAM AI)</span>
+              <span class="nerd-metric-badge">MULTILINGUAL</span>
+            </div>
+            <div class="nerd-spec-list">
+              <div class="nerd-spec-row"><span class="spec-k">ACOUSTIC MODEL</span><span class="spec-v font-mono">Sarvam saarika:v2.5</span></div>
+              <div class="nerd-spec-row"><span class="spec-k">STREAMING CODEC</span><span class="spec-v font-mono">Opus / 16kHz Mono 1-Ch</span></div>
+              <div class="nerd-spec-row"><span class="spec-k">VAD ALGORITHM</span><span class="spec-v font-mono">Energy + WebRTC Bi-Filter</span></div>
+              <div class="nerd-spec-row"><span class="spec-k">ASR LATENCY SLA</span><span class="spec-v font-mono text-cyan" id="nerd-asr-time">&le; 58 ms</span></div>
+            </div>
+          </div>
+
+          <!-- Card 4: Grounding Guard & Budget -->
+          <div class="nerd-card">
+            <div class="nerd-card-top">
+              <span class="nerd-card-icon">🛡️</span>
+              <span class="nerd-card-title">GROUNDING &amp; SLA BUDGET</span>
+              <span class="nerd-metric-badge green">&lt;200ms TARGET</span>
+            </div>
+            <div class="nerd-spec-list">
+              <div class="nerd-spec-row"><span class="spec-k">HALLUCINATION GUARD</span><span class="spec-v font-mono">Strict Citation Verifier</span></div>
+              <div class="nerd-spec-row"><span class="spec-k">SIMILARITY THRESHOLD</span><span class="spec-v font-mono">&ge; 0.750 Cosine Score</span></div>
+              <div class="nerd-spec-row"><span class="spec-k">ORB VISUAL STATE</span><span class="spec-v font-mono text-gold" id="nerd-orb-state">IDLE (MORPH 1.0)</span></div>
+              <div class="nerd-spec-row"><span class="spec-k">LAST ROUNDTRIP</span><span class="spec-v font-mono text-green" id="nerd-total-time">—</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Pipeline Timeline Flow -->
+        <div class="nerd-pipeline-flow">
+          <div class="pipeline-node active" id="pipe-vad">
+            <span class="node-num">01</span>
+            <span class="node-name">AUDIO VAD</span>
+            <span class="node-time">~0ms</span>
+          </div>
+          <div class="pipeline-connector"></div>
+          <div class="pipeline-node" id="pipe-stt">
+            <span class="node-num">02</span>
+            <span class="node-name">SARVAM STT</span>
+            <span class="node-time">~58ms</span>
+          </div>
+          <div class="pipeline-connector"></div>
+          <div class="pipeline-node" id="pipe-embed">
+            <span class="node-num">03</span>
+            <span class="node-name">FASTEMBED</span>
+            <span class="node-time">~9ms</span>
+          </div>
+          <div class="pipeline-connector"></div>
+          <div class="pipeline-node" id="pipe-faiss">
+            <span class="node-num">04</span>
+            <span class="node-name">FAISS SEARCH</span>
+            <span class="node-time">~5ms</span>
+          </div>
+          <div class="pipeline-connector"></div>
+          <div class="pipeline-node" id="pipe-groq">
+            <span class="node-num">05</span>
+            <span class="node-name">GROQ LPU</span>
+            <span class="node-time">~70ms</span>
+          </div>
+          <div class="pipeline-connector"></div>
+          <div class="pipeline-node" id="pipe-guard">
+            <span class="node-num">06</span>
+            <span class="node-name">GROUNDING</span>
+            <span class="node-time">~4ms</span>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <main class="main-content" role="main">
 
@@ -100,7 +245,17 @@
           <button id="btn-mic-real" style="display:none;" aria-hidden="true"></button>
         </div>
 
-        <div class="mic-instruction" id="mic-label">TAP ORB TO SPEAK</div>
+        <div class="mic-instruction" id="mic-label" role="button" tabindex="0" style="cursor:pointer; user-select:none;" title="Click to start / stop voice recording">CLICK ORB TO START VOICE QUERY</div>
+
+        <!-- Microphone Selector & Toggle Button -->
+        <div class="mic-controls-row" style="display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:10px; margin: 8px 0 16px;">
+          <select id="select-mic-device" class="mic-device-select" style="background: rgba(15, 23, 42, 0.9); color: #ffd966; border: 1px solid rgba(234, 179, 8, 0.4); border-radius: 20px; padding: 6px 14px; font-size: 0.82rem; outline: none; cursor: pointer; max-width: 260px;" title="Select input microphone">
+            <option value="">🎙 Loading Microphones...</option>
+          </select>
+          <button id="btn-toggle-mic" type="button" style="background: linear-gradient(135deg, #eab308, #ca8a04); color: #000; font-weight: 700; border: none; border-radius: 20px; padding: 6px 16px; font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 0 15px rgba(234, 179, 8, 0.3); transition: all 0.2s;" title="Toggle voice recording">
+            <span id="btn-toggle-mic-icon">🎙</span> <span id="btn-toggle-mic-text">START RECORDING</span>
+          </button>
+        </div>
 
         <!-- Text Input Search Box -->
         <form id="text-query-form" class="search-form" role="search">
@@ -109,7 +264,7 @@
               id="input-text-query"
               type="text"
               class="search-input"
-              placeholder="Enter question or query neural knowledge..."
+              placeholder="Ask SONAR anything..."
               autocomplete="off"
               spellcheck="false"
               aria-label="Search query"
@@ -210,17 +365,6 @@
         <div class="settings-body">
           <div class="setting-row">
             <div class="setting-label-group">
-              <span class="setting-name">Demo Mode</span>
-              <span class="setting-desc">Simulate speech &amp; RAG pipeline offline with mock data</span>
-            </div>
-            <label class="toggle-switch">
-              <input type="checkbox" id="setting-demo-mode" />
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-
-          <div class="setting-row">
-            <div class="setting-label-group">
               <span class="setting-name">Top-K Retrieval</span>
               <span class="setting-desc">Number of candidate passages to retrieve (<span id="top-k-val">3</span>)</span>
             </div>
@@ -249,7 +393,7 @@
 
   </div>
 
-  <script src="/static/orb.js"></script>
-  <script src="/static/app.js"></script>
+  <script src="orb.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>

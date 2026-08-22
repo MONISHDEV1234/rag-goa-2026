@@ -1,0 +1,7 @@
+{
+  "model_name": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "dim": 384,
+  "is_e5": false,
+  "note": "Built with direct ONNX Runtime (mean pool). Same model as fastembed uses.",
+  "num_vectors": 7651
+}

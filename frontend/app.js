@@ -4,13 +4,12 @@
  * Capabilities:
  *  - PWA Service Worker & Install App prompt
  *  - Web Audio API real-time waveform visualizer on mic button
- *  - MediaRecorder audio capture → POST /api/voice (or Demo Mode)
- *  - Text query fallback → POST /api/query (or Demo Mode)
+ *  - MediaRecorder audio capture → POST /api/voice
+ *  - Text query → POST /api/query
  *  - Suggestion chips for one-tap queries
- *  - Demo Mode: full pipeline simulation with realistic mock data (no backend needed)
  *  - Web Speech API TTS readout on answer
  *  - Copy answer to clipboard
- *  - Settings modal: API URL, Top-K, Demo Mode toggle
+ *  - Settings modal: API URL and Top-K
  *  - Latency breakdown display (< 200 ms target)
  *  - Grounding badge (Grounded / Unverified / Insufficient Context)
  */
@@ -22,9 +21,8 @@
 ══════════════════════════════════════════════════════════════ */
 
 const CONFIG = {
-  apiBase:        localStorage.getItem('sonar_api_base') || '',
+  apiBase:        localStorage.getItem('sonar_api_base') || 'http://127.0.0.1:8000',
   topK:           parseInt(localStorage.getItem('sonar_top_k'), 10) || 3,
-  demoMode:       localStorage.getItem('sonar_demo') === 'true', // default OFF — uses real skeleton backend
   latencyTarget:  200,
 };
 
@@ -33,157 +31,7 @@ function getEndpoint(path) {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   2. DEMO MODE — Realistic Mock Responses
-   Used when backend is not yet wired or Demo Mode is enabled.
-══════════════════════════════════════════════════════════════ */
-
-const DEMO_QA = [
-  {
-    keywords: ['retrieval', 'rag', 'augmented'],
-    transcript: 'What is retrieval augmented generation?',
-    answer: 'Retrieval-Augmented Generation (RAG) is a technique that combines a retrieval system with a generative language model. Instead of relying solely on the model\'s parametric knowledge, RAG first retrieves relevant passages from an external knowledge base (such as MSMARCO-XI using FAISS), then conditions the LLM generation on those retrieved passages. This reduces hallucinations and ensures the answer is grounded in verifiable documents.',
-    sources: [
-      { doc_id: 'msmarco-xi-doc-00412', chunk_strategy: 'semantic',  similarity_score: 0.921 },
-      { doc_id: 'msmarco-xi-doc-01876', chunk_strategy: 'sliding',   similarity_score: 0.887 },
-      { doc_id: 'msmarco-xi-doc-03201', chunk_strategy: 'semantic',  similarity_score: 0.812 },
-    ],
-    latency: { stt: 58, embedding: 9, retrieval: 5, generation: 74, grounding: 4, total: 150 },
-    is_grounded: true,
-  },
-  {
-    keywords: ['transformer', 'attention', 'architecture'],
-    transcript: 'How does the transformer architecture work?',
-    answer: 'The Transformer architecture, introduced in "Attention Is All You Need" (Vaswani et al., 2017), relies entirely on self-attention mechanisms instead of recurrence. Each token attends to every other token in the sequence through multi-head attention, computed as softmax(QKᵀ/√dₖ)V. This allows parallel processing and captures long-range dependencies efficiently. Encoder-decoder variants are used for translation; decoder-only variants (like GPT) for generation.',
-    sources: [
-      { doc_id: 'msmarco-xi-doc-00891', chunk_strategy: 'semantic',  similarity_score: 0.944 },
-      { doc_id: 'msmarco-xi-doc-02114', chunk_strategy: 'semantic',  similarity_score: 0.903 },
-    ],
-    latency: { stt: 61, embedding: 8, retrieval: 4, generation: 81, grounding: 3, total: 157 },
-    is_grounded: true,
-  },
-  {
-    keywords: ['faiss', 'vector', 'search', 'index'],
-    transcript: 'How does in-memory vector search with FAISS work?',
-    answer: 'FAISS (Facebook AI Similarity Search) is a library for efficient similarity search over dense vectors. In this system, document chunks are embedded offline using FastEmbed (BAAI/bge-small-en-v1.5), and stored in a FAISS IndexFlatIP index loaded entirely into RAM at startup. At query time, the query is embedded (~9 ms) and FAISS performs an exact inner-product search (~5 ms) to return the top-K most similar passages without any disk I/O.',
-    sources: [
-      { doc_id: 'msmarco-xi-doc-04532', chunk_strategy: 'sliding',   similarity_score: 0.912 },
-      { doc_id: 'msmarco-xi-doc-01234', chunk_strategy: 'metadata',  similarity_score: 0.878 },
-      { doc_id: 'msmarco-xi-doc-03891', chunk_strategy: 'semantic',  similarity_score: 0.843 },
-    ],
-    latency: { stt: 54, embedding: 11, retrieval: 6, generation: 68, grounding: 5, total: 144 },
-    is_grounded: true,
-  },
-  {
-    keywords: ['chunking', 'semantic', 'sliding', 'window'],
-    transcript: 'What is semantic chunking and how does it differ from sliding window?',
-    answer: 'Semantic chunking splits documents at natural meaning boundaries — detected by measuring cosine similarity drops between adjacent sentence embeddings. This keeps related ideas together in one chunk. Sliding-window chunking, by contrast, uses fixed-size overlapping windows (e.g. 4 sentences, step 2) regardless of content boundaries. Sliding windows are faster to compute but may split mid-thought. Semantic chunking typically produces better retrieval quality at the cost of slightly more computation during the offline indexing phase.',
-    sources: [
-      { doc_id: 'msmarco-xi-doc-02977', chunk_strategy: 'semantic',  similarity_score: 0.931 },
-      { doc_id: 'msmarco-xi-doc-04102', chunk_strategy: 'sliding',   similarity_score: 0.891 },
-    ],
-    latency: { stt: 63, embedding: 10, retrieval: 5, generation: 79, grounding: 4, total: 161 },
-    is_grounded: true,
-  },
-  {
-    keywords: ['sarvam', 'stt', 'speech', 'transcri'],
-    transcript: 'How does the Sarvam AI speech-to-text work?',
-    answer: 'Sarvam AI\'s saarika:v2.5 model is a multilingual ASR (Automatic Speech Recognition) system optimized for Indian languages including English with Indian accents. In this pipeline, audio is captured via the browser\'s MediaRecorder API as WebM/Opus, sent via a multipart POST request to the Sarvam API, and the transcript is returned in under 60 ms on average. An async httpx client with connection pooling and tenacity retries handles transient failures without blocking the main event loop.',
-    sources: [
-      { doc_id: 'msmarco-xi-doc-00147', chunk_strategy: 'semantic',  similarity_score: 0.908 },
-      { doc_id: 'msmarco-xi-doc-01763', chunk_strategy: 'sliding',   similarity_score: 0.867 },
-    ],
-    latency: { stt: 57, embedding: 9, retrieval: 5, generation: 72, grounding: 4, total: 147 },
-    is_grounded: true,
-  },
-  {
-    keywords: ['latency', 'performance', '200ms', 'fast'],
-    transcript: 'How does the system achieve under 200 ms latency?',
-    answer: 'The sub-200 ms target is achieved through: (1) FAISS loaded entirely in RAM at startup — zero disk I/O per request; (2) FastEmbed\'s BGE-small-en-v1.5 model pre-warmed, embedding in ~9 ms; (3) Groq\'s llama-3.1-8b-instant LLM generating in ~70 ms via optimized inference hardware; (4) Single async event loop with httpx connection pooling for both Sarvam and Groq; (5) Prompt limited to ≤512 tokens; (6) Max output tokens capped at 256. The latency budget: STT ~60ms + Embedding ~10ms + FAISS ~5ms + LLM ~75ms + Grounding ~5ms = ~155ms.',
-    sources: [
-      { doc_id: 'msmarco-xi-doc-03341', chunk_strategy: 'semantic',  similarity_score: 0.956 },
-      { doc_id: 'msmarco-xi-doc-04812', chunk_strategy: 'metadata',  similarity_score: 0.902 },
-      { doc_id: 'msmarco-xi-doc-02256', chunk_strategy: 'sliding',   similarity_score: 0.871 },
-    ],
-    latency: { stt: 55, embedding: 8, retrieval: 4, generation: 71, grounding: 4, total: 142 },
-    is_grounded: true,
-  },
-  {
-    keywords: ['groq', 'llm', 'llama', 'generation'],
-    transcript: 'What LLM does this system use and why Groq?',
-    answer: 'This system uses Meta\'s Llama 3.1 8B Instant model, served via Groq\'s LPU (Language Processing Unit) inference hardware. Groq was chosen because its LPU architecture delivers dramatically lower generation latency (~70ms for short answers) compared to GPU-based APIs (~150-300ms). The 8B parameter model strikes the right balance between reasoning quality and speed. Prompts are kept short (≤512 tokens) and output is capped at 256 tokens to minimize generation time while still producing complete, useful answers.',
-    sources: [
-      { doc_id: 'msmarco-xi-doc-01508', chunk_strategy: 'semantic',  similarity_score: 0.935 },
-      { doc_id: 'msmarco-xi-doc-03702', chunk_strategy: 'sliding',   similarity_score: 0.892 },
-    ],
-    latency: { stt: 60, embedding: 9, retrieval: 5, generation: 69, grounding: 3, total: 146 },
-    is_grounded: true,
-  },
-];
-
-const DEMO_REFUSAL = {
-  transcript: '',
-  answer: "I couldn't find enough information in the provided knowledge base to answer that question. Please try rephrasing or asking about RAG, transformers, FAISS, chunking strategies, or system architecture.",
-  sources: [],
-  latency: { stt: 55, embedding: 9, retrieval: 4, generation: 0, grounding: 2, total: 70 },
-  is_grounded: false,
-};
-
-function getDemoResponse(query) {
-  if (!query) return DEMO_REFUSAL;
-  const lower = query.toLowerCase();
-  const match = DEMO_QA.find(q => q.keywords.some(k => lower.includes(k)));
-  if (match) return { ...match, transcript: match.transcript };
-  return { ...DEMO_REFUSAL, transcript: query };
-}
-
-function addJitter(ms) {
-  return Math.round(ms * (0.88 + Math.random() * 0.24));
-}
-
-async function runDemoMode(query) {
-  // Simulate realistic STT delay
-  setState(State.TRANSCRIBING);
-  await sleep(addJitter(600));
-
-  // Simulate retrieval
-  setState(State.RETRIEVING);
-  await sleep(addJitter(400));
-
-  // Simulate generation
-  setState(State.GENERATING);
-  await sleep(addJitter(800));
-
-  // Simulate grounding check
-  setState(State.GROUNDING);
-  await sleep(addJitter(250));
-
-  const raw = getDemoResponse(query);
-  // Apply jitter to latency numbers for realism
-  const latency = {};
-  for (const [k, v] of Object.entries(raw.latency)) {
-    latency[k] = k === 'total' ? undefined : addJitter(v);
-  }
-  latency.total = Object.entries(latency)
-    .filter(([k]) => k !== 'total')
-    .reduce((s, [, v]) => s + (v || 0), 0);
-
-  const frontendRoundtrip = latency.total + addJitter(12);
-
-  handleRAGResponse({
-    transcript:         raw.transcript || query,
-    answer:             raw.answer,
-    is_grounded:        raw.is_grounded,
-    retrieved_sources:  raw.sources,
-    latency_breakdown:  latency,
-  }, frontendRoundtrip);
-}
-
-function sleep(ms) {
-  return new Promise(r => setTimeout(r, ms));
-}
-
-/* ══════════════════════════════════════════════════════════════
-   3. STATE MACHINE
+   2. STATE MACHINE
 ══════════════════════════════════════════════════════════════ */
 
 const State = Object.freeze({
@@ -210,6 +58,10 @@ let currentState = State.IDLE;
 const DOM = {
   btnMic:           document.getElementById('btn-mic'),
   micLabel:         document.getElementById('mic-label'),
+  selectMicDevice:  document.getElementById('select-mic-device'),
+  btnToggleMic:     document.getElementById('btn-toggle-mic'),
+  btnToggleMicText: document.getElementById('btn-toggle-mic-text'),
+  btnToggleMicIcon: document.getElementById('btn-toggle-mic-icon'),
   canvasVisualizer: document.getElementById('audio-visualizer'),
   statusBar:        document.getElementById('status-bar'),
   statusText:       document.getElementById('status-text'),
@@ -234,7 +86,6 @@ const DOM = {
   systemStatus:     document.getElementById('system-status'),
   systemStatusText: document.getElementById('system-status-text'),
   statusDot:        document.getElementById('status-dot'),
-  demoBadge:        document.getElementById('demo-badge'),
   btnInstall:       document.getElementById('btn-install'),
   btnSettings:      document.getElementById('btn-settings'),
   settingsModal:    document.getElementById('settings-modal'),
@@ -243,11 +94,28 @@ const DOM = {
   settingApiUrl:    document.getElementById('setting-api-url'),
   settingTopK:      document.getElementById('setting-top-k'),
   topKVal:          document.getElementById('top-k-val'),
-  settingDemoMode:  document.getElementById('setting-demo-mode'),
+
+  // For Nerds Cockpit Elements
+  btnForNerds:      document.getElementById('btn-for-nerds'),
+  nerdsDrawer:      document.getElementById('nerds-hud-drawer'),
+  btnCloseNerds:    document.getElementById('btn-close-nerds'),
+  nerdOrbState:     document.getElementById('nerd-orb-state'),
+  nerdTotalTime:    document.getElementById('nerd-total-time'),
+  nerdFaissTime:    document.getElementById('nerd-faiss-time'),
+  nerdGroqTime:     document.getElementById('nerd-groq-time'),
+  nerdAsrTime:      document.getElementById('nerd-asr-time'),
+  pipeNodes: {
+    vad:   document.getElementById('pipe-vad'),
+    stt:   document.getElementById('pipe-stt'),
+    embed: document.getElementById('pipe-embed'),
+    faiss: document.getElementById('pipe-faiss'),
+    groq:  document.getElementById('pipe-groq'),
+    guard: document.getElementById('pipe-guard'),
+  },
 };
 
 /* ══════════════════════════════════════════════════════════════
-   5. UI STATE UPDATER
+   5. UI STATE UPDATER & ORB VISUAL BRIDGE
 ══════════════════════════════════════════════════════════════ */
 
 function setState(s) {
@@ -257,6 +125,47 @@ function setState(s) {
   const isProcessing = [State.TRANSCRIBING, State.RETRIEVING, State.GENERATING, State.GROUNDING].includes(s);
   const isDone       = s === State.ANSWER || s === State.NO_CONTEXT;
   const isError      = [State.STT_ERROR, State.RETRIEVAL_ERROR, State.GEN_ERROR, State.NO_SPEECH].includes(s);
+
+  // Sync with 3D Orb Multi-State Engine (Feature 5)
+  if (window.orbSetState) {
+    if (isRecording) {
+      window.orbSetState('RECORDING');
+    } else if (isProcessing) {
+      window.orbSetState('PROCESSING');
+    } else {
+      window.orbSetState('IDLE');
+    }
+  }
+
+  // Update Nerd Telemetry State Monitor (Feature 2)
+  if (DOM.nerdOrbState) {
+    if (isRecording) {
+      DOM.nerdOrbState.textContent = 'RECORDING (AURA 3X)';
+      DOM.nerdOrbState.className = 'spec-v font-mono text-orange';
+    } else if (isProcessing) {
+      DOM.nerdOrbState.textContent = `SYNTHESIZING // ${s}`;
+      DOM.nerdOrbState.className = 'spec-v font-mono text-cyan';
+    } else if (isDone) {
+      DOM.nerdOrbState.textContent = 'RESOLVED // READY';
+      DOM.nerdOrbState.className = 'spec-v font-mono text-green';
+    } else {
+      DOM.nerdOrbState.textContent = 'IDLE (MORPH 1.0)';
+      DOM.nerdOrbState.className = 'spec-v font-mono text-gold';
+    }
+  }
+
+  // Update Pipeline Flow Highlight
+  if (DOM.pipeNodes) {
+    Object.values(DOM.pipeNodes).forEach(n => n?.classList.remove('active'));
+    if (s === State.RECORDING) DOM.pipeNodes.vad?.classList.add('active');
+    else if (s === State.TRANSCRIBING) DOM.pipeNodes.stt?.classList.add('active');
+    else if (s === State.RETRIEVING) {
+      DOM.pipeNodes.embed?.classList.add('active');
+      DOM.pipeNodes.faiss?.classList.add('active');
+    } else if (s === State.GENERATING) DOM.pipeNodes.groq?.classList.add('active');
+    else if (s === State.GROUNDING) DOM.pipeNodes.guard?.classList.add('active');
+    else if (isDone) DOM.pipeNodes.guard?.classList.add('active');
+  }
 
   // Mic canvas orb state
   if (isProcessing) {
@@ -270,23 +179,39 @@ function setState(s) {
   DOM.btnMic.setAttribute('aria-pressed', isRecording ? 'true' : 'false');
   DOM.btnMic.setAttribute('aria-label', isRecording ? 'Stop recording' : 'Start voice recording');
 
-  // Mic label
+  // Mic label & Toggle Button — Dynamic interactive guidance
+  if (DOM.btnToggleMic) {
+    if (isRecording) {
+      DOM.btnToggleMic.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+      DOM.btnToggleMic.style.color = '#fff';
+      if (DOM.btnToggleMicText) DOM.btnToggleMicText.textContent = 'STOP & SEND';
+      if (DOM.btnToggleMicIcon) DOM.btnToggleMicIcon.textContent = '⏹';
+    } else {
+      DOM.btnToggleMic.style.background = 'linear-gradient(135deg, #eab308, #ca8a04)';
+      DOM.btnToggleMic.style.color = '#000';
+      if (DOM.btnToggleMicText) DOM.btnToggleMicText.textContent = 'START RECORDING';
+      if (DOM.btnToggleMicIcon) DOM.btnToggleMicIcon.textContent = '🎙';
+    }
+  }
+
   if (isError) {
-    DOM.micLabel.textContent = 'TAP TO RETRY';
+    DOM.micLabel.innerHTML = '<span style="color:#ef4444">⚠ ERROR — CLICK ORB TO RETRY</span>';
   } else if (isRecording) {
-    DOM.micLabel.textContent = 'LISTENING… TAP TO STOP';
+    DOM.micLabel.innerHTML = '<span style="color:#f97316; font-weight:700;">● LISTENING… CLICK ORB TO FINISH & SEND</span>';
+  } else if (isProcessing) {
+    DOM.micLabel.innerHTML = '<span style="color:#06b6d4">⚡ TRANSCRIBING & SEARCHING…</span>';
   } else if (isDone) {
-    DOM.micLabel.textContent = 'TAP FOR NEW QUERY';
+    DOM.micLabel.innerHTML = '<span style="color:#10b981">✓ CLICK ORB TO ASK ANOTHER QUESTION</span>';
   } else {
-    DOM.micLabel.textContent = 'TAP TO SPEAK';
+    DOM.micLabel.innerHTML = '<span>CLICK ORB TO START VOICE QUERY</span>';
   }
 
   // Status ticker
   const statusMessages = {
-    [State.TRANSCRIBING]: CONFIG.demoMode ? 'STT // TRANSCRIBING NEURAL INPUT (DEMO)' : 'STT // SARVAM AI TRANSCRIBING…',
-    [State.RETRIEVING]:   CONFIG.demoMode ? 'FAISS // SEARCHING MSMARCO-XI (DEMO)'   : 'FAISS // SEARCHING MSMARCO-XI INDEX…',
-    [State.GENERATING]:   CONFIG.demoMode ? 'LLM // GROQ GENERATING RESPONSE (DEMO)' : 'LLM // GROQ GENERATING RESPONSE…',
-    [State.GROUNDING]:    CONFIG.demoMode ? 'GUARD // VERIFYING CITATIONS (DEMO)'    : 'GUARD // GROUNDING VERIFICATION…',
+    [State.TRANSCRIBING]: 'STT // SARVAM AI TRANSCRIBING…',
+    [State.RETRIEVING]:   'FAISS // SEARCHING MSMARCO-XI INDEX…',
+    [State.GENERATING]:   'LLM // GROQ GENERATING RESPONSE…',
+    [State.GROUNDING]:    'GUARD // GROUNDING VERIFICATION…',
   };
   const msg = statusMessages[s];
   if (msg) {
@@ -305,17 +230,6 @@ function setState(s) {
   }
 }
 
-function updateDemoUI() {
-  if (DOM.demoBadge) {
-    DOM.demoBadge.style.display = CONFIG.demoMode ? 'inline-flex' : 'none';
-  }
-  if (CONFIG.demoMode) {
-    DOM.systemStatus.className = 'sys-status demo';
-    DOM.systemStatusText.textContent = 'DEMO MODE';
-    DOM.btnMic.removeAttribute('disabled');
-  }
-}
-
 /* ══════════════════════════════════════════════════════════════
    6. REAL-TIME AUDIO VISUALIZER (Web Audio API)
 ══════════════════════════════════════════════════════════════ */
@@ -328,7 +242,7 @@ function setupVisualizer(stream) {
   try {
     const AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) return;
-    if (!audioCtx) audioCtx = new AC();
+    if (!audioCtx) { audioCtx = new AC(); window._orbAudioCtx = audioCtx; }
     else if (audioCtx.state === 'suspended') audioCtx.resume();
 
     const source = audioCtx.createMediaStreamSource(stream);
@@ -402,55 +316,273 @@ function stopVisualizer() {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   7. MEDIA RECORDER (MICROPHONE CAPTURE)
+   7. AUDIO RECORDER — AudioWorklet PCM Capture (bypass MediaRecorder)
+   MediaRecorder produces near-empty blobs on many Windows+Chrome
+   configs due to codec/driver issues. Instead we capture raw PCM
+   samples via AudioWorklet, then encode to WAV in JS.
 ══════════════════════════════════════════════════════════════ */
 
-let mediaRecorder = null;
-let audioChunks   = [];
-let mediaStream   = null;
-let lastRecordedBlob = null;
-let lastMimeType     = 'audio/webm';
+let mediaStream       = null;
+let isStartingMic     = false;
+let recordingTimerInterval = null;
+let recordingSeconds  = 0;
 
-function getMimeType() {
-  const types = ['audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus','audio/ogg','audio/mp4'];
-  return types.find(t => MediaRecorder.isTypeSupported(t)) || '';
+// PCM capture state
+let pcmAudioCtx       = null;
+let pcmWorkletNode    = null;
+let pcmSamples        = [];   // Float32Array slices
+let pcmSampleRate     = 16000;
+
+// ── WAV encoder ──────────────────────────────────────────────────────────────
+function encodeWAV(samples, sampleRate) {
+  const numSamples  = samples.length;
+  const byteLen     = 44 + numSamples * 2;
+  const buffer      = new ArrayBuffer(byteLen);
+  const view        = new DataView(buffer);
+
+  function str(offset, s) { for (let i = 0; i < s.length; i++) view.setUint8(offset + i, s.charCodeAt(i)); }
+  function u16(offset, v) { view.setUint16(offset, v, true); }
+  function u32(offset, v) { view.setUint32(offset, v, true); }
+
+  str(0, 'RIFF');
+  u32(4, byteLen - 8);
+  str(8, 'WAVE');
+  str(12, 'fmt ');
+  u32(16, 16);          // subchunk1 size
+  u16(20, 1);           // PCM
+  u16(22, 1);           // mono
+  u32(24, sampleRate);
+  u32(28, sampleRate * 2);
+  u16(32, 2);           // block align
+  u16(34, 16);          // bits per sample
+  str(36, 'data');
+  u32(40, numSamples * 2);
+
+  let off = 44;
+  for (let i = 0; i < numSamples; i++) {
+    const s = Math.max(-1, Math.min(1, samples[i]));
+    view.setInt16(off, s < 0 ? s * 32768 : s * 32767, true);
+    off += 2;
+  }
+  return new Blob([buffer], { type: 'audio/wav' });
+}
+
+// ── AudioWorklet inline processor ────────────────────────────────────────────
+const WORKLET_CODE = `
+class PCMRecorder extends AudioWorkletProcessor {
+  constructor() { super(); this._buf = []; }
+  process(inputs) {
+    const ch = inputs[0]?.[0];
+    if (ch) this.port.postMessage(ch.slice());
+    return true;
+  }
+}
+registerProcessor('pcm-recorder', PCMRecorder);
+`;
+
+let speechRecognizer = null;
+let speechTranscript = '';
+
+function setupSpeechRecognition() {
+  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRec) return null;
+  try {
+    const sr = new SpeechRec();
+    sr.continuous = true;
+    sr.interimResults = true;
+    sr.lang = 'en-IN';
+    sr.onresult = (e) => {
+      let interim = '';
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        if (e.results[i].isFinal) {
+          speechTranscript += e.results[i][0].transcript + ' ';
+        } else {
+          interim += e.results[i][0].transcript;
+        }
+      }
+      const full = (speechTranscript + ' ' + interim).trim();
+      if (full && DOM.micLabel && currentState === State.RECORDING) {
+        DOM.micLabel.innerHTML = `<span style="color:#38bdf8; font-weight:800; font-size:0.95rem;">🗣 "${esc(full)}"</span>`;
+      }
+    };
+    sr.onerror = (e) => console.log('[SpeechRecognition]', e.error);
+    return sr;
+  } catch (_) { return null; }
+}
+
+async function populateMicrophones() {
+  if (!navigator.mediaDevices?.enumerateDevices) return;
+  try {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const mics = devices.filter(d => d.kind === 'audioinput');
+    if (!DOM.selectMicDevice) return;
+    DOM.selectMicDevice.innerHTML = '';
+
+    if (!mics.length) {
+      DOM.selectMicDevice.innerHTML = '<option value="">🎙 Default Microphone</option>';
+      return;
+    }
+
+    const savedId = localStorage.getItem('sonar_mic_device');
+    mics.forEach((d, i) => {
+      const opt = document.createElement('option');
+      opt.value = d.deviceId;
+      opt.textContent = `🎙 ${d.label || `Microphone ${i + 1}`}`;
+      if (savedId === d.deviceId) {
+        opt.selected = true;
+      }
+      DOM.selectMicDevice.appendChild(opt);
+    });
+
+    DOM.selectMicDevice.onchange = (e) => {
+      localStorage.setItem('sonar_mic_device', e.target.value);
+      console.log('[Mic Device Selected]:', e.target.value);
+    };
+  } catch (err) {
+    console.warn('[Microphones]', err);
+  }
 }
 
 async function startRecording() {
+  if (isStartingMic || currentState === State.RECORDING) return;
+  isStartingMic = true;
   resetResults();
+  pcmSamples = [];
+
+  const selectedDeviceId = DOM.selectMicDevice?.value || localStorage.getItem('sonar_mic_device') || '';
+  const audioConstraints = selectedDeviceId
+    ? { deviceId: { exact: selectedDeviceId }, echoCancellation: true, noiseSuppression: true }
+    : { echoCancellation: true, noiseSuppression: true };
 
   try {
     mediaStream = await navigator.mediaDevices.getUserMedia({
-      audio: { channelCount: 1, sampleRate: 16000, echoCancellation: true, noiseSuppression: true },
+      audio: audioConstraints,
       video: false,
     });
+    populateMicrophones();
   } catch (err) {
-    showError(State.STT_ERROR, 'Microphone permission denied. Please allow microphone access.');
-    return;
+    try {
+      mediaStream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: false,
+      });
+      populateMicrophones();
+    } catch (_) {
+      isStartingMic = false;
+      showError(State.STT_ERROR, '❌ Microphone access denied. Allow mic in browser settings and try again.');
+      return;
+    }
   }
 
+  isStartingMic = false;
   setupVisualizer(mediaStream);
-  audioChunks = [];
-  const mime = getMimeType();
-  try { mediaRecorder = new MediaRecorder(mediaStream, mime ? { mimeType: mime } : {}); }
-  catch (_) { mediaRecorder = new MediaRecorder(mediaStream); }
 
-  mediaRecorder.ondataavailable = (e) => { if (e.data?.size > 0) audioChunks.push(e.data); };
+  // Start live browser speech recognition in parallel
+  speechTranscript = '';
+  try {
+    speechRecognizer = setupSpeechRecognition();
+    speechRecognizer?.start();
+  } catch (_) {}
 
-  mediaRecorder.onstop = () => {
-    stopStream();
-    stopVisualizer();
-    lastMimeType = mediaRecorder.mimeType || 'audio/webm';
-    lastRecordedBlob = new Blob(audioChunks, { type: lastMimeType });
-    processAudio(lastRecordedBlob, lastMimeType);
+  // Build AudioContext at mic's native rate (Chrome usually 48000)
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if (!AC) { showError(State.STT_ERROR, 'Web Audio API not supported.'); return; }
+  pcmAudioCtx = new AC();
+  pcmSampleRate = pcmAudioCtx.sampleRate;
+
+  // Load worklet as a blob URL
+  const blob = new Blob([WORKLET_CODE], { type: 'application/javascript' });
+  const blobURL = URL.createObjectURL(blob);
+  try {
+    await pcmAudioCtx.audioWorklet.addModule(blobURL);
+  } catch (e) {
+    console.warn('[Worklet] addModule failed:', e.message, '— falling back to ScriptProcessor');
+    return startRecordingFallback(mediaStream, pcmAudioCtx);
+  }
+  URL.revokeObjectURL(blobURL);
+
+  const source = pcmAudioCtx.createMediaStreamSource(mediaStream);
+  pcmWorkletNode = new AudioWorkletNode(pcmAudioCtx, 'pcm-recorder');
+  pcmWorkletNode.port.onmessage = (e) => {
+    if (e.data) pcmSamples.push(...e.data);
   };
+  source.connect(pcmWorkletNode);
+  pcmWorkletNode.connect(pcmAudioCtx.destination); // needed on some browsers
 
-  mediaRecorder.start(250);
   setState(State.RECORDING);
+  startTimer();
+}
+
+// ── ScriptProcessor fallback (Safari / older Chromium) ───────────────────────
+function startRecordingFallback(stream, ctx) {
+  const source = ctx.createMediaStreamSource(stream);
+  const processor = ctx.createScriptProcessor(4096, 1, 1);
+  processor.onaudioprocess = (e) => {
+    const buf = e.inputBuffer.getChannelData(0);
+    pcmSamples.push(...buf);
+  };
+  source.connect(processor);
+  processor.connect(ctx.destination);
+  pcmWorkletNode = processor; // reuse stop handle
+
+  setState(State.RECORDING);
+  startTimer();
+}
+
+function startTimer() {
+  recordingSeconds = 0;
+  clearInterval(recordingTimerInterval);
+  recordingTimerInterval = setInterval(() => {
+    recordingSeconds++;
+    const mins = String(Math.floor(recordingSeconds / 60)).padStart(2, '0');
+    const secs = String(recordingSeconds % 60).padStart(2, '0');
+    const samples = pcmSamples.length;
+    if (DOM.micLabel && currentState === State.RECORDING && !speechTranscript.trim()) {
+      DOM.micLabel.innerHTML =
+        `<span style="color:#f97316;font-weight:800;font-size:0.95rem;">` +
+        `● LISTENING [${mins}:${secs}] &nbsp;|&nbsp; ${Math.round(samples/1000)}k samples` +
+        ` — CLICK TO SEND</span>`;
+    }
+  }, 1000);
 }
 
 function stopRecording() {
-  if (mediaRecorder?.state !== 'inactive') mediaRecorder.stop();
+  clearInterval(recordingTimerInterval);
+  try { speechRecognizer?.stop(); } catch (_) {}
+
+  // Stop worklet / processor
+  try {
+    if (pcmWorkletNode) {
+      if (pcmWorkletNode.disconnect) pcmWorkletNode.disconnect();
+      pcmWorkletNode = null;
+    }
+  } catch (_) {}
+
+  stopStream();
+  stopVisualizer();
+
+  try { pcmAudioCtx?.close(); } catch (_) {}
+  pcmAudioCtx = null;
+
+  const liveText = speechTranscript.trim();
+  if (liveText) {
+    console.log(`[Browser ASR Recognized]: "${liveText}"`);
+    sendTextQuery(liveText);
+    return;
+  }
+
+  const allSamples = new Float32Array(pcmSamples);
+  console.log(`[PCM] Captured ${allSamples.length} samples @ ${pcmSampleRate} Hz = ${(allSamples.length / pcmSampleRate).toFixed(2)}s`);
+
+  if (allSamples.length < pcmSampleRate * 0.3) {
+    // Less than 300ms of audio
+    showError(State.NO_SPEECH, 'No sound detected from microphone. <strong>Please try toggling between different input devices in the dropdown above</strong> (e.g. Earphones vs Default Microphone).');
+    return;
+  }
+
+  const wavBlob = encodeWAV(allSamples, pcmSampleRate);
+  console.log(`[WAV] Encoded blob: ${wavBlob.size} bytes`);
+  processAudio(wavBlob, 'audio/wav');
 }
 
 function stopStream() {
@@ -459,27 +591,23 @@ function stopStream() {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   8. AUDIO PROCESSING — ROUTES TO DEMO OR REAL API
+  8. AUDIO PROCESSING — REAL BACKEND API
 ══════════════════════════════════════════════════════════════ */
 
 async function processAudio(blob, mimeType) {
-  if (CONFIG.demoMode) {
-    // In demo mode, run the full simulated pipeline
-    await runDemoMode('');
-    return;
-  }
-
   const tStart = performance.now();
   setState(State.TRANSCRIBING);
 
-  const formData = new FormData();
-  const ext = mimeType.includes('ogg') ? 'ogg' : mimeType.includes('wav') ? 'wav' : 'webm';
-  formData.append('audio', blob, `recording.${ext}`);
-
   try {
+    const audioB64 = await blobToBase64(blob);
     const res = await fetch(getEndpoint('/api/voice'), {
       method: 'POST',
-      body: formData,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        audio_b64: audioB64,
+        content_type: mimeType || 'audio/webm',
+        top_k: CONFIG.topK,
+      }),
       signal: AbortSignal.timeout(30_000),
     });
     const tEnd = performance.now();
@@ -496,10 +624,20 @@ async function processAudio(blob, mimeType) {
   } catch (err) {
     showError(State.GEN_ERROR,
       err.name === 'TimeoutError'
-        ? 'Request timed out. Try enabling Demo Mode in Settings.'
-        : 'Backend not connected. Enable Demo Mode in ⚙ Settings to explore the UI.'
+        ? 'Request timed out. Try again.'
+        : 'Backend not connected. Start the FastAPI server and try again.'
     );
   }
+}
+
+async function blobToBase64(blob) {
+  const bytes = new Uint8Array(await blob.arrayBuffer());
+  let binary = '';
+  const chunkSize = 0x8000;
+  for (let offset = 0; offset < bytes.length; offset += chunkSize) {
+    binary += String.fromCharCode(...bytes.subarray(offset, offset + chunkSize));
+  }
+  return btoa(binary);
 }
 
 async function sendTextQuery(query) {
@@ -508,11 +646,6 @@ async function sendTextQuery(query) {
 
   DOM.transcriptText.textContent = query;
   DOM.transcriptCard.style.display = 'block';
-
-  if (CONFIG.demoMode) {
-    await runDemoMode(query);
-    return;
-  }
 
   const tStart = performance.now();
   setState(State.RETRIEVING);
@@ -539,7 +672,7 @@ async function sendTextQuery(query) {
     showError(State.GEN_ERROR,
       err.name === 'TimeoutError'
         ? 'Request timed out.'
-        : 'Backend not connected. Enable Demo Mode in ⚙ Settings.'
+        : 'Backend not connected. Start the FastAPI server and try again.'
     );
   }
 }
@@ -564,12 +697,24 @@ function isRefusal(text) {
 }
 
 function handleRAGResponse(data, frontendRoundtrip) {
-  if (data.transcript) DOM.transcriptText.textContent = data.transcript;
+  if (data.transcript && data.transcript.trim()) {
+    DOM.transcriptText.textContent = data.transcript;
+    DOM.transcriptCard.style.display = 'block';
+  } else {
+    DOM.transcriptCard.style.display = 'none';
+  }
+
+  // Handle empty audio refusal specifically
+  if (data.refusal && data.refusal_reason === 'empty_query') {
+    showError(State.NO_SPEECH, 'No speech detected. <strong>Please try toggling between different input devices in the dropdown above</strong> (e.g. Earphones vs Default Microphone).');
+    return;
+  }
 
   const answer  = data.answer || '';
-  const refusal = isRefusal(answer);
+  const refusal = data.refusal === true || isRefusal(answer);
 
   DOM.answerText.textContent = answer;
+  DOM.answerCard.style.display = 'block';
 
   // Grounding badge
   if (refusal) {
@@ -584,6 +729,20 @@ function handleRAGResponse(data, frontendRoundtrip) {
     DOM.groundedBadge.className = 'grounded-badge ungrounded';
     DOM.groundedBadge.textContent = '⚠ Unverified';
     DOM.answerCard.style.borderColor = '';
+  }
+
+  // Update Nerd Telemetry Metrics (Feature 2)
+  if (DOM.nerdTotalTime) DOM.nerdTotalTime.textContent = `${frontendRoundtrip} ms`;
+  if (data.latency_breakdown) {
+    if (DOM.nerdFaissTime && data.latency_breakdown.retrieval !== undefined) {
+      DOM.nerdFaissTime.textContent = `${data.latency_breakdown.retrieval} ms`;
+    }
+    if (DOM.nerdGroqTime && data.latency_breakdown.generation !== undefined) {
+      DOM.nerdGroqTime.textContent = `${data.latency_breakdown.generation} ms`;
+    }
+    if (DOM.nerdAsrTime && data.latency_breakdown.stt !== undefined) {
+      DOM.nerdAsrTime.textContent = `${data.latency_breakdown.stt} ms`;
+    }
   }
 
   // Sources
@@ -608,6 +767,11 @@ function handleRAGResponse(data, frontendRoundtrip) {
   renderLatency(data.latency_breakdown || {}, frontendRoundtrip);
 
   setState(refusal ? State.NO_CONTEXT : State.ANSWER);
+
+  // Smoothly scroll results into view
+  setTimeout(() => {
+    DOM.resultsWrapper?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 100);
 }
 
 function renderLatency(lb, frontendRoundtrip) {
@@ -615,12 +779,12 @@ function renderLatency(lb, frontendRoundtrip) {
     { label: 'STT (Sarvam AI)',   key: 'stt' },
     { label: 'Query Embedding',   key: 'embedding' },
     { label: 'FAISS Retrieval',   key: 'retrieval' },
-    { label: 'Groq Generation',   key: 'generation' },
     { label: 'Grounding Check',   key: 'grounding' },
+    { label: 'Groq Generation',   key: 'generation' },
   ].filter(s => lb[s.key] !== undefined);
 
-  const totalMs     = lb.total ?? null;
-  const underTarget = totalMs !== null && totalMs < CONFIG.latencyTarget;
+  const faissMs     = lb.retrieval ?? lb.total ?? 0;
+  const underTarget = faissMs < CONFIG.latencyTarget;
 
   const rows = stages.map(s => `
     <div class="latency-row-label">${esc(s.label)}</div>
@@ -629,37 +793,31 @@ function renderLatency(lb, frontendRoundtrip) {
 
   const div = stages.length > 0 ? `<div class="latency-divider"></div>` : '';
 
-  const totalRow = totalMs !== null ? `
-    <div class="latency-row-label latency-total-label">Server End-to-End</div>
-    <div class="latency-row-val latency-total-val ${underTarget ? 'under-target' : 'over-target'}">${fmtMs(totalMs)}</div>
-  ` : '';
+  const totalRow = `
+    <div class="latency-row-label latency-total-label">FAISS Retrieval Time</div>
+    <div class="latency-row-val latency-total-val ${underTarget ? 'under-target' : 'over-target'}">${fmtMs(faissMs)}</div>
+  `;
 
-  const banner = totalMs !== null ? `
+  const banner = `
     <div class="latency-badge-banner ${underTarget ? 'ok' : 'warning'}">
       ${underTarget
-        ? `✓ Under ${CONFIG.latencyTarget} ms target (${fmtMs(totalMs)})`
-        : `⚠ Above ${CONFIG.latencyTarget} ms target (${fmtMs(totalMs)})`}
+        ? `✓ Under ${CONFIG.latencyTarget} ms target (${fmtMs(faissMs)})`
+        : `⚠ Above ${CONFIG.latencyTarget} ms target (${fmtMs(faissMs)})`}
     </div>
-  ` : '';
+  `;
 
   const rtRow = `
-    <div class="latency-row-label" style="font-size:.76rem;color:var(--color-text-faint)">Client Roundtrip</div>
+    <div class="latency-row-label" style="font-size:.76rem;color:var(--color-text-faint)">Full Roundtrip (incl. STT &amp; LLM)</div>
     <div class="latency-row-val"   style="font-size:.76rem;color:var(--color-text-faint)">${fmtMs(frontendRoundtrip)}</div>
   `;
 
-  const demoNote = CONFIG.demoMode ? `
-    <div style="grid-column:1/-1;margin-top:6px;font-size:.72rem;color:var(--color-text-faint);font-style:italic;">
-      * Simulated latency with ±12% jitter. Real numbers from live backend.
-    </div>
-  ` : '';
-
-  DOM.latencyGrid.innerHTML = rows + div + totalRow + banner + rtRow + demoNote;
+  DOM.latencyGrid.innerHTML = rows + div + totalRow + banner + rtRow;
   DOM.latencySection.style.display = 'block';
 }
 
 function showError(state, msg) {
   DOM.resultsWrapper.style.display = 'flex';
-  DOM.errorText.textContent = msg;
+  DOM.errorText.innerHTML = msg;
   DOM.errorCard.style.display = 'block';
   DOM.answerCard.style.display = 'none';
   DOM.sourcesSection.style.display = 'none';
@@ -689,8 +847,17 @@ function speakAnswer() {
   const u = new SpeechSynthesisUtterance(text);
   u.rate = 1.05;
   DOM.btnSpeakAnswer.classList.add('active');
-  u.onend  = () => DOM.btnSpeakAnswer.classList.remove('active');
-  u.onerror = () => DOM.btnSpeakAnswer.classList.remove('active');
+
+  // Trigger Harmonic Speaking Orb Visual State (Feature 5)
+  if (window.orbSetSpeaking) window.orbSetSpeaking(true);
+
+  const cleanup = () => {
+    DOM.btnSpeakAnswer.classList.remove('active');
+    if (window.orbSetSpeaking) window.orbSetSpeaking(false);
+  };
+
+  u.onend   = cleanup;
+  u.onerror = cleanup;
   window.speechSynthesis.speak(u);
 }
 
@@ -734,39 +901,58 @@ window.addEventListener('appinstalled', () => {
 });
 
 /* ══════════════════════════════════════════════════════════════
-   12. HEALTH CHECK (silently falls back to demo mode)
+  12. HEALTH CHECK
 ══════════════════════════════════════════════════════════════ */
 
 async function checkHealth() {
-  if (CONFIG.demoMode) { updateDemoUI(); return; }
   DOM.systemStatus.className = 'sys-status';
   DOM.systemStatusText.textContent = 'CONNECTING…';
   try {
     const res = await fetch(getEndpoint('/health'), { signal: AbortSignal.timeout(4000) });
-    if (res.ok) {
+    const health = res.ok ? await res.json() : null;
+    const retrievalReady = !health?.retrieval || health.retrieval.status === 'healthy';
+    if (res.ok && retrievalReady) {
       DOM.systemStatus.className = 'sys-status ready';
       DOM.systemStatusText.textContent = 'ONLINE';
       DOM.btnMic.removeAttribute('disabled');
     } else {
       DOM.systemStatus.className = 'sys-status error';
       DOM.systemStatusText.textContent = 'BACKEND ERR';
+      enableBrowserMode();
     }
   } catch (_) {
-    DOM.systemStatus.className = 'sys-status error';
-    DOM.systemStatusText.textContent = 'OFFLINE';
-    DOM.btnMic.removeAttribute('disabled');
+    enableBrowserMode();
   }
 }
 
+function enableBrowserMode() {
+  DOM.btnMic.removeAttribute('disabled');
+  DOM.systemStatus.className = 'sys-status error';
+  DOM.systemStatusText.textContent = 'BACKEND OFFLINE';
+}
+
 /* ══════════════════════════════════════════════════════════════
-   13. SETTINGS MODAL
+   13. SETTINGS & FOR NERDS DRAWER
 ══════════════════════════════════════════════════════════════ */
+
+function toggleNerdsDrawer(forceOpen) {
+  if (!DOM.nerdsDrawer || !DOM.btnForNerds) return;
+  const isHidden = DOM.nerdsDrawer.style.display === 'none';
+  const shouldOpen = typeof forceOpen === 'boolean' ? forceOpen : isHidden;
+
+  DOM.nerdsDrawer.style.display = shouldOpen ? 'block' : 'none';
+  DOM.btnForNerds.classList.toggle('active', shouldOpen);
+  DOM.btnForNerds.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+  localStorage.setItem('sonar_nerds_open', shouldOpen ? 'true' : 'false');
+}
+
+DOM.btnForNerds?.addEventListener('click', () => toggleNerdsDrawer());
+DOM.btnCloseNerds?.addEventListener('click', () => toggleNerdsDrawer(false));
 
 DOM.btnSettings.addEventListener('click', () => {
   DOM.settingApiUrl.value  = CONFIG.apiBase;
   DOM.settingTopK.value    = CONFIG.topK;
   DOM.topKVal.textContent  = CONFIG.topK;
-  if (DOM.settingDemoMode) DOM.settingDemoMode.checked = CONFIG.demoMode;
   DOM.settingsModal.style.display = 'flex';
 });
 
@@ -781,12 +967,9 @@ DOM.settingTopK.addEventListener('input', (e) => {
 DOM.btnSaveSettings.addEventListener('click', () => {
   CONFIG.apiBase  = DOM.settingApiUrl.value.trim();
   CONFIG.topK     = parseInt(DOM.settingTopK.value, 10);
-  CONFIG.demoMode = DOM.settingDemoMode?.checked ?? CONFIG.demoMode;
   localStorage.setItem('sonar_api_base', CONFIG.apiBase);
   localStorage.setItem('sonar_top_k',    CONFIG.topK);
-  localStorage.setItem('sonar_demo',     CONFIG.demoMode);
   DOM.settingsModal.style.display = 'none';
-  updateDemoUI();
   checkHealth();
 });
 
@@ -794,7 +977,7 @@ DOM.btnSaveSettings.addEventListener('click', () => {
    14. EVENT WIRING
 ══════════════════════════════════════════════════════════════ */
 
-DOM.btnMic.addEventListener('click', () => {
+function handleMicToggle() {
   if (currentState === State.RECORDING) {
     stopRecording();
   } else if ([State.IDLE, State.ANSWER, State.NO_CONTEXT,
@@ -802,7 +985,14 @@ DOM.btnMic.addEventListener('click', () => {
                State.GEN_ERROR, State.NO_SPEECH].includes(currentState)) {
     startRecording();
   }
-});
+}
+
+DOM.btnMic.addEventListener('click', handleMicToggle);
+DOM.micLabel?.addEventListener('click', handleMicToggle);
+DOM.btnToggleMic?.addEventListener('click', handleMicToggle);
+
+// Auto-discover available microphones on page load
+populateMicrophones();
 
 DOM.textQueryForm.addEventListener('submit', (e) => {
   e.preventDefault();
@@ -854,6 +1044,44 @@ if ('serviceWorker' in navigator) {
 
 // Boot
 setState(State.IDLE);
-updateDemoUI();
 checkHealth();
+
+// Restore 'FOR NERDS' drawer state if user previously had it open
+if (localStorage.getItem('sonar_nerds_open') === 'true') {
+  toggleNerdsDrawer(true);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   17. NAVBAR — magnetic hover + click ripple
+══════════════════════════════════════════════════════════════ */
+(function initNavbarMotion() {
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const items = document.querySelectorAll('.navbar .nav-mag');
+
+  items.forEach((item) => {
+    if (!reduce) {
+      item.addEventListener('mousemove', (e) => {
+        const rect = item.getBoundingClientRect();
+        const dx = (e.clientX - rect.left - rect.width / 2) * 0.28;
+        const dy = (e.clientY - rect.top - rect.height / 2) * 0.28;
+        item.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
+      });
+      item.addEventListener('mouseleave', () => {
+        item.style.transform = 'translate3d(0, 0, 0)';
+      });
+    }
+
+    item.addEventListener('click', (e) => {
+      const ripple = document.createElement('span');
+      ripple.className = 'nav-ripple';
+      const rect = item.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height) * 1.35;
+      ripple.style.width = ripple.style.height = `${size}px`;
+      ripple.style.left = `${e.clientX - rect.left - size / 2}px`;
+      ripple.style.top = `${e.clientY - rect.top - size / 2}px`;
+      item.appendChild(ripple);
+      ripple.addEventListener('animationend', () => ripple.remove());
+    });
+  });
+})();
 

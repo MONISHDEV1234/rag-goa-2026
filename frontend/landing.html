@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#000000" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;900&family=Space+Mono:wght@400;700&family=Unbounded:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -19,6 +19,8 @@
       color: #ffffff;
       font-family: 'Plus Jakarta Sans', sans-serif;
       -webkit-font-smoothing: antialiased;
+      scroll-behavior: smooth;
+      text-rendering: optimizeLegibility;
     }
 
     /* ── Volumetric Prism Lighting ── */
@@ -110,17 +112,21 @@
     }
 
     .brand-logo {
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 900;
-      font-size: 1.15rem;
-      letter-spacing: 0.28em;
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: 0.22em;
       color: #ffffff;
       text-decoration: none;
       text-transform: uppercase;
-      transition: transform 0.2s cubic-bezier(0.2, 0, 0.2, 1), opacity 0.2s;
+      transition: transform 0.25s cubic-bezier(0.2, 0, 0.2, 1), text-shadow 0.3s ease, color 0.3s ease;
       display: inline-block;
     }
-    .brand-logo:hover { opacity: 0.85; }
+    .brand-logo:hover {
+      color: #ffffff;
+      text-shadow: 0 0 10px #ff2a6d, 0 0 25px rgba(255, 42, 109, 0.85);
+      transform: translateY(-1px);
+    }
 
     .nav-actions {
       display: flex;
@@ -238,21 +244,317 @@
       text-align: center;
       margin: auto 0;
       user-select: none;
+      position: relative;
+      z-index: 50;
+      pointer-events: auto;
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .hero-orb-stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.3);
+      opacity: 0;
+      visibility: hidden;
+      filter: blur(16px);
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                  filter 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                  visibility 0.5s;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .hero-center.launching .hero-title {
+      opacity: 0;
+      transform: scale(1.15) translateY(-10px);
+      filter: blur(14px);
+      pointer-events: none;
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .hero-center.launching .hero-subtitle {
+      opacity: 0;
+      transform: translateY(15px);
+      filter: blur(8px);
+      transition: all 0.4s ease;
+    }
+
+    .hero-center.launching .hero-orb-stage {
+      opacity: 1;
+      visibility: visible;
+      transform: translate(-50%, -50%) scale(1);
+      filter: blur(0);
+    }
+
+    .orb-aura-glow {
+      position: absolute;
+      width: 330px;
+      height: 330px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 55%, transparent 75%);
+      filter: blur(38px);
+      animation: aura-expand 2.5s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+
+    @keyframes aura-expand {
+      0% { transform: scale(0.9); opacity: 0.5; }
+      100% { transform: scale(1.12); opacity: 0.85; }
+    }
+
+    .hero-orb-canvas {
+      width: 340px;
+      height: 340px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .orb-launch-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 16px;
+      padding: 7px 22px;
+      background: rgba(8, 10, 18, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.95);
+    }
+
+    .orb-status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.85);
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
+      animation: blink 1.2s infinite;
+    }
+
+    .orb-status-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      color: rgba(255, 255, 255, 0.65);
+      text-transform: uppercase;
+      font-weight: 400;
+    }
+
+    /* Full-screen smooth exit transition overlay */
+    .page-exit-overlay {
+      position: fixed;
+      inset: 0;
+      background: #000000;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 9999;
+      transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .page-exit-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* ══════════════════════════════════════════
+       TELEMETRY BORDER OVERLAY
+    ══════════════════════════════════════════ */
+    .cyber-border-stream {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 120;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.8s ease, visibility 0.8s;
+      overflow: hidden;
+    }
+
+    body.launching-active .cyber-border-stream {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .border-rail {
+      position: absolute;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      white-space: nowrap;
+      text-transform: uppercase;
+      user-select: none;
+      opacity: 0.3;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .rail-top {
+      top: 14px;
+      left: 0;
+      width: 200%;
+      animation: marquee-left 18s linear infinite;
+    }
+
+    .rail-bottom {
+      bottom: 14px;
+      left: 0;
+      width: 200%;
+      animation: marquee-right 18s linear infinite;
+    }
+
+    .rail-left {
+      top: 0;
+      left: 14px;
+      writing-mode: vertical-rl;
+      height: 200%;
+      animation: marquee-up 22s linear infinite;
+    }
+
+    .rail-right {
+      top: 0;
+      right: 14px;
+      writing-mode: vertical-rl;
+      height: 200%;
+      animation: marquee-down 22s linear infinite;
+    }
+
+    @keyframes marquee-left {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    @keyframes marquee-right {
+      0% { transform: translateX(-50%); }
+      100% { transform: translateX(0); }
+    }
+
+    @keyframes marquee-up {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-50%); }
+    }
+
+    @keyframes marquee-down {
+      0% { transform: translateY(-50%); }
+      100% { transform: translateY(0); }
+    }
+
+    /* Peripheral status badges */
+    .buff-floating-container {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .buff-badge {
+      position: absolute;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.67rem;
+      font-weight: 400;
+      letter-spacing: 0.14em;
+      padding: 6px 14px;
+      border-radius: 4px;
+      backdrop-filter: blur(20px);
+      white-space: nowrap;
+      text-transform: uppercase;
+      z-index: 130;
+      animation: buff-pop-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      color: rgba(255, 255, 255, 0.45);
+      background: rgba(12, 14, 22, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.7);
+    }
+
+    .buff-badge.cyan {
+      color: rgba(200, 240, 255, 0.55);
+      border-color: rgba(200, 240, 255, 0.12);
+    }
+
+    .buff-badge.orange {
+      color: rgba(255, 200, 140, 0.55);
+      border-color: rgba(255, 200, 140, 0.12);
+    }
+
+    @keyframes buff-pop-in {
+      0% {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .hero-title {
-      font-family: 'Space Grotesk', sans-serif;
+      font-family: 'Unbounded', sans-serif;
       font-weight: 900;
-      font-size: clamp(5.5rem, 18vw, 13.5rem);
-      letter-spacing: 0.18em;
+      font-size: clamp(4.2rem, 14.5vw, 11rem);
       line-height: 1;
       color: #ffffff;
       text-transform: uppercase;
+      margin: 0;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(0.06em, 1.4vw, 0.12em);
+      user-select: none;
+      position: relative;
+      z-index: 60;
+      pointer-events: auto;
+    }
+
+    .hero-letter {
+      display: inline-block;
+      color: #ffffff;
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.4), 0 0 40px rgba(255, 255, 255, 0.15);
+      cursor: pointer;
+      position: relative;
+      z-index: 60;
+      pointer-events: auto;
+      padding: 0 4px;
+      transition: color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                  text-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                  filter 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* When hovering anywhere over the title, all letters get cyberpunk pink neon */
+    .hero-title:hover .hero-letter {
+      color: #ffffff;
       text-shadow:
-        0 0 20px rgba(255, 255, 255, 0.7),
-        0 0 50px rgba(255, 255, 255, 0.4),
-        0 0 90px rgba(0, 240, 255, 0.35);
-      margin-left: 0.18em;
+        0 0 10px #ff2a6d,
+        0 0 25px rgba(255, 42, 109, 0.95),
+        0 0 50px rgba(255, 42, 109, 0.85),
+        0 0 90px rgba(255, 0, 128, 0.65),
+        0 0 140px rgba(255, 0, 128, 0.4);
+    }
+
+    /* When hovering over each specific letter, give it a prominent lift, pulse, and intense flare */
+    .hero-title .hero-letter:hover {
+      transform: translateY(-4px) scale(1.06);
+      text-shadow:
+        0 0 15px #ff2a6d,
+        0 0 35px rgba(255, 42, 109, 1),
+        0 0 70px rgba(255, 42, 109, 0.95),
+        0 0 110px rgba(255, 0, 128, 0.85),
+        0 0 160px rgba(255, 0, 128, 0.6);
+      filter: drop-shadow(0 0 35px rgba(255, 42, 109, 0.9));
+      animation: letter-pink-pulse 1.6s ease-in-out infinite alternate;
+      z-index: 5;
+    }
+
+    @keyframes letter-pink-pulse {
+      0% {
+        filter: drop-shadow(0 0 25px rgba(255, 42, 109, 0.7));
+      }
+      100% {
+        filter: drop-shadow(0 0 50px rgba(255, 42, 109, 1));
+      }
     }
 
     .hero-subtitle {
@@ -330,12 +632,17 @@
       justify-content: center;
       padding: 24px;
       opacity: 0;
+      visibility: hidden;
       pointer-events: none;
-      transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.35s;
     }
     .tour-modal-backdrop.active {
       opacity: 1;
+      visibility: visible;
       pointer-events: auto;
+    }
+    .tour-modal-backdrop:not(.active) * {
+      pointer-events: none !important;
     }
 
     /* Orange glowing card with entrance animation */
@@ -379,10 +686,10 @@
       gap: 12px;
     }
     .tour-logo {
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 900;
-      font-size: 1.1rem;
-      letter-spacing: 0.2em;
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 800;
+      font-size: 1.05rem;
+      letter-spacing: 0.18em;
       color: #ffffff;
     }
     .tour-pipe { color: rgba(255, 255, 255, 0.25); }
@@ -809,30 +1116,58 @@
     <!-- Top Navigation Bar -->
     <header class="navbar">
       <div class="magnetic-item">
-        <a href="/" class="brand-logo">SONAR</a>
+        <a href="landing.html" class="brand-logo">SONAR</a>
       </div>
       <nav class="nav-actions">
         <div class="magnetic-item">
-          <a href="/about" class="nav-link">ABOUT</a>
+          <a href="about.html" class="nav-link">ABOUT</a>
         </div>
         <div class="magnetic-item">
           <button id="btn-open-tutorial" class="nav-link" type="button">TUTORIAL</button>
         </div>
         <div class="magnetic-item">
-          <a href="/app" class="nav-pill-btn">LAUNCH APP</a>
+          <a href="index.html" class="nav-pill-btn">LAUNCH APP</a>
         </div>
       </nav>
     </header>
 
     <!-- Center Brand Showcase -->
-    <main class="hero-center">
-      <h1 class="hero-title">SONAR</h1>
-      <p class="hero-subtitle">SOund Neural Answer Retrieval</p>
+    <main class="hero-center" id="hero-center">
+      <h1 class="hero-title" id="hero-title" aria-label="SONAR" title="Click to launch SONAR">
+        <span class="hero-letter">S</span>
+        <span class="hero-letter">O</span>
+        <span class="hero-letter">N</span>
+        <span class="hero-letter">A</span>
+        <span class="hero-letter">R</span>
+      </h1>
+      <p class="hero-subtitle" id="hero-subtitle">SOund Neural Answer Retrieval</p>
+
+      <!-- Hero AI Orb Stage (Revealed on click) -->
+      <div class="hero-orb-stage" id="hero-orb-stage" aria-hidden="true">
+        <div class="orb-aura-glow"></div>
+        <canvas id="hero-orb-canvas" width="340" height="340" class="hero-orb-canvas"></canvas>
+        <div class="orb-launch-status" id="orb-launch-status">
+          <span class="orb-status-dot"></span>
+          <span class="orb-status-label" id="orb-status-label">INITIALIZING NEURAL CORE…</span>
+        </div>
+      </div>
     </main>
+
+    <!-- Cyber Buff Telemetry Stream on Screen Borders -->
+    <div id="cyber-border-stream" class="cyber-border-stream" aria-hidden="true">
+      <div class="border-rail rail-top" id="rail-top">/// [NEURAL_CORE_INIT] ── DENSE_VECTOR_RETRIEVAL: ACTIVE ── SARVAM_STT_v2: READY ── GROQ_LPU_ACCEL: 750_T/s ── FAISS_INDEX_NORM: 1.000 ── COSINE_SIMILARITY: 0.9942 /// [NEURAL_CORE_INIT] ── DENSE_VECTOR_RETRIEVAL: ACTIVE ── SARVAM_STT_v2: READY ── GROQ_LPU_ACCEL: 750_T/s ── FAISS_INDEX_NORM: 1.000 ///</div>
+      <div class="border-rail rail-bottom" id="rail-bottom">/// [SYSTEM_TELEMETRY] ── TOTAL_LATENCY: 149ms ── ZERO_SHOT_EMBEDDINGS: 768D ── CITATION_GROUNDING: STRICT ── CONTEXT_WINDOW: 8192_TOKENS ── CROSS_ENCODER_RERANK: OK /// [SYSTEM_TELEMETRY] ── TOTAL_LATENCY: 149ms ── ZERO_SHOT_EMBEDDINGS: 768D ── CITATION_GROUNDING: STRICT ///</div>
+      <div class="border-rail rail-left" id="rail-left">/// MATRIX_0x7F // ADAPTIVE_BEAM_SEARCH // INT8_QUANTIZATION // TENSOR_MAP_OK /// MATRIX_0x7F // ADAPTIVE_BEAM_SEARCH // INT8_QUANTIZATION ///</div>
+      <div class="border-rail rail-right" id="rail-right">/// AUDIO_SAMPLING_RATE_16kHZ // SPECTROGRAM_FFT_512 // SYNAPSE_GATE_ONLINE /// AUDIO_SAMPLING_RATE_16kHZ // SPECTROGRAM_FFT_512 ///</div>
+      <div class="buff-floating-container" id="buff-floating-container"></div>
+    </div>
+
+    <!-- Full-screen Page Transition Overlay -->
+    <div id="page-exit-overlay" class="page-exit-overlay" aria-hidden="true"></div>
 
     <!-- Bottom Footer -->
     <footer class="footer">
-      <p class="footer-text">&copy; 2026 SONAR &mdash; SOund Neural Answer Retrieval. HH Goa 2026 Task 2.</p>
+      <p class="footer-text">&copy; 2026 SONAR &mdash; SOund Neural Answer Retrieval.</p>
     </footer>
 
   </div>
@@ -917,9 +1252,9 @@
           <div class="tour-left-col">
             <span class="tour-tag-pill">&bull; VECTOR SEARCH</span>
             <h2 class="tour-heading">In-Memory <span class="text-orange">FAISS Index</span></h2>
-            <div class="tour-subheading cyan">BGE-small-en embeddings &bull; Zero Disk I/O</div>
+            <div class="tour-subheading cyan">MiniLM-L12 Multilingual &bull; Hybrid BM25 Fusion</div>
             <p class="tour-desc">
-              FastEmbed generates query vectors in 9ms. FAISS <code>IndexFlatIP</code> scans thousands of MSMARCO-XI chunks in RAM in ~5ms, ranking candidates by cosine similarity.
+              FastEmbed generates 384-D dense vectors in ~15ms. FAISS <code>IndexFlatIP</code> and BM25 search 7,650+ multilingual MSMARCO-XI chunks in RAM in &lt; 1ms, ranking candidates with Reciprocal Rank Fusion.
             </p>
             <div class="tour-step-counter">03 / 04</div>
           </div>
@@ -987,7 +1322,7 @@
         <div class="tour-btn-group">
           <button id="btn-tour-prev" class="tour-btn-prev" type="button" disabled>&larr; Prev</button>
           <button id="btn-tour-next" class="tour-btn-next" type="button">Next &rarr;</button>
-          <a href="/app" id="btn-tour-launch" class="tour-btn-launch">Launch App &rarr;</a>
+          <a href="index.html" id="btn-tour-launch" class="tour-btn-launch">Launch App &rarr;</a>
         </div>
       </div>
 
@@ -1101,6 +1436,292 @@
         target.style.transform = 'translate3d(0, 0, 0)';
       });
     });
+
+    /* ══════════════════════════════════════════════════════════
+       HERO AI ORB TRANSITION TO SECOND PAGE (/app)
+    ══════════════════════════════════════════════════════════ */
+    (function () {
+      const heroCenter   = document.getElementById('hero-center');
+      const heroTitle    = document.getElementById('hero-title');
+      const orbCanvas    = document.getElementById('hero-orb-canvas');
+      const exitOverlay  = document.getElementById('page-exit-overlay');
+      const statusLabel  = document.getElementById('orb-status-label');
+
+      if (!heroTitle || !orbCanvas) return;
+
+      let isLaunching = false;
+
+      // ── 3D Geodesic Icosahedron Geometry ──
+      const PHI = (1 + Math.sqrt(5)) / 2;
+      const BASE_VERTS = [
+        [-1,  PHI, 0], [ 1,  PHI, 0], [-1, -PHI, 0], [ 1, -PHI, 0],
+        [ 0, -1,  PHI], [ 0,  1,  PHI], [ 0, -1, -PHI], [ 0,  1, -PHI],
+        [ PHI, 0, -1], [ PHI, 0,  1], [-PHI, 0, -1], [-PHI, 0,  1],
+      ].map(v => { const l = Math.hypot(...v); return v.map(c => c / l); });
+
+      const BASE_FACES = [
+        [0,11,5],[0,5,1],[0,1,7],[0,7,10],[0,10,11],
+        [1,5,9],[5,11,4],[11,10,2],[10,7,6],[7,1,8],
+        [3,9,4],[3,4,2],[3,2,6],[3,6,8],[3,8,9],
+        [4,9,5],[2,4,11],[6,2,10],[8,6,7],[9,8,1],
+      ];
+
+      function midpoint(a, b) {
+        const m = [(a[0]+b[0])/2, (a[1]+b[1])/2, (a[2]+b[2])/2];
+        const l = Math.hypot(...m); return m.map(c => c / l);
+      }
+
+      function subdivide(verts, faces, depth) {
+        for (let d = 0; d < depth; d++) {
+          const newFaces = [];
+          const cache = {};
+          function getMid(i, j) {
+            const key = i < j ? `${i}_${j}` : `${j}_${i}`;
+            if (!cache[key]) { verts.push(midpoint(verts[i], verts[j])); cache[key] = verts.length - 1; }
+            return cache[key];
+          }
+          faces.forEach(([a, b, c]) => {
+            const ab = getMid(a, b), bc = getMid(b, c), ca = getMid(c, a);
+            newFaces.push([a, ab, ca], [b, bc, ab], [c, ca, bc], [ab, bc, ca]);
+          });
+          faces = newFaces;
+        }
+        return { verts, faces };
+      }
+
+      const { verts: VERTS, faces: FACES } = subdivide(
+        BASE_VERTS.map(v => [...v]),
+        BASE_FACES.map(f => [...f]),
+        2
+      );
+
+      const edgeSet = new Set();
+      const EDGES = [];
+      FACES.forEach(([a, b, c]) => {
+        [[a,b],[b,c],[c,a]].forEach(([i, j]) => {
+          const key = i < j ? `${i}_${j}` : `${j}_${i}`;
+          if (!edgeSet.has(key)) { edgeSet.add(key); EDGES.push([i, j]); }
+        });
+      });
+
+      function rotX(v, a) {
+        const [x, y, z] = v, c = Math.cos(a), s = Math.sin(a);
+        return [x, y*c - z*s, y*s + z*c];
+      }
+      function rotY(v, a) {
+        const [x, y, z] = v, c = Math.cos(a), s = Math.sin(a);
+        return [x*c + z*s, y, -x*s + z*c];
+      }
+      function rotZ(v, a) {
+        const [x, y, z] = v, c = Math.cos(a), s = Math.sin(a);
+        return [x*c - y*s, x*s + y*c, z];
+      }
+      function project(v, cx, cy, scale, fov) {
+        const z = v[2] + fov;
+        const f = fov / z;
+        return [cx + v[0] * scale * f, cy + v[1] * scale * f, v[2]];
+      }
+
+      // ── Particle System ──
+      const particles = [];
+      function spawnOrbParticles(amount, radius, cx, cy) {
+        for (let i = 0; i < amount; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const dist  = radius * (0.5 + Math.random() * 0.7);
+          particles.push({
+            x: cx + Math.cos(angle) * dist,
+            y: cy + Math.sin(angle) * dist,
+            vx: (Math.random() - 0.5) * 4.5,
+            vy: (Math.random() - 0.5) * 4.5,
+            r: 1.5 + Math.random() * 3.5,
+            alpha: 0.8 + Math.random() * 0.2,
+            decay: 0.015 + Math.random() * 0.02,
+            hue: Math.random() > 0.4 ? 45 : 185
+          });
+        }
+        while (particles.length > 120) particles.shift();
+      }
+
+      function startOrbAnimation() {
+        const ctx = orbCanvas.getContext('2d');
+        const W = orbCanvas.width;
+        const H = orbCanvas.height;
+        const cx = W / 2, cy = H / 2;
+        const baseScale = W * 0.38;
+        const FOV = 3.5;
+
+        let ax = 0, ay = 0, az = 0;
+        let scaleProgress = 0.2;
+        let speed = 1.0;
+
+        function render() {
+          requestAnimationFrame(render);
+
+          // Smoothly expand orb size and rotation speed (slower, grander pace)
+          scaleProgress += (1.0 - scaleProgress) * 0.035;
+          speed += 0.008;
+
+          ax += 0.004 * speed;
+          ay += 0.007 * speed;
+          az += 0.003 * speed;
+
+          const currentScale = baseScale * scaleProgress;
+
+          // Spawn radiant cyan/orange particles
+          if (Math.random() > 0.25) {
+            spawnOrbParticles(2, currentScale * 0.9, cx, cy);
+          }
+
+          ctx.clearRect(0, 0, W, H);
+
+          // 1. Subtle monochrome centre glow
+          const bgGlow = ctx.createRadialGradient(cx, cy, 0, cx, cy, currentScale * 1.2);
+          bgGlow.addColorStop(0, 'rgba(255, 255, 255, 0.06)');
+          bgGlow.addColorStop(0.6, 'rgba(255, 255, 255, 0.015)');
+          bgGlow.addColorStop(1, 'transparent');
+          ctx.fillStyle = bgGlow;
+          ctx.beginPath();
+          ctx.arc(cx, cy, currentScale * 1.2, 0, Math.PI * 2);
+          ctx.fill();
+
+          // 2. Project vertices
+          const projected = VERTS.map(v => {
+            let r = rotX(v, ax);
+            r = rotY(r, ay);
+            r = rotZ(r, az);
+            return project(r, cx, cy, currentScale, FOV);
+          });
+
+          // 3. Geodesic wireframe — white with depth-based opacity only
+          EDGES.forEach(([i, j]) => {
+            const p1 = projected[i];
+            const p2 = projected[j];
+            const avgZ = (p1[2] + p2[2]) / 2;
+            const normZ = (avgZ + 1) / 2;
+            const alpha = 0.06 + normZ * 0.45;
+            ctx.beginPath();
+            ctx.moveTo(p1[0], p1[1]);
+            ctx.lineTo(p2[0], p2[1]);
+            ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
+            ctx.lineWidth = 0.6 + normZ * 0.9;
+            ctx.stroke();
+          });
+
+          // 4. Vertex nodes — small, white, no colour
+          projected.forEach(p => {
+            const normZ = (p[2] + 1) / 2;
+            if (normZ > 0.5) {
+              ctx.beginPath();
+              ctx.arc(p[0], p[1], 0.8 + normZ * 1.4, 0, Math.PI * 2);
+              ctx.fillStyle = `rgba(255, 255, 255, ${0.3 + normZ * 0.5})`;
+              ctx.fill();
+            }
+          });
+
+          // 5. Sparse white particles
+          for (let i = particles.length - 1; i >= 0; i--) {
+            const pt = particles[i];
+            pt.x += pt.vx;
+            pt.y += pt.vy;
+            pt.alpha -= pt.decay;
+            if (pt.alpha <= 0) { particles.splice(i, 1); continue; }
+            ctx.beginPath();
+            ctx.arc(pt.x, pt.y, pt.r, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255, 255, 255, ${pt.alpha * 0.45})`;
+            ctx.fill();
+          }
+        }
+
+        render();
+      }
+
+      // ── Peripheral Telemetry Badges (Strict Cyan & Orange Palette) ──
+      const BUFF_DATA = [
+        { text: '⚡ LATENCY // 149ms (SUB-200ms)', type: 'cyan', top: '9%', left: '4%' },
+        { text: '◈ FAISS DENSE VECTOR [768D OK]', type: 'orange', top: '10%', right: '4%' },
+        { text: '✦ SARVAM-AI ASR: STREAMING', type: 'cyan', top: '48%', left: '3%' },
+        { text: '★ GROQ LPU INFERENCE // 750 T/s', type: 'orange', top: '50%', right: '3%' },
+        { text: '◆ MSMARCO-XI GROUNDING: 100%', type: 'cyan', bottom: '11%', left: '5%' },
+        { text: '▲ ZERO-SHOT RETRIEVAL: READY', type: 'orange', bottom: '12%', right: '5%' },
+        { text: '● CITATION VERIFIER: ARMED', type: 'cyan', top: '22%', right: '8%' },
+        { text: '■ SYNAPSE PIPELINE // ACTIVE', type: 'orange', bottom: '22%', left: '7%' }
+      ];
+
+      function spawnOrbParticles(amount, radius, cx, cy) {
+        for (let i = 0; i < amount; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const dist  = radius * (0.5 + Math.random() * 0.7);
+          particles.push({
+            x: cx + Math.cos(angle) * dist,
+            y: cy + Math.sin(angle) * dist,
+            vx: (Math.random() - 0.5) * 4.0,
+            vy: (Math.random() - 0.5) * 4.0,
+            r: 1.5 + Math.random() * 3.0,
+            alpha: 0.8 + Math.random() * 0.2,
+            decay: 0.015 + Math.random() * 0.02,
+            hue: Math.random() > 0.5 ? 28 : 185
+          });
+        }
+        while (particles.length > 120) particles.shift();
+      }
+
+      function spawnBuffBadges() {
+        const container = document.getElementById('buff-floating-container');
+        if (!container) return;
+
+        BUFF_DATA.forEach((item, index) => {
+          setTimeout(() => {
+            const badge = document.createElement('div');
+            badge.className = `buff-badge ${item.type}`;
+            badge.textContent = item.text;
+            if (item.top) badge.style.top = item.top;
+            if (item.bottom) badge.style.bottom = item.bottom;
+            if (item.left) badge.style.left = item.left;
+            if (item.right) badge.style.right = item.right;
+            container.appendChild(badge);
+          }, 300 + index * 260);
+        });
+      }
+
+      function launchAppTransition(e) {
+        if (e) e.preventDefault();
+        if (isLaunching) return;
+        isLaunching = true;
+
+        // 1. Activate body launching mode & border cyber telemetry stream
+        document.body.classList.add('launching-active');
+        heroCenter.classList.add('launching');
+        startOrbAnimation();
+        spawnBuffBadges();
+
+        // 2. Slower, cinematic status progression
+        if (statusLabel) {
+          statusLabel.textContent = 'ACCESS GRANTED // SYNAPSE ONLINE';
+          setTimeout(() => {
+            statusLabel.textContent = 'CALIBRATING 768D DENSE VECTOR MATRIX…';
+          }, 850);
+          setTimeout(() => {
+            statusLabel.textContent = 'ENGAGING GROQ LPU & SARVAM PIPELINE…';
+          }, 1800);
+          setTimeout(() => {
+            statusLabel.textContent = 'SONAR RETRIEVAL ENGINE OPERATIONAL';
+          }, 2750);
+        }
+
+        // 3. Smooth fade-out to next page
+        setTimeout(() => {
+          if (exitOverlay) exitOverlay.classList.add('active');
+        }, 2900);
+
+        // 4. Navigate to second page (/app)
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 3750);
+      }
+
+      // Attach click on SONAR hero title & letters
+      heroTitle.addEventListener('click', launchAppTransition);
+    })();
   </script>
 
 </body>

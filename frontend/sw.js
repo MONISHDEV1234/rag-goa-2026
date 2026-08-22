@@ -1,5 +1,5 @@
 /* Service Worker for HH Goa Voice RAG PWA */
-const CACHE_NAME = 'hh-goa-rag-v1';
+const CACHE_NAME = 'hh-goa-rag-v3-connected-pages';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',

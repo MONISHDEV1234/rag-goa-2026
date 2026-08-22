@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#000000" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;900&family=Space+Mono:wght@400;700&family=Unbounded:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -68,10 +68,10 @@
     }
 
     .brand-logo {
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 900;
-      font-size: 1.15rem;
-      letter-spacing: 0.28em;
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: 0.22em;
       color: #ffffff;
       text-decoration: none;
       text-transform: uppercase;
@@ -536,8 +536,8 @@
   <div class="page-container">
 
     <header class="navbar">
-      <a href="/" class="brand-logo">SONAR</a>
-      <a href="/" class="back-btn">&larr; BACK</a>
+      <a href="landing.html" class="brand-logo">SONAR</a>
+      <a href="landing.html" class="back-btn">&larr; BACK</a>
     </header>
 
     <main class="center-stage">
@@ -614,9 +614,9 @@
             <div class="tour-left-col">
               <span class="tour-tag-pill">&bull; VECTOR SEARCH</span>
               <h2 class="tour-heading">In-Memory <span class="text-orange">FAISS Index</span></h2>
-              <div class="tour-subheading cyan">BGE-small-en embeddings &bull; Zero Disk I/O</div>
+              <div class="tour-subheading cyan">MiniLM-L12 Multilingual &bull; Hybrid BM25 Fusion</div>
               <p class="tour-desc">
-                FastEmbed generates query vectors in 9ms. FAISS <code>IndexFlatIP</code> scans thousands of MSMARCO-XI chunks in RAM in ~5ms, ranking candidates by cosine similarity.
+                FastEmbed generates 384-D dense vectors in ~15ms. FAISS <code>IndexFlatIP</code> and BM25 search 7,650+ multilingual MSMARCO-XI chunks in RAM in &lt; 1ms, ranking candidates with Reciprocal Rank Fusion.
               </p>
               <div class="tour-step-counter">03 / 04</div>
             </div>
@@ -684,7 +684,7 @@
           <div class="tour-btn-group">
             <button id="btn-tour-prev" class="tour-btn-prev" type="button" disabled>&larr; Prev</button>
             <button id="btn-tour-next" class="tour-btn-next" type="button">Next &rarr;</button>
-            <a href="/app" id="btn-tour-launch" class="tour-btn-launch">Launch App &rarr;</a>
+            <a href="index.html" id="btn-tour-launch" class="tour-btn-launch">Launch App &rarr;</a>
           </div>
         </div>
 
@@ -692,7 +692,7 @@
     </main>
 
     <footer class="footer">
-      <p class="footer-text">&copy; 2026 SONAR &mdash; SOund Neural Answer Retrieval. HH Goa 2026 Task 2.</p>
+      <p class="footer-text">&copy; 2026 SONAR &mdash; SOund Neural Answer Retrieval.</p>
     </footer>
 
   </div>
