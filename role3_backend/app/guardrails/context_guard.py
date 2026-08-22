@@ -33,7 +33,7 @@ class ContextGuard:
     Instantiated once and reused across requests.
     """
 
-    def __init__(self, threshold: float = 0.50) -> None:
+    def __init__(self, threshold: float = 0.05) -> None:
         self._threshold = threshold
 
     def check(self, chunks: list[DocumentChunk]) -> None:

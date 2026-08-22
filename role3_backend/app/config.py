@@ -44,7 +44,7 @@ class Settings(BaseSettings):
     # MiniLM inner-product scores (post L2-normalize) are lower than e5-large,
     # so a lower threshold avoids incorrectly refusing valid queries.
     # Tune experimentally with evaluate.py.
-    context_similarity_threshold: float = 0.20
+    context_similarity_threshold: float = 0.05
     # Anti-hallucination pre-filter: chunks with score below this are dropped
     # before the LLM sees them. 0.0 = disabled (threshold guard handles it instead).
     retrieval_min_score: float = 0.0
