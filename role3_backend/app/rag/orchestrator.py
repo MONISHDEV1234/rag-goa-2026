@@ -159,10 +159,23 @@ class RAGService:
 
         # ---- 5. LLM Generation (Groq + Tenacity retries) ----
         t = time.perf_counter()
-        llm_answer = await self._groq.generate(
-            system_prompt=SYSTEM_PROMPT,
-            user_message=user_message,
-        )
+        try:
+            llm_answer = await self._groq.generate(
+                system_prompt=SYSTEM_PROMPT,
+                user_message=user_message,
+            )
+        except Exception as exc:
+            latency["generation"] = _ms(t)
+            latency["total"] = _ms(total_start)
+            return RAGResponse(
+                transcript=transcript,
+                answer=f"LLM Generation Error: {exc}",
+                is_grounded=False,
+                retrieved_sources=chunks,
+                latency_breakdown=latency,
+                refusal=True,
+                refusal_reason="generation_error",
+            )
         latency["generation"] = _ms(t)
 
         # ---- 6. Grounding Check (deterministic, < 1 ms) ----
@@ -175,7 +188,7 @@ class RAGService:
         latency["grounding"] = _ms(t)
 
         # ---- 7. Final answer assembly ----
-        latency["total"] = round(latency["retrieval"] + latency["grounding"], 2)
+        latency["total"] = round(latency.get("retrieval", 0) + latency["generation"] + latency["grounding"], 2)
 
         final_answer = llm_answer.answer
         refusal = False

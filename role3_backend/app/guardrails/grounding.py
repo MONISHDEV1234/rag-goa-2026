@@ -39,7 +39,7 @@ _STOP_WORDS = frozenset({
 })
 
 # Minimum fraction of answer tokens that must appear in context.
-_DEFAULT_COVERAGE_THRESHOLD = 0.30
+_DEFAULT_COVERAGE_THRESHOLD = 0.20
 
 
 def _tokenize(text: str) -> frozenset[str]:
