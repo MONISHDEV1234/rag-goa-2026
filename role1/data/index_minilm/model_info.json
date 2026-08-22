@@ -1,6 +1,7 @@
 {
-  "model_name": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "model_name": "sentence-transformers/all-MiniLM-L6-v2",
   "dim": 384,
   "is_e5": false,
+  "note": "Built with all-MiniLM-L6-v2 (cached locally). Same 384-dim as original.",
   "num_vectors": 7651
 }
