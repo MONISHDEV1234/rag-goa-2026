@@ -115,14 +115,22 @@ class RetrievalIndex:
 
         # Set HF_HUB_OFFLINE=1 when we have a local cache to avoid
         # slow network calls just to check for model updates at startup
+        os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
+        os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS", "1")
         if effective_cache_dir and effective_cache_dir.exists():
             os.environ.setdefault("HF_HUB_OFFLINE", "1")
 
-        kwargs: dict = {"model_name": self._model_info["model_name"], "threads": threads}
-        if effective_cache_dir:
+        kwargs: dict = {"model_name": self._model_info.get("model_name", "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"), "threads": threads}
+        if effective_cache_dir and effective_cache_dir.exists():
             kwargs["cache_dir"] = str(effective_cache_dir)
 
-        self._embedder = TextEmbedding(**kwargs)
+        try:
+            self._embedder = TextEmbedding(**kwargs)
+        except Exception as err:
+            # If cached load fails (e.g. incomplete local cache or HF_HUB_OFFLINE issue), retry without restrictive kwargs/offline mode
+            os.environ.pop("HF_HUB_OFFLINE", None)
+            model_name = self._model_info.get("model_name", "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+            self._embedder = TextEmbedding(model_name=model_name, threads=threads)
 
         # Build BM25 sparse index for hybrid search capability
         self._bm25.build_index(self._chunk_meta)
