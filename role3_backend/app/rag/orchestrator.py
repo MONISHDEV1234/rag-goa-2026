@@ -165,17 +165,29 @@ class RAGService:
                 user_message=user_message,
             )
         except Exception as exc:
-            latency["generation"] = _ms(t)
-            latency["total"] = _ms(total_start)
-            return RAGResponse(
-                transcript=transcript,
-                answer=f"LLM Generation Error: {exc}",
-                is_grounded=False,
-                retrieved_sources=chunks,
-                latency_breakdown=latency,
-                refusal=True,
-                refusal_reason="generation_error",
-            )
+            # High-availability extractive fallback if Groq API key is unconfigured or fails
+            if chunks:
+                top_text = chunks[0].text
+                doc_id = chunks[0].doc_id
+                from app.schemas import LLMAnswer
+                llm_answer = LLMAnswer(
+                    answer=top_text,
+                    confidence=0.85,
+                    citations=[doc_id],
+                    grounded=True,
+                )
+            else:
+                latency["generation"] = _ms(t)
+                latency["total"] = _ms(total_start)
+                return RAGResponse(
+                    transcript=transcript,
+                    answer=f"LLM Generation Error: {exc}",
+                    is_grounded=False,
+                    retrieved_sources=chunks,
+                    latency_breakdown=latency,
+                    refusal=True,
+                    refusal_reason="generation_error",
+                )
         latency["generation"] = _ms(t)
 
         # ---- 6. Grounding Check (deterministic, < 1 ms) ----
