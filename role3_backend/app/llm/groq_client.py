@@ -61,21 +61,33 @@ class GroqClient:
         reraise=True,
     )
     async def _call_with_retry(self, system_prompt: str, user_message: str) -> str:
-        """Raw Groq call wrapped by Tenacity. Returns the content string."""
-        response = await self._client.chat.completions.create(
-            model=settings.groq_model,
-            response_format={"type": "json_object"},
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_message},
-            ],
-            temperature=0.0,   # deterministic output for grounding consistency
-            max_tokens=512,    # keep generation short — latency-sensitive path
-        )
-        content = response.choices[0].message.content
-        if not content:
-            raise LLMGenerationError("Groq returned an empty response.")
-        return content
+        """Raw Groq call wrapped by Tenacity. Tries primary model then fallback models."""
+        models_to_try = [settings.groq_model, "llama-3.1-8b-instant", "llama3-8b-8192"]
+        # Deduplicate while preserving order
+        seen = set()
+        models = [m for m in models_to_try if m and not (m in seen or seen.add(m))]
+
+        last_error = None
+        for model in models:
+            try:
+                response = await self._client.chat.completions.create(
+                    model=model,
+                    response_format={"type": "json_object"},
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_message},
+                    ],
+                    temperature=0.0,   # deterministic output for grounding consistency
+                    max_tokens=512,    # keep generation short — latency-sensitive path
+                )
+                content = response.choices[0].message.content
+                if content:
+                    return content
+            except Exception as e:
+                logger.warning("Groq call failed for model '%s': %s. Trying fallback model...", model, e)
+                last_error = e
+
+        raise LLMGenerationError(f"Groq generation failed across models: {last_error}")
 
     @staticmethod
     def _parse(raw: str) -> LLMAnswer:

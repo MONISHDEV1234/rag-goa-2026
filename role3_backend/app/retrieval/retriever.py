@@ -182,28 +182,22 @@ class RetrievalIndex:
                     "HF Inference API unavailable (%s), falling back to local ONNX.", hf_err
                 )
 
-        # 2. Local ONNX via fastembed — ~300MB RAM, loads from baked Docker cache
+        # 2. Local ONNX via fastembed — ~300MB RAM, fast vector embeddings
         if self._embedder is None and os.environ.get("DISABLE_ONNX_EMBEDDER", "0") != "1":
-            kwargs: dict = {"model_name": model_name, "threads": threads}
-            if effective_cache_dir and effective_cache_dir.exists():
-                kwargs["cache_dir"] = str(effective_cache_dir)
             try:
-                self._embedder = TextEmbedding(**kwargs)
+                if effective_cache_dir and effective_cache_dir.exists():
+                    os.environ["FASTEMBED_CACHE_PATH"] = str(effective_cache_dir)
+                self._embedder = TextEmbedding(model_name=model_name, threads=threads)
                 # Warm up ONNX runtime
                 self.embed_query("warmup query")
                 print(f"[Role 3] Embedder: local ONNX ({model_name})")
-            except Exception as e:
-                try:
-                    os.environ.pop("HF_HUB_OFFLINE", None)
-                    self._embedder = TextEmbedding(model_name=model_name, threads=threads)
-                    self.embed_query("warmup query")
-                except Exception as err:
-                    import logging
-                    logging.getLogger("retriever").warning(
-                        f"Dense ONNX embedder could not be loaded ({err}). "
-                        "Running in BM25-only mode (~60MB RAM)."
-                    )
-                    self._embedder = None
+            except Exception as err:
+                import logging
+                logging.getLogger("retriever").warning(
+                    f"Dense ONNX embedder could not be loaded ({err}). "
+                    "Running in BM25-only mode (~60MB RAM)."
+                )
+                self._embedder = None
 
         # 3. BM25 only — keyword search fallback, minimal RAM
         if self._embedder is None:
