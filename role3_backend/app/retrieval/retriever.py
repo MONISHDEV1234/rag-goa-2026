@@ -118,17 +118,23 @@ class RetrievalIndex:
         if effective_cache_dir and effective_cache_dir.exists():
             os.environ.setdefault("HF_HUB_OFFLINE", "1")
 
-        kwargs: dict = {"model_name": self._model_info["model_name"], "threads": threads}
-        if effective_cache_dir:
-            kwargs["cache_dir"] = str(effective_cache_dir)
-
-        self._embedder = TextEmbedding(**kwargs)
-
-        # Build BM25 sparse index for hybrid search capability
+        # Build BM25 sparse index for instant keyword search and low-memory fallback
         self._bm25.build_index(self._chunk_meta)
 
-        # Warm up ONNX runtime so request #1 has no cold-start delay
-        self.embed_query("warmup query")
+        self._embedder = None
+        # In cloud environments with low RAM, check if ONNX embedder can be safely loaded
+        if os.environ.get("DISABLE_ONNX_EMBEDDER", "0") != "1":
+            try:
+                self._embedder = TextEmbedding(**kwargs)
+                # Warm up ONNX runtime
+                self.embed_query("warmup query")
+            except Exception as e:
+                import logging
+                logging.getLogger("retriever").warning(
+                    f"Dense ONNX embedder could not be loaded ({e}). "
+                    "Running in ultra-fast lightweight BM25 mode (~60MB RAM)."
+                )
+                self._embedder = None
 
         self._loaded = True
 
@@ -192,8 +198,14 @@ class RetrievalIndex:
             return self._cache[cache_key]
 
         self._cache_misses += 1
-        query_vector = self.embed_query(query)
-        results = self.search(query_vector, top_k)
+        if self._embedder is not None and self._index is not None:
+            try:
+                query_vector = self.embed_query(query)
+                results = self.search(query_vector, top_k)
+            except Exception:
+                results = self._bm25.search(query, top_k)
+        else:
+            results = self._bm25.search(query, top_k)
 
         # Bound cache size to prevent unbounded memory growth
         if len(self._cache) >= _CACHE_MAX_SIZE:
