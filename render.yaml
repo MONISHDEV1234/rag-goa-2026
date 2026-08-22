@@ -4,8 +4,8 @@ services:
     env: python
     region: oregon
     plan: free
-    buildCommand: "pip install --upgrade pip && pip install -r requirements.txt"
-    startCommand: "python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT --app-dir role3_backend"
+    buildCommand: "pip install --upgrade pip && pip install -r requirements.txt && python -c \"from fastembed import TextEmbedding; TextEmbedding('sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2')\""
+    startCommand: "python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT --app-dir role3_backend --workers 1"
     envVars:
       - key: PYTHON_VERSION
         value: "3.11.9"
@@ -15,3 +15,7 @@ services:
         sync: false
       - key: FAISS_INDEX_DIR
         value: "role1/data/index_minilm"
+      - key: OMP_NUM_THREADS
+        value: "1"
+      - key: MKL_NUM_THREADS
+        value: "1"

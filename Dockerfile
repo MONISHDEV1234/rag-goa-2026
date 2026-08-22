@@ -9,7 +9,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+    pip install --no-cache-dir -r requirements.txt && \
+    python -c "from fastembed import TextEmbedding; TextEmbedding('sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2')"
 
 # Copy application code, frontend assets, and indexed FAISS knowledge vectors
 COPY role3_backend/ ./role3_backend/
@@ -19,6 +20,8 @@ COPY frontend/ ./frontend/
 ENV PYTHONUNBUFFERED=1
 ENV PORT=8000
 ENV FAISS_INDEX_DIR=role1/data/index_minilm
+ENV OMP_NUM_THREADS=1
+ENV MKL_NUM_THREADS=1
 
 EXPOSE 8000
 

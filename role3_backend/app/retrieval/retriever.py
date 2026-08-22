@@ -98,7 +98,7 @@ class RetrievalIndex:
         # Lazy import so this module can be unit-tested without fastembed installed
         from fastembed import TextEmbedding
 
-        threads = self.threads if self.threads is not None else max(1, os.cpu_count() or 4)
+        threads = self.threads if self.threads is not None else 1
 
         # Resolve offline model cache dir
         # Priority: explicit cache_dir > fastembed temp cache > index_dir.parent/models > data/models
