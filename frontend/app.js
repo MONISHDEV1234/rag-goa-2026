@@ -21,7 +21,8 @@
 ══════════════════════════════════════════════════════════════ */
 
 const CONFIG = {
-  apiBase:        localStorage.getItem('sonar_api_base') || 'http://127.0.0.1:8000',
+  // Use same-origin relative URL on Railway/cloud; fall back to localStorage override if set
+  apiBase:        localStorage.getItem('sonar_api_base') || '',
   topK:           parseInt(localStorage.getItem('sonar_top_k'), 10) || 3,
   latencyTarget:  200,
 };
@@ -908,7 +909,8 @@ async function checkHealth() {
   DOM.systemStatus.className = 'sys-status';
   DOM.systemStatusText.textContent = 'CONNECTING…';
   try {
-    const res = await fetch(getEndpoint('/health'), { signal: AbortSignal.timeout(4000) });
+    // Use 8s timeout to handle Railway cold starts
+    const res = await fetch(getEndpoint('/health'), { signal: AbortSignal.timeout(8000) });
     const health = res.ok ? await res.json() : null;
     const retrievalReady = !health?.retrieval || health.retrieval.status === 'healthy';
     if (res.ok && retrievalReady) {
@@ -920,7 +922,8 @@ async function checkHealth() {
       DOM.systemStatusText.textContent = 'BACKEND ERR';
       enableBrowserMode();
     }
-  } catch (_) {
+  } catch (err) {
+    console.warn('[Health] Backend check failed:', err.message);
     enableBrowserMode();
   }
 }
