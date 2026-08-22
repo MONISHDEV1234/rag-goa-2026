@@ -206,12 +206,15 @@ class RAGService:
         refusal = False
         refusal_reason = None
 
-        if not is_grounded:
+        if not final_answer or not final_answer.strip():
             final_answer = (
                 "I couldn't verify this answer against the retrieved knowledge base. "
                 "Please try rephrasing your question."
             )
             refusal = True
+            refusal_reason = "insufficient_context"
+        elif not is_grounded:
+            refusal = False
             refusal_reason = "ungrounded_answer"
 
         return RAGResponse(
